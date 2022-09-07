@@ -1,0 +1,17 @@
+export default {
+    settings: "md-settings",
+    create: "md-add",
+    home: 'md-home',
+    order: 'md-reorder-three',
+    save: 'save-sharp',
+    delete: 'trash-sharp',
+    edit: 'create-outline',
+    cancel: 'md-close',
+    duplicate: 'md-copy',
+    okay: 'md-checkmark',
+    darkMode: 'md-contrast',
+    language:'language',
+    dateFormat: 'md-calendar',
+    feedback: 'chatbubble',
+    site: 'globe',
+}
