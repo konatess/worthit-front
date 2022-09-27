@@ -114,6 +114,12 @@ const buttonStyles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    ingBtn: {
+        padding: 15,
+        justifyContent: 'flex-start', 
+        alignItems: 'stretch',
+        backgroundColor: Colors.lightTheme.buttons.settings
+    },
     projectBtnArea: {
         padding: 15,
     },

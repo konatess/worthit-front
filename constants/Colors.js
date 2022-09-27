@@ -1,30 +1,34 @@
-const darkNeutral = '#001B2E';
-const mediumNeutral = '#294C60';
-const brightCool = '#B4CFBC';
-const brightWarm = '#FFAC70';
-const lightWarm ='#FFF0D6';
-const lightCool = '#ADB6C4';
+const darkText = '#001B2E';
+const darkCool = '#294C60';
+const darkGreen = '#5F956E';
+const darkBrown = '#A78162';
+const darkOrange = '#F55600';
+const lightGrey = '#ADB6C4';
+const lightGreen = '#B4CFBC';
+const lightBrown = '#FFAC70';
+const lightTurquoise = '#1CD9D9'
+const lightText ='#FFF0D6';
 
 export default {
     lightTheme: {
         background: '#fdfdfd',
         buttons:{
-            settings: lightWarm,
-            save: brightCool,
-            create: brightCool,
-            cancel: lightCool,
-            delete: brightWarm,
-            filter: mediumNeutral,
-            duplicate: lightWarm,
-            newIngredient: brightCool,
-            addIngredient: brightCool,
+            settings: lightText,
+            save: lightGreen,
+            create: lightGreen,
+            cancel: lightGrey,
+            delete: lightBrown,
+            filter: lightTurquoise,
+            duplicate: lightText,
+            newIngredient: lightGreen,
+            addIngredient: lightGreen,
         },
-        inputBorder: mediumNeutral,
-        text: darkNeutral,
+        inputBorder: darkCool,
+        text: darkText,
     },
     darkTheme: {
-        background: darkNeutral,
-        text: lightWarm
+        background: darkText,
+        text: lightText
     },
     tabIconDefault: '#fff',
     errorBackground: 'red',
@@ -40,10 +44,10 @@ export default {
     settingsIcons: '#888',
     transparent: '#0000',
     toggle: {
-        trackfalse: mediumNeutral, 
-        tracktrue: darkNeutral,
-        thumbfalse: lightWarm,
-        thumbtrue: brightCool,
+        trackfalse: darkCool, 
+        tracktrue: darkText,
+        thumbfalse: lightText,
+        thumbtrue: lightTurquoise,
         ios_backgroundColor: "#3e3e3e"
     },
 };

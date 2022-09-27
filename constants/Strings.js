@@ -6,6 +6,11 @@ export default {
             prodPrefix: "PROD-",
             ingPrefix: "ING-"
         },
+        routes: {
+            home: "Home",
+            settings: "Settings",
+            recipe: "Recipe"
+        },
         mailto: "mailto:<admin@buddingapps.com>?subject=Worth%20It%20App",
         website: "https://www.buddingapps.com/projects/divide-%26-de-stress",
         dateFormats: ["MM/DD", "DD/MM", "MM-DD", "DD-MM", "YY/MM/DD", "DD/MM/YY", "MM/DD/YY", "YY-MM-DD", "DD-MM-YY", "MM-DD-YY"],
