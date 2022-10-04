@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Text, SafeAreaView, View } from "react-native";
+import { Text, SafeAreaView, View, Pressable } from "react-native";
 
 import ButtonBar from '../components/ButtonBar';
 import { containers } from '../constants/Styles';
@@ -8,7 +8,8 @@ import IngButton from "../components/IngButton";
 import Modal from "../components/Modal";
 import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
-import FbBtn from "../components/FbLoginBtn";
+import LoginButton from "../constants/Storage";
+// import { firebaseAuth } from "../constants/firebase";
 
 
 export default function HomeScreen ({ route, navigation }) {
@@ -32,7 +33,18 @@ export default function HomeScreen ({ route, navigation }) {
     const [ingName, setIngName] = useState("");
     const [ingUnit, setIngUnit] = useState("");
     const [ingCost, setIngCost] = useState(0);
-    const [signedIn, setSignedIn] = useState(false);
+    // const [signedIn, setSignedIn] = useState(false);
+    // const [facebookError, setFacebookError] = useState('');
+
+    // const signUpEmail = () => {
+    //     firebaseAuth
+    //     .createUserWithEmailAndPassword('konatess@gmail.com', 'password')
+    //     .then(userCredentials => {
+    //         const user = userCredentials.user;
+    //         console.log(user.email)
+    //     })
+    //     .catch(error => alert(error.message))
+    // } 
 
     const navToRecipe = () => {
         navigation.navigate(Strings.util.routes.recipe, {
@@ -128,11 +140,16 @@ export default function HomeScreen ({ route, navigation }) {
         onPress: () => {setViewIng(!viewIng)}
     }
     return <SafeAreaView style={[containers.safeArea, {backgroundColor: Colors.lightTheme.background}]}> 
-        {!signedIn && <FbBtn></FbBtn>}
+        {/* <Pressable onPress={signUpEmail}>
+            <Text>Login Email</Text>
+        </Pressable> */}
+        <LoginButton />
+        <Text>{}</Text>
         <Text>{"viewIng: " + viewIng}</Text>
         {allIngredients.length > 0 && viewIng && <View style={containers.projArea}>
-            {allIngredients.map(ingredient => {
+            {allIngredients.map((ingredient, index) => {
                 return <IngButton 
+                    keyid={"ing" + index}
                     name={ingredient.name}
                     cost={ingredient.cost}
                     unit={ingredient.unit}
