@@ -7,6 +7,7 @@ export default {
             ingPrefix: "ING-"
         },
         routes: {
+            login: "Login",
             home: "Home",
             settings: "Settings",
             recipe: "Recipe"
@@ -23,6 +24,7 @@ export default {
     English: {
         buttons: {
             settings: "Settings",
+            loginWithEmail: "Log In With Email",
             save: "Save",
             delete: "Delete",
             create: "New",
@@ -39,10 +41,12 @@ export default {
                 dateFormat: "Date Format:  ",
                 delete: "Start Fresh - Delete All Projects",
                 feedback: "Send Us Your Feedback",
-                site: "Visit Our Website"
+                site: "Visit Our Website",
+                logout: "Log out"
             }
         },
         label: {
+            login: "Log in to Begin",
             prodName: "Product Name: ",
             time: "Average Time to Make: ",
             number: "Items: ",
@@ -67,6 +71,8 @@ export default {
             amount: "If it takes more than one hour to produce one, we recommend setting amount to 1"
         },
         placeholder:  {
+            email: "email",
+            password: "password",
             prodName: "What is your product called?",
             ingName: "What is the ingredient called?",
             ingUnit: "bottle, skein, sheet, unit, etc.",

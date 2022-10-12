@@ -1,4 +1,7 @@
+import { useContext } from "react";
 import { SafeAreaView, Linking } from "react-native";
+import { getAuth, signOut } from 'firebase/auth';
+import { app } from "../storage/firebaseInit"
 
 import ButtonBar from '../components/ButtonBar';
 import SettingButton from "../components/SettingButton";
@@ -6,9 +9,12 @@ import { containers } from '../constants/Styles';
 import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
+import { UserContext } from "../constants/UserContext";
 
 
-export default function SettingsScreen ({ navigation }) {
+export default function SettingsScreen ({ route, navigation }) {
+    const { settings } = route.params;
+    const { user, setUser } = useContext(UserContext)
     let cancelBtn = {
         title: "Cancel",
         color: Colors.lightTheme.buttons.cancel,
@@ -48,11 +54,15 @@ export default function SettingsScreen ({ navigation }) {
                 console.log("Error: " + Strings.util.website)
             }
         },
+        logout: () => {
+            let auth = getAuth(app)
+            signOut(auth).then(setUser({uid: ""}))
+        }
     }
     let settingsBtns = [];
     for (const property in Strings.English.buttons.allSettings) {
         let button = <SettingButton 
-            name={property}
+            key={property}
             title={Strings.English.buttons.allSettings[property]}
             iconName={Icons[property]}
             onPress={settingsPress[property]}

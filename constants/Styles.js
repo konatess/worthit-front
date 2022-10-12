@@ -11,6 +11,11 @@ const containers = StyleSheet.create({
     safeArea: {
 		flex: 1,
     },
+    logins: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     // Project screens view, inside safe area view
     projArea: {
         flex: 1,
@@ -53,6 +58,9 @@ const containers = StyleSheet.create({
     },
     datetimeSpinner: {
         width: width * .8,
+    },
+    loginInputs: {
+        width: 200 * sizer,
     }
 });
 
@@ -91,6 +99,17 @@ const buttonStyles = StyleSheet.create({
         borderRadius: 20,
         padding: 10,
         elevation: 0
+    },
+    loginButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 20,
+        padding: 10,
+    },
+    loginWithEmail: {
+        marginTop: 10,
+        backgroundColor: Colors.lightTheme.buttons.save
     },
     modalButton: {
         borderRadius: 20,
@@ -135,6 +154,7 @@ const buttonStyles = StyleSheet.create({
         flexDirection: "row",
         paddingHorizontal: 15,
         paddingVertical: 15,
+        alignItems: 'center',
         borderWidth: StyleSheet.hairlineWidth,
         borderBottomWidth: 0,
         borderColor: Colors.settings
@@ -162,6 +182,14 @@ const inputStyles = StyleSheet.create({
         paddingHorizontal: 10,
         fontSize: 18 * sizer,
     }, 
+    loginField: {
+        marginTop: 10,
+        borderColor: Colors.inputBorder, 
+        borderWidth: 1, 
+        padding: 3,
+        paddingHorizontal: 10,
+        fontSize: 18 * sizer,
+    }
 });
 
 const textStyles = StyleSheet.create({
@@ -239,6 +267,7 @@ const iconSizes = StyleSheet.create({
     settingsIconSize: 22 * sizer,
     fabIconSize: 50 * sizer,
     modalIconSize: 18 * sizer,
+    loginIconSize: 50 * sizer
 });
 
 export {containers, rows, buttonStyles, inputStyles, textStyles, progressbar, iconSizes};

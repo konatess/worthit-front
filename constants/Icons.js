@@ -17,4 +17,8 @@ export default {
     filter: 'swap-vertical',
     ingredient: 'pie-chart',
     product: 'barcode',
+    logout: 'exit',
+    email: 'at-sharp',
+    facebook: 'logo-facebook',
+    google: 'logo-google'
 }
