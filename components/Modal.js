@@ -21,8 +21,8 @@ export default ({visible, message, pickers, inputs, buttons, vertical, darkmode}
 				{message !== '' && <Text style={[textStyles.modalMsgText, {color: Colors.lightTheme.text}]}>{message}</Text>}
 				{(pickers.length > 0) && <View style={containers.pickerArea}>
 					<ScrollView>
-						{pickers.map(item => {
-							return <Pressable style={buttonStyles.pickerButton} onPress={item.onPress}>
+						{pickers.map((item, index) => {
+							return <Pressable key={"picker-" + index} style={buttonStyles.pickerButton} onPress={item.onPress}>
 								<Text style={[textStyles.pickerText, {color: Colors.lightTheme.text}]}>
 									{item.name}
 								</Text>
@@ -42,7 +42,7 @@ export default ({visible, message, pickers, inputs, buttons, vertical, darkmode}
 							defaultValue={unit.default || ''}
 							autoFocus={!index}
 							autoCapitalize={'none'}
-							onChangeText={unit.onChange}
+							onChangeText={text => {unit.onChange(text)}}
 						/>
 					</View>	)})}
 					<View style={[vertical ? rows.vertical : rows.rowModal, {marginTop: 10}]}>

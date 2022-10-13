@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Text, SafeAreaView, View } from "react-native";
 
 import ButtonBar from '../components/ButtonBar';
@@ -9,24 +9,21 @@ import Modal from "../components/Modal";
 import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import * as WebBrowser from 'expo-web-browser';
-// import { firebaseAuth } from "../constants/firebase";
+import { app } from "../storage/firebaseInit";
+import { UserContext } from "../constants/UserContext";
+import { getDatabase, ref, set, push, onValue, get, child } from 'firebase/database';
 
 WebBrowser.maybeCompleteAuthSession();
+
+const database = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com/");
 
 
 export default function HomeScreen ({ route, navigation }) {
 	const { settings } = route.params;
+    const { user } = useContext(UserContext)
     const [viewIng, setViewIng] = useState(false);
-    const [allIngredients, setAllIngredients] = useState([{
-            name: "purple yarn",
-            unit: "skein",
-            cost: "3.95"
-        },
-        {
-            name: "green yarn",
-            unit: "skein",
-            cost: "3.65"
-        }]);
+    const [allIngredients, setAllIngredients] = useState({});
+    const [ingButtons, setIngButtons] = useState([])
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
     const [modalButtons, setModalButtons] = useState([]);
@@ -35,6 +32,33 @@ export default function HomeScreen ({ route, navigation }) {
     const [ingName, setIngName] = useState("");
     const [ingUnit, setIngUnit] = useState("");
     const [ingCost, setIngCost] = useState(0);
+
+
+    const ingredients = ref(database, `users/${user.uid}/ingredients`)
+    // const userRef = ref(database, `users/${user.uid}`)
+
+    useEffect(() => {
+        let unsubscribe = onValue(ingredients, (snapshot) => {
+            if (snapshot.exists()) {
+                setAllIngredients(snapshot.val())
+                let buttons = [];
+                for (const id in allIngredients) {
+                    let button = <IngButton 
+                    key={"ing" + id}
+                    name={allIngredients[id].name}
+                    cost={allIngredients[id].cost}
+                    unit={allIngredients[id].unit}
+                    onPress={() => {
+                        setViewIng(false);
+                    }}
+                />
+                    buttons.push(button)
+                }
+                setIngButtons(buttons)
+            }
+        })
+        return unsubscribe
+    }, [])
 
     const navToRecipe = () => {
         navigation.navigate(Strings.util.routes.recipe, {
@@ -47,20 +71,9 @@ export default function HomeScreen ({ route, navigation }) {
                 wage: 0.00,
                 profitPercent: 0.0,
                 profitAmount: 0,
-                ingredients: []
+                ingredients: {}
             }, 
-            allIngredients: [
-                {
-                    name: "purple yarn",
-                    unit: "skein",
-                    cost: "3.95"
-                },
-                {
-                    name: "green yarn",
-                    unit: "skein",
-                    cost: "3.65"
-                }
-            ]
+            allIngredients: allIngredients
         })
     };
 
@@ -96,12 +109,13 @@ export default function HomeScreen ({ route, navigation }) {
         color: Colors.lightTheme.buttons.create,
         iconName: Icons.create,
         onPress: async () => {
+            console.log('ingName = ' + ingName)
             let ing = {
                 name: ingName,
                 unit: ingUnit,
                 cost: ingCost,
             }
-            // await Storage.createIng(ing, settings.language)
+            push(ingredients, ing).catch(error => console.log(error.message));
             setModalVisible(false);
             setModalMessage("");
             setModalPickers([]);
@@ -131,18 +145,10 @@ export default function HomeScreen ({ route, navigation }) {
     }
     return (<SafeAreaView style={[containers.safeArea, {backgroundColor: Colors.lightTheme.background}]}> 
         <Text>{"viewIng: " + viewIng}</Text>
-        {allIngredients.length > 0 && viewIng && <View style={containers.projArea}>
-            {allIngredients.map((ingredient, index) => {
-                return <IngButton 
-                    key={"ing" + index}
-                    name={ingredient.name}
-                    cost={ingredient.cost}
-                    unit={ingredient.unit}
-                    onPress={() => {
-                        setViewIng(false);
-                    }}
-                />
-            })}
+        <Text>{JSON.stringify(allIngredients)}</Text>
+        {/* {allIngredients.length > 0 && <Text>{JSON.stringify(allIngredients)}</Text>} */}
+        {ingButtons.length > 0 && viewIng && <View style={containers.projArea}>
+            {ingButtons.map(button => button)}
         </View>}
         <Modal 
             visible={modalVisible} 

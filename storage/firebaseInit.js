@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getDatabase } from 'firebase/database'
+import { getDatabase, ref, set, push } from 'firebase/database';
 
 let firebaseConfig = {
     apiKey: "AIzaSyD5LuF_dEvcv3xcTg3-hIxJ_6Ps_f04YYw",
@@ -14,6 +14,14 @@ let firebaseConfig = {
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp()
 
-const db = getDatabase(app)
+const db = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com/");
 
-export default { app, db }
+const dbMethods = {
+    newIngredient: (user, ing) => {
+        let ingredients = ref(db, `users/${user.uid}/ingredients`)
+        console.log(ingredients)
+        push(ingredients, ing).catch(error => console.log(error.message));
+    }
+}
+
+export default { app, db, dbMethods }

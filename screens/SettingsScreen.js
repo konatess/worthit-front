@@ -28,7 +28,8 @@ export default function SettingsScreen ({ route, navigation }) {
         color: Colors.lightTheme.buttons.save,
         iconName: Icons.save,
         onPress: () => {
-            navigation.navigate("Recipe")
+            // navigation.navigate("Recipe")
+            console.log("Save Button")
         }
     }
     let settingsPress = {
@@ -71,7 +72,7 @@ export default function SettingsScreen ({ route, navigation }) {
     }
 
     return <SafeAreaView style={[containers.safeArea, {backgroundColor: Colors.lightTheme.background}]}> 
-        {settingsBtns.map( button => { return button })}
+        {settingsBtns.map( button => button )}
         <ButtonBar buttons={[cancelBtn, saveBtn]} />
     </SafeAreaView>
 }

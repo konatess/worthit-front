@@ -9,20 +9,22 @@ import Strings from "../constants/Strings";
 import Modal from "../components/Modal";
 
 export default function RecipeScreen ({navigation, route}) {
+    const { allIngredients, prodObj } = route.params
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
     const [modalButtons, setModalButtons] = useState([]);
 	const [modalPickers, setModalPickers] = useState([]);
     const [modalInputs, setModalInputs] = useState([]);
-    const [name, setName] = useState(route.params.prodObj ? route.params.prodObj.name : "");
-    const [note, setNote] = useState(route.params.prodObj ? route.params.prodObj.note : "");
-    const [hour, setHour] = useState(route.params.prodObj ? route.params.prodObj.hour : 0);
-    const [minute, setMinute] = useState(route.params.prodObj ? route.params.prodObj.minute : 0);
-    const [amountPerTime, setAmountPerTime] = useState(route.params.prodObj ? route.params.prodObj.amount : 1)
-    const [wage, setWage] = useState(route.params.prodObj ? route.params.prodObj.wage : 15.00);
-    const [profitPercent, setProfitPercent] = useState(route.params.prodObj ? route.params.prodObj.profitPercent : 0);
-    const [profitAmount, setProfitAmount] = useState(route.params.prodObj ? route.params.prodObj.profitAmount : 0);
-    const [ingredients, setIngredients] = useState(route.params.prodObj ? route.params.prodObj.ingredients : []);
+    const [name, setName] = useState(prodObj ? prodObj.name : "");
+    const [note, setNote] = useState(prodObj ? prodObj.note : "");
+    const [hour, setHour] = useState(prodObj ? prodObj.hour : 0);
+    const [minute, setMinute] = useState(prodObj ? prodObj.minute : 0);
+    const [amountPerTime, setAmountPerTime] = useState(prodObj ? prodObj.amount : 1)
+    const [wage, setWage] = useState(prodObj ? prodObj.wage : 15.00);
+    const [profitPercent, setProfitPercent] = useState(prodObj ? prodObj.profitPercent : 0);
+    const [profitAmount, setProfitAmount] = useState(prodObj ? prodObj.profitAmount : 0);
+    const [ingredients, setIngredients] = useState(prodObj ? prodObj.ingredients : {});
+    const [ingTextList, setIngTextList] = useState([])
     const [ingName, setIngName] = useState("");
     const [ingUnit, setIngUnit] = useState("");
     const [ingCost, setIngCost] = useState(0);
@@ -92,31 +94,16 @@ export default function RecipeScreen ({navigation, route}) {
         iconName: Icons.create,
         onPress: () => {
             setModalMessage(Strings.English.label.newIngredient);
+            setModalInputs([
+                {label: Strings.English.label.ingName, default: "", onChange: setIngName},
+                {label: Strings.English.label.ingUnit, default: "", onChange: setIngUnit},
+                {label: Strings.English.label.ingCost, default: 0, onChange: setIngCost, keyboardType: "decimal-pad"}
+            ])
             setModalPickers([]);
             setModalButtons([modalCancelBtn]);
-            setModalInputs([
-                {
-                    label: Strings.English.label.ingName,
-                    keyboardType: "default",
-                    placeholder: Strings.English.placeholder.ingName,
-                    onChange: (text) => {setIngName(text)}
-                },
-                {
-                    label: Strings.English.label.ingUnit,
-                    keyboardType: "default",
-                    placeholder: Strings.English.placeholder.ingUnit,
-                    onChange: (text) => {setIngUnit(text)}
-                },
-                {
-                    label: Strings.English.label.ingCost,
-                    keyboardType: "default",
-                    placeholder: Strings.English.placeholder.ingCost,
-                    onChange: (text) => {setIngCost(text)}
-                },
-            ])
         }
     }
-    // let navBtns = route.params.prodObj ? [ deleteBtn, cancelBtn, duplicateBtn, createBtn ] : [ cancelBtn, duplicateBtn, createBtn ]
+    // let navBtns = prodObj ? [ deleteBtn, cancelBtn, duplicateBtn, createBtn ] : [ cancelBtn, duplicateBtn, createBtn ]
     let navBtns = [ deleteBtn, cancelBtn, duplicateBtn, createBtn ]
     return <SafeAreaView style={[containers.safeArea, {backgroundColor: Colors.lightTheme.background}]}> 
          <View style={containers.projArea}>
@@ -242,26 +229,46 @@ export default function RecipeScreen ({navigation, route}) {
                 <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
                     {Strings.English.label.ingredients}
                 </Text>
-                {ingredients && ingredients.map(ing => {
+                {/* {ingredients && ingredients.map(ing => {
                     return <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
                         {ing.amount + " -- " + ing.name}
                     </Text>
-                })}
+                })} */}
+                {ingTextList.length > 0 && ingTextList.map(item => item)}
                 <Pressable 
                     style={[buttonStyles.basicButton, {backgroundColor: Colors.lightTheme.buttons.addIngredient}]}
                     onPress={() => {
                         setModalMessage(Strings.English.messages.ingredients)
-                        setModalPickers(route.params.allIngredients.length < 1 ? [] : route.params.allIngredients.map(ing => {
-                            return {
-                                name: ing.name,
-                                onPress: () => {
-                                    ingredients.push(ing.name)
-                                    setModalVisible(false);
-                                    setModalButtons([]);
-                                    setModalPickers([]);
+                        // setModalPickers(allIngredients.length < 1 ? [] : allIngredients.map(ing => {
+                        //     return {
+                        //         name: ing.name,
+                        //         onPress: () => {
+                        //             ingredients.push(ing.name)
+                        //             setModalVisible(false);
+                        //             setModalButtons([]);
+                        //             setModalPickers([]);
+                        //         }
+                        //     }
+                        // }))
+                        setModalPickers(() => {
+                            let ingList = [];
+                            for (const id in allIngredients) {
+                                let ing = {
+                                    id: id,
+                                    amount: 0,
+                                    name: allIngredients[id].name,
+                                    onPress: () => {
+                                        setModalVisible(false)
+                                        setIngTextList(ingTextList.concat(<Text key={id} style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
+                                            {0 + "--" + allIngredients[id].name}
+                                        </Text>))
+                                        return (id in ingredients) ? null : ingredients[id] = 0;
+                                    }
                                 }
+                                ingList.push(ing)
                             }
-                        }))
+                            return ingList
+                        })
                         setModalButtons([modalCancelBtn, newIngredientBtn]);
                         setModalVisible(true);
                     }}
@@ -276,7 +283,7 @@ export default function RecipeScreen ({navigation, route}) {
             visible={modalVisible} 
             message={modalMessage} 
             pickers={modalPickers}
-            inputs={[]}
+            inputs={modalInputs}
             buttons={modalButtons} 
             vertical={true}
             darkmode={false}
