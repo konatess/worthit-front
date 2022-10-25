@@ -65,13 +65,18 @@ export default {
             // ingPerItem: "Per",
         },
         messages: {
-            ingredients: "Choose an ingredient: "
+            ingredients: "Choose an ingredient: ",
+            ingNameTooShort: "Your ingredient needs a name",
+            ingNameBadChar: "Ingredient names can only contain letters, numbers, spaces, and these symbols: '-_/&:!",
+            ingUnitTooShort: "Your ingredient needs a unit of measurement. How do you count it? By item, pair, skein, box, bottle...",
+            ingUnitBadChar: "Your ingredient can't contain special characters",
+            ingCostZero: "Your ingredient should have a cost. Even if you didn't pay for it, look up what it would cost to buy."
         },
         hint: {
             amount: "If it takes more than one hour to produce one, we recommend setting amount to 1"
         },
         placeholder:  {
-            email: "email",
+            email: "email@example.com",
             password: "password",
             prodName: "What is your product called?",
             ingName: "What is the ingredient called?",

@@ -1,15 +1,9 @@
-import { useState, useEffect, createRef, createContext, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
-import { NavigationContainer, ServerContainer } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import * as Facebook from 'expo-auth-session/providers/facebook';
-import { ResponseType } from 'expo-auth-session';
-import { initializeApp } from 'firebase/app';
-import { getAuth, FacebookAuthProvider, signInWithCredential, onAuthStateChanged } from 'firebase/auth';
-import { auth } from './storage/firebaseInit'
 
 import { UserContext } from './constants/UserContext';
 
@@ -32,8 +26,6 @@ export default function App() {
 		language: 'English',
 		dateFormat: 'MM/DD',
 	});
-	
-
 	
 
 

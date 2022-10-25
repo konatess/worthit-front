@@ -31,6 +31,7 @@ const containers = StyleSheet.create({
     },
     centerModal: {
         flex: 1,
+        flexShrink: 1,
         justifyContent: "center",
         alignItems: "center",
     },
@@ -181,6 +182,7 @@ const inputStyles = StyleSheet.create({
         padding: 3,
         paddingHorizontal: 10,
         fontSize: 18 * sizer,
+        maxWidth: '75%'
     }, 
     loginField: {
         marginTop: 10,
@@ -197,7 +199,7 @@ const textStyles = StyleSheet.create({
         fontSize: 20 * sizer,
         paddingRight: 5,
         textAlignVertical: 'center',
-        flexWrap: 'wrap',
+        // flexWrap: 'wrap',
         flexShrink: 1,
     }, 
     buttonText: {

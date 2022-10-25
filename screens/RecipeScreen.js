@@ -95,9 +95,9 @@ export default function RecipeScreen ({navigation, route}) {
         onPress: () => {
             setModalMessage(Strings.English.label.newIngredient);
             setModalInputs([
-                {label: Strings.English.label.ingName, default: "", onChange: setIngName},
-                {label: Strings.English.label.ingUnit, default: "", onChange: setIngUnit},
-                {label: Strings.English.label.ingCost, default: 0, onChange: setIngCost, keyboardType: "decimal-pad"}
+                {label: Strings.English.label.ingName, default: "", onChange: text => {setIngName(text)}},
+                {label: Strings.English.label.ingUnit, default: "", onChange: text => {setIngUnit(text)}},
+                {label: Strings.English.label.ingCost, default: 0, onChange: text => {setIngCost(text)}, keyboardType: "decimal-pad"}
             ])
             setModalPickers([]);
             setModalButtons([modalCancelBtn]);
@@ -229,27 +229,11 @@ export default function RecipeScreen ({navigation, route}) {
                 <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
                     {Strings.English.label.ingredients}
                 </Text>
-                {/* {ingredients && ingredients.map(ing => {
-                    return <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
-                        {ing.amount + " -- " + ing.name}
-                    </Text>
-                })} */}
                 {ingTextList.length > 0 && ingTextList.map(item => item)}
                 <Pressable 
                     style={[buttonStyles.basicButton, {backgroundColor: Colors.lightTheme.buttons.addIngredient}]}
                     onPress={() => {
                         setModalMessage(Strings.English.messages.ingredients)
-                        // setModalPickers(allIngredients.length < 1 ? [] : allIngredients.map(ing => {
-                        //     return {
-                        //         name: ing.name,
-                        //         onPress: () => {
-                        //             ingredients.push(ing.name)
-                        //             setModalVisible(false);
-                        //             setModalButtons([]);
-                        //             setModalPickers([]);
-                        //         }
-                        //     }
-                        // }))
                         setModalPickers(() => {
                             let ingList = [];
                             for (const id in allIngredients) {
@@ -274,7 +258,7 @@ export default function RecipeScreen ({navigation, route}) {
                     }}
                 >
                     <Text>
-                        {Strings.English.buttons.addIngredient + " " + modalVisible}
+                        {Strings.English.buttons.addIngredient}
                     </Text>
                 </Pressable>
             </View>

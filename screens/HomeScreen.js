@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { Text, SafeAreaView, View } from "react-native";
+import { Text, SafeAreaView, FlatList, ke } from "react-native";
 
 import ButtonBar from '../components/ButtonBar';
 import { containers } from '../constants/Styles';
@@ -11,7 +11,7 @@ import Strings from "../constants/Strings";
 import * as WebBrowser from 'expo-web-browser';
 import { app } from "../storage/firebaseInit";
 import { UserContext } from "../constants/UserContext";
-import { getDatabase, ref, set, push, onValue, get, child } from 'firebase/database';
+import { getDatabase, ref, set, push, onValue, get, child, remove } from 'firebase/database';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -29,36 +29,54 @@ export default function HomeScreen ({ route, navigation }) {
     const [modalButtons, setModalButtons] = useState([]);
 	const [modalPickers, setModalPickers] = useState([]);
     const [modalInputs, setModalInputs] = useState([]);
+    const [modalBtnsVertical, setModalBtnsVertical] = useState(false);
+    const [ingId, setIngId] = useState("");
     const [ingName, setIngName] = useState("");
     const [ingUnit, setIngUnit] = useState("");
     const [ingCost, setIngCost] = useState(0);
 
 
-    const ingredients = ref(database, `users/${user.uid}/ingredients`)
+    const ingRef = ref(database, `users/${user.uid}/ingredients`)
     // const userRef = ref(database, `users/${user.uid}`)
 
     useEffect(() => {
-        let unsubscribe = onValue(ingredients, (snapshot) => {
+        let unsubscribe = onValue(ingRef, (snapshot) => {
             if (snapshot.exists()) {
                 setAllIngredients(snapshot.val())
-                let buttons = [];
-                for (const id in allIngredients) {
-                    let button = <IngButton 
-                    key={"ing" + id}
-                    name={allIngredients[id].name}
-                    cost={allIngredients[id].cost}
-                    unit={allIngredients[id].unit}
-                    onPress={() => {
-                        setViewIng(false);
-                    }}
-                />
-                    buttons.push(button)
-                }
-                setIngButtons(buttons)
+                createIngButtons();
             }
         })
         return unsubscribe
     }, [])
+
+    useEffect(() => {
+        console.log(`ingId: ${ingId}`)
+    }, [ingId])
+
+    useEffect(() => {
+        let modalBtns = [modalCancelBtn];
+        if (ingName && ingCost && ingUnit) {
+            modalBtns.push(modalSaveIngBtn)
+        }
+        if (ingId) {
+            modalBtns.unshift(modalDeleteIngBtn)
+        }
+        setModalButtons(modalBtns);
+    }, [ingId, ingName, ingCost, ingUnit])
+
+    const createIngButtons = () => {
+        let buttons = [];
+        for (const id in allIngredients) {
+            let button = {
+                    id: id,
+                    name: allIngredients[id].name,
+                    cost: allIngredients[id].cost,
+                    unit: allIngredients[id].unit,
+                }
+            buttons.push(button)
+        }
+        setIngButtons(buttons)
+    }
 
     const navToRecipe = () => {
         navigation.navigate(Strings.util.routes.recipe, {
@@ -79,17 +97,65 @@ export default function HomeScreen ({ route, navigation }) {
 
     const callIngModal = (ingObj) => {
         if (ingObj) {
+            setIngId(ingObj.id);
             setIngName(ingObj.name);
             setIngUnit(ingObj.unit);
             setIngCost(ingObj.cost);
+            setModalBtnsVertical(true);
+        } else {
+            setIngId("");
+            setIngName("");
+            setIngUnit("");
+            setIngCost(0);
         }
-        setModalButtons([modalCancelBtn, modalSaveIngBtn]);
         setModalInputs([
-            {label: Strings.English.label.ingName, default: ingObj.name || "", onChange: setIngName},
-            {label: Strings.English.label.ingUnit, default: ingObj.unit || "", onChange: setIngUnit},
-            {label: Strings.English.label.ingCost, default: ingObj.cost || 0, onChange: setIngCost, keyboardType: "decimal-pad"}
+            {label: Strings.English.label.ingName, default: ingObj.name || "", maxChar: 50, onChange: (text) => {setIngName(text)}},
+            {label: Strings.English.label.ingUnit, default: ingObj.unit || "", maxChar: 30, onChange: (text) => {setIngUnit(text)}},
+            {label: Strings.English.label.ingCost, default: ingObj ? ingObj.cost.toString() : "", maxChar: 15, onChange: text => {
+                let trimmed = text.trim();
+                let num = parseFloat(trimmed);
+                setIngCost(isNaN(num) ? 0 : num);
+            }, keyboardType: "decimal-pad"}
         ])
+        setModalButtons([modalCancelBtn])
         setModalVisible(true);
+    }
+
+    const saveIngredient = async () => {
+        let newName = ingName.trim();
+        let newUnit = ingUnit.trim();
+        let newCost = ingCost;
+        if(newName.length === 0) {
+            setModalMessage(Strings.English.messages.ingNameTooShort)
+        } else if (Strings.util.regex.titles.test(newName)) {
+            setModalMessage(Strings.English.messages.ingNameBadChar)
+        } else if (newUnit.length === 0) {
+            setModalMessage(Strings.English.messages.ingUnitTooShort)
+        } else if (ingCost === 0) {
+            setModalMessage(Strings.English.messages.ingCostZero)
+        }
+        let ing = {
+            name: newName,
+            unit: newUnit,
+            cost: newCost,
+        }
+        // ingId ? await set(`${ingRef}/${ingId}`, ing).catch(error => console.log(error.message)) 
+        // : await push(ingRef, ing).catch(error => console.log(error.message));
+        console.log(`${ingRef}/${ingId}`)
+        console.log("Save Ing: ")
+        console.log(ing)
+        if (ingId) {
+            await set(ref(database, `users/${user.uid}/ingredients/${ingId}`), ing).catch(error => console.log(error.message))
+        } else {
+            await push(ingRef, ing).catch(error => console.log(error.message));
+        }
+        setViewIng(false);
+    }
+
+    const deleteIngredient = (id) => {
+        remove(ref(database, `users/${user.uid}/ingredients/${id}`)).catch(error => console.log(error.message));
+        setIngId("");
+        setViewIng(false);
     }
 
     let modalCancelBtn = {
@@ -101,6 +167,22 @@ export default function HomeScreen ({ route, navigation }) {
             setModalMessage("");
             setModalPickers([]);
             setModalButtons([]);
+            setModalBtnsVertical(false);
+            setIngId("");
+        }
+    }
+
+    let modalDeleteIngBtn = {
+        title: Strings.English.buttons.delete,
+        color: Colors.lightTheme.buttons.delete,
+        iconName: Icons.delete,
+        onPress: () => {
+            deleteIngredient(ingId)
+            setModalVisible(false);
+            setModalMessage("");
+            setModalPickers([]);
+            setModalButtons([]);
+            setModalBtnsVertical(false);
         }
     }
 
@@ -108,18 +190,13 @@ export default function HomeScreen ({ route, navigation }) {
         title: Strings.English.buttons.save,
         color: Colors.lightTheme.buttons.create,
         iconName: Icons.create,
-        onPress: async () => {
-            console.log('ingName = ' + ingName)
-            let ing = {
-                name: ingName,
-                unit: ingUnit,
-                cost: ingCost,
-            }
-            push(ingredients, ing).catch(error => console.log(error.message));
+        onPress: () => {
+            saveIngredient();
             setModalVisible(false);
             setModalMessage("");
             setModalPickers([]);
             setModalButtons([]);
+            setModalBtnsVertical(false);
         }
     }
 
@@ -135,28 +212,44 @@ export default function HomeScreen ({ route, navigation }) {
         title: Strings.English.buttons.create,
         color: Colors.lightTheme.buttons.create,
         iconName: Icons.create,
-        onPress: viewIng ? callIngModal : navToRecipe
+        onPress: viewIng ? () => {callIngModal(false)} : navToRecipe
     }
     let ingBtn = {
         title: viewIng ? "Products" : "Ingredients",
         color: Colors.lightTheme.buttons.filter,
         iconName: viewIng ? Icons.product : Icons.ingredient,
-        onPress: () => {setViewIng(!viewIng)}
+        onPress: () => {
+            if (!viewIng) { createIngButtons() }
+            setViewIng(!viewIng)
+        }
     }
     return (<SafeAreaView style={[containers.safeArea, {backgroundColor: Colors.lightTheme.background}]}> 
         <Text>{"viewIng: " + viewIng}</Text>
-        <Text>{JSON.stringify(allIngredients)}</Text>
-        {/* {allIngredients.length > 0 && <Text>{JSON.stringify(allIngredients)}</Text>} */}
-        {ingButtons.length > 0 && viewIng && <View style={containers.projArea}>
-            {ingButtons.map(button => button)}
-        </View>}
+        {ingButtons.length > 0 && viewIng && <FlatList 
+            style={[ containers.projArea ]}
+            data={ingButtons}
+            renderItem={({ item }) => <IngButton 
+                key={"ing" + item.id} 
+                name={item.name}
+                cost={item.cost}
+                unit={item.unit}
+                onPress={() => {
+                    callIngModal({
+                        id: item.id,
+                        name: item.name,
+                        cost: item.cost,
+                        unit: item.unit,
+                    })
+                }}
+            />}
+        />}
         <Modal 
             visible={modalVisible} 
             message={modalMessage} 
             pickers={modalPickers}
             inputs={modalInputs}
             buttons={modalButtons} 
-            vertical={false}
+            vertical={modalBtnsVertical}
             darkmode={false}
         />
         <ButtonBar buttons={[settingsbtn, ingBtn, createbtn]} />
