@@ -9,8 +9,8 @@ import Modal from "../components/Modal";
 import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import * as WebBrowser from 'expo-web-browser';
-import { app } from "../storage/firebaseInit";
 import { UserContext } from "../constants/UserContext";
+import { app } from "../storage/firebaseInit";
 import { getDatabase, ref, set, push, onValue, get, child, remove } from 'firebase/database';
 
 WebBrowser.maybeCompleteAuthSession();
@@ -20,7 +20,7 @@ const database = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com
 
 export default function HomeScreen ({ route, navigation }) {
 	const { settings } = route.params;
-    const { user } = useContext(UserContext)
+    const { user } = useContext(UserContext);
     const [viewIng, setViewIng] = useState(false);
     const [allIngredients, setAllIngredients] = useState({});
     const [ingButtons, setIngButtons] = useState([])
@@ -91,7 +91,7 @@ export default function HomeScreen ({ route, navigation }) {
                 profitAmount: 0,
                 ingredients: {}
             }, 
-            allIngredients: allIngredients
+            knownIng: allIngredients
         })
     };
 
@@ -139,11 +139,6 @@ export default function HomeScreen ({ route, navigation }) {
             unit: newUnit,
             cost: newCost,
         }
-        // ingId ? await set(`${ingRef}/${ingId}`, ing).catch(error => console.log(error.message)) 
-        // : await push(ingRef, ing).catch(error => console.log(error.message));
-        console.log(`${ingRef}/${ingId}`)
-        console.log("Save Ing: ")
-        console.log(ing)
         if (ingId) {
             await set(ref(database, `users/${user.uid}/ingredients/${ingId}`), ing).catch(error => console.log(error.message))
         } else {

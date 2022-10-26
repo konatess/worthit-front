@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Text, SafeAreaView, View, TextInput, Keyboard, Pressable } from "react-native";
 
 import ButtonBar from '../components/ButtonBar';
@@ -7,14 +7,21 @@ import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import Modal from "../components/Modal";
+import { UserContext } from "../constants/UserContext";
+import { app } from "../storage/firebaseInit";
+import { getDatabase, ref, set, push, onValue, get, child, remove } from 'firebase/database';
+
+const database = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com/");
 
 export default function RecipeScreen ({navigation, route}) {
-    const { allIngredients, prodObj } = route.params
+    const { knownIng, prodObj } = route.params;
+    const { user } = useContext(UserContext);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
     const [modalButtons, setModalButtons] = useState([]);
 	const [modalPickers, setModalPickers] = useState([]);
     const [modalInputs, setModalInputs] = useState([]);
+    const [allIngredients, setAllIngredients] = useState(knownIng);
     const [name, setName] = useState(prodObj ? prodObj.name : "");
     const [note, setNote] = useState(prodObj ? prodObj.note : "");
     const [hour, setHour] = useState(prodObj ? prodObj.hour : 0);
@@ -24,7 +31,8 @@ export default function RecipeScreen ({navigation, route}) {
     const [profitPercent, setProfitPercent] = useState(prodObj ? prodObj.profitPercent : 0);
     const [profitAmount, setProfitAmount] = useState(prodObj ? prodObj.profitAmount : 0);
     const [ingredients, setIngredients] = useState(prodObj ? prodObj.ingredients : {});
-    const [ingTextList, setIngTextList] = useState([])
+    const [ingTextList, setIngTextList] = useState([]);
+    const [ingId, setIngId] = useState("");
     const [ingName, setIngName] = useState("");
     const [ingUnit, setIngUnit] = useState("");
     const [ingCost, setIngCost] = useState(0);
@@ -44,6 +52,70 @@ export default function RecipeScreen ({navigation, route}) {
           hideSubscription.remove();
         };
     }, []);
+
+    useEffect(() => {
+        let modalBtns = [modalCancelBtn];
+        if (ingName && ingCost && ingUnit) {
+            modalBtns.push(modalSaveIngBtn)
+        }
+        setModalButtons(modalBtns);
+    }, [ingName, ingCost, ingUnit])
+
+    useEffect(() => {
+        let unsubscribe = onValue(ref(database, `users/${user.uid}/ingredients`), (snapshot) => {
+            if (snapshot.exists()) {
+                setAllIngredients(snapshot.val())
+                createIngPickers();
+            }
+        })
+        return unsubscribe
+    }, [])
+
+    const createIngPickers = () => {
+        let ingList = [];
+        for (const id in allIngredients) {
+            let ing = {
+                id: id,
+                amount: 0,
+                name: allIngredients[id].name,
+                onPress: () => {
+                    setModalVisible(false)
+                    setIngTextList(ingTextList.concat(<Text key={id} style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
+                        {0 + "--" + allIngredients[id].name}
+                        {/* FIXME: add inputs for quantity of each ingredient */}
+                    </Text>))
+                    return (id in ingredients) ? null : ingredients[id] = 0;
+                }
+            }
+            ingList.push(ing)
+        }
+        return ingList
+    }
+
+    const saveIngredient = async () => {
+        let newName = ingName.trim();
+        let newUnit = ingUnit.trim();
+        let newCost = ingCost;
+        if(newName.length === 0) {
+            setModalMessage(Strings.English.messages.ingNameTooShort)
+        } else if (Strings.util.regex.titles.test(newName)) {
+            setModalMessage(Strings.English.messages.ingNameBadChar)
+        } else if (newUnit.length === 0) {
+            setModalMessage(Strings.English.messages.ingUnitTooShort)
+        } else if (ingCost === 0) {
+            setModalMessage(Strings.English.messages.ingCostZero)
+        }
+        let ing = {
+            name: newName,
+            unit: newUnit,
+            cost: newCost,
+        }
+        if (ingId) {
+            await set(ref(database, `users/${user.uid}/ingredients/${ingId}`), ing).catch(error => console.log(error.message))
+        } else {
+            await push(ref(database, `users/${user.uid}/ingredients`), ing).catch(error => console.log(error.message));
+        }
+    }
     
     let deleteBtn = {
         title: Strings.English.buttons.delete,
@@ -86,6 +158,7 @@ export default function RecipeScreen ({navigation, route}) {
             setModalMessage("");
             setModalPickers([]);
             setModalButtons([]);
+            setIngId("");
         }
     }
     let newIngredientBtn = {
@@ -103,6 +176,19 @@ export default function RecipeScreen ({navigation, route}) {
             setModalButtons([modalCancelBtn]);
         }
     }
+    let modalSaveIngBtn = {
+        title: Strings.English.buttons.save,
+        color: Colors.lightTheme.buttons.create,
+        iconName: Icons.create,
+        onPress: () => {
+            saveIngredient(); 
+            setModalVisible(false);
+            setModalMessage("");
+            setModalPickers([]);
+            setModalButtons([]);
+        }
+    }
+
     // let navBtns = prodObj ? [ deleteBtn, cancelBtn, duplicateBtn, createBtn ] : [ cancelBtn, duplicateBtn, createBtn ]
     let navBtns = [ deleteBtn, cancelBtn, duplicateBtn, createBtn ]
     return <SafeAreaView style={[containers.safeArea, {backgroundColor: Colors.lightTheme.background}]}> 
@@ -234,25 +320,8 @@ export default function RecipeScreen ({navigation, route}) {
                     style={[buttonStyles.basicButton, {backgroundColor: Colors.lightTheme.buttons.addIngredient}]}
                     onPress={() => {
                         setModalMessage(Strings.English.messages.ingredients)
-                        setModalPickers(() => {
-                            let ingList = [];
-                            for (const id in allIngredients) {
-                                let ing = {
-                                    id: id,
-                                    amount: 0,
-                                    name: allIngredients[id].name,
-                                    onPress: () => {
-                                        setModalVisible(false)
-                                        setIngTextList(ingTextList.concat(<Text key={id} style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
-                                            {0 + "--" + allIngredients[id].name}
-                                        </Text>))
-                                        return (id in ingredients) ? null : ingredients[id] = 0;
-                                    }
-                                }
-                                ingList.push(ing)
-                            }
-                            return ingList
-                        })
+                        setModalInputs([]);
+                        setModalPickers( createIngPickers() );
                         setModalButtons([modalCancelBtn, newIngredientBtn]);
                         setModalVisible(true);
                     }}
