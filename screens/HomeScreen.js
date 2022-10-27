@@ -64,6 +64,15 @@ export default function HomeScreen ({ route, navigation }) {
         setModalButtons(modalBtns);
     }, [ingId, ingName, ingCost, ingUnit])
 
+    const closeModal = () => {
+        setModalVisible(false);
+        setModalMessage("");
+        setModalPickers([]);
+        setModalInputs([]);
+        setModalButtons([]);
+        setModalBtnsVertical(false);
+    }
+
     const createIngButtons = () => {
         let buttons = [];
         for (const id in allIngredients) {
@@ -158,11 +167,7 @@ export default function HomeScreen ({ route, navigation }) {
         color: Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
-            setModalVisible(false);
-            setModalMessage("");
-            setModalPickers([]);
-            setModalButtons([]);
-            setModalBtnsVertical(false);
+            closeModal();
             setIngId("");
         }
     }
@@ -173,11 +178,7 @@ export default function HomeScreen ({ route, navigation }) {
         iconName: Icons.delete,
         onPress: () => {
             deleteIngredient(ingId)
-            setModalVisible(false);
-            setModalMessage("");
-            setModalPickers([]);
-            setModalButtons([]);
-            setModalBtnsVertical(false);
+            closeModal();
         }
     }
 
@@ -187,11 +188,7 @@ export default function HomeScreen ({ route, navigation }) {
         iconName: Icons.create,
         onPress: () => {
             saveIngredient();
-            setModalVisible(false);
-            setModalMessage("");
-            setModalPickers([]);
-            setModalButtons([]);
-            setModalBtnsVertical(false);
+            closeModal();
         }
     }
 

@@ -10,6 +10,7 @@ import Modal from "../components/Modal";
 import { UserContext } from "../constants/UserContext";
 import { app } from "../storage/firebaseInit";
 import { getDatabase, ref, set, push, onValue, get, child, remove } from 'firebase/database';
+import IngAmount from "../components/IngAmount";
 
 const database = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com/");
 
@@ -62,14 +63,58 @@ export default function RecipeScreen ({navigation, route}) {
     }, [ingName, ingCost, ingUnit])
 
     useEffect(() => {
+        let modalBtns = [modalCancelBtn];
+        if (ingPerItem > 0) {
+            modalBtns.push(modalSaveAmountBtn)
+        }
+        setModalButtons(modalBtns);
+    }, [ingPerItem])
+
+    useEffect(() => {
+        let list = [];
+        for (const id in ingredients) {
+            if (id) {
+                list.push(<IngAmount 
+                    id={id}
+                    amount={ingredients[id]}
+                    name={allIngredients[id].name}
+                    onPress={() => {
+                        setIngId(id)
+                        setModalInputs([{
+                            label: Strings.English.label.ingPerItem, 
+                            default: ingredients[id] ? ingredients[id].toString() : "", 
+                            onChange: text => {
+                                let trimmed = text.trim();
+                                let num = parseFloat(trimmed);
+                                setIngPerItem(isNaN(num) ? 0 : num);
+                            }
+                        }]);
+                        setModalMessage(Strings.English.messages.ingPerItem.replace(/\*unit\*/g, allIngredients[id].unit));
+                        setModalButtons([modalCancelBtn])
+                        setModalVisible(true);
+                    }}
+                />)
+            }
+        }
+        setIngTextList(list);
+    }, [ingredients])
+
+    useEffect(() => {
         let unsubscribe = onValue(ref(database, `users/${user.uid}/ingredients`), (snapshot) => {
             if (snapshot.exists()) {
                 setAllIngredients(snapshot.val())
-                createIngPickers();
             }
         })
         return unsubscribe
     }, [])
+
+    const closeModal = () => {
+        setModalVisible(false);
+        setModalMessage("");
+        setModalPickers([]);
+        setModalInputs([]);
+        setModalButtons([]);
+    }
 
     const createIngPickers = () => {
         let ingList = [];
@@ -79,12 +124,11 @@ export default function RecipeScreen ({navigation, route}) {
                 amount: 0,
                 name: allIngredients[id].name,
                 onPress: () => {
-                    setModalVisible(false)
-                    setIngTextList(ingTextList.concat(<Text key={id} style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
-                        {0 + "--" + allIngredients[id].name}
-                        {/* FIXME: add inputs for quantity of each ingredient */}
-                    </Text>))
-                    return (id in ingredients) ? null : ingredients[id] = 0;
+                    closeModal();
+                    return (id in ingredients) ? null : setIngredients({
+                        ...ingredients,
+                        [id]: 0
+                    })
                 }
             }
             ingList.push(ing)
@@ -115,6 +159,15 @@ export default function RecipeScreen ({navigation, route}) {
         } else {
             await push(ref(database, `users/${user.uid}/ingredients`), ing).catch(error => console.log(error.message));
         }
+    }
+
+    const saveAmount = () => {
+        setIngredients({
+            ...ingredients,
+            [ingId]: ingPerItem
+        })
+        setIngPerItem(0);
+        setIngId("");
     }
     
     let deleteBtn = {
@@ -154,10 +207,7 @@ export default function RecipeScreen ({navigation, route}) {
         color: Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
-            setModalVisible(false);
-            setModalMessage("");
-            setModalPickers([]);
-            setModalButtons([]);
+            closeModal();
             setIngId("");
         }
     }
@@ -182,10 +232,17 @@ export default function RecipeScreen ({navigation, route}) {
         iconName: Icons.create,
         onPress: () => {
             saveIngredient(); 
-            setModalVisible(false);
-            setModalMessage("");
-            setModalPickers([]);
-            setModalButtons([]);
+            closeModal();
+        }
+    }
+
+    let modalSaveAmountBtn = {
+        title: Strings.English.buttons.save,
+        color: Colors.lightTheme.buttons.create,
+        iconName: Icons.create,
+        onPress: () => {
+            saveAmount();
+            closeModal();
         }
     }
 
@@ -320,7 +377,6 @@ export default function RecipeScreen ({navigation, route}) {
                     style={[buttonStyles.basicButton, {backgroundColor: Colors.lightTheme.buttons.addIngredient}]}
                     onPress={() => {
                         setModalMessage(Strings.English.messages.ingredients)
-                        setModalInputs([]);
                         setModalPickers( createIngPickers() );
                         setModalButtons([modalCancelBtn, newIngredientBtn]);
                         setModalVisible(true);

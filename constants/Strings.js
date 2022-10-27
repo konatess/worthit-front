@@ -62,7 +62,7 @@ export default {
             ingName: "Name: ",
             ingUnit: "Unit: ",
             ingCost: "Cost: ",
-            // ingPerItem: "Per",
+            ingPerItem: "Amount: ",
         },
         messages: {
             ingredients: "Choose an ingredient: ",
@@ -70,7 +70,8 @@ export default {
             ingNameBadChar: "Ingredient names can only contain letters, numbers, spaces, and these symbols: '-_/&:!",
             ingUnitTooShort: "Your ingredient needs a unit of measurement. How do you count it? By item, pair, skein, box, bottle...",
             ingUnitBadChar: "Your ingredient can't contain special characters",
-            ingCostZero: "Your ingredient should have a cost. Even if you didn't pay for it, look up what it would cost to buy."
+            ingCostZero: "Your ingredient should have a cost. Even if you didn't pay for it, look up what it would cost to buy.",
+            ingPerItem: "How much of this ingredient do you use to make one of this product? You're counting by *unit*."
         },
         hint: {
             amount: "If it takes more than one hour to produce one, we recommend setting amount to 1"
