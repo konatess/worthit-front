@@ -18,7 +18,7 @@ export default {
         regex: {
             titles: /[^\wÀ-ÖØ-öø-ÿ'\- _/&:!]/,
             units: /[^A-Za-zÀ-ÖØ-öø-ÿ ]/,
-            numbers: /[^0-9]/,
+            numbers: /^([0-9\.]+)$/,
         },
     },
     English: {

@@ -22,12 +22,14 @@ export default function RecipeScreen ({navigation, route}) {
     const [modalButtons, setModalButtons] = useState([]);
 	const [modalPickers, setModalPickers] = useState([]);
     const [modalInputs, setModalInputs] = useState([]);
+    const [modalBtnsVertical, setModalBtnsVertical] = useState(false);
+    const [canSave, setCanSave] = useState(false)
     const [allIngredients, setAllIngredients] = useState(knownIng);
     const [name, setName] = useState(prodObj ? prodObj.name : "");
     const [note, setNote] = useState(prodObj ? prodObj.note : "");
     const [hour, setHour] = useState(prodObj ? prodObj.hour : 0);
     const [minute, setMinute] = useState(prodObj ? prodObj.minute : 0);
-    const [amountPerTime, setAmountPerTime] = useState(prodObj ? prodObj.amount : 1)
+    const [amountPerTime, setAmountPerTime] = useState(prodObj ? prodObj.amount : 0)
     const [wage, setWage] = useState(prodObj ? prodObj.wage : 15.00);
     const [profitPercent, setProfitPercent] = useState(prodObj ? prodObj.profitPercent : 0);
     const [profitAmount, setProfitAmount] = useState(prodObj ? prodObj.profitAmount : 0);
@@ -38,6 +40,7 @@ export default function RecipeScreen ({navigation, route}) {
     const [ingUnit, setIngUnit] = useState("");
     const [ingCost, setIngCost] = useState(0);
     const [ingPerItem, setIngPerItem] = useState(0);
+    const [totalCost, setTotalCost] = useState(0);
 
     const [keyboardOut, setKeyboardOut] = useState(false);
     Platform.OS === 'android' &&  useEffect(() => {
@@ -58,6 +61,7 @@ export default function RecipeScreen ({navigation, route}) {
         let modalBtns = [modalCancelBtn];
         if (ingName && ingCost && ingUnit) {
             modalBtns.push(modalSaveIngBtn)
+            setModalBtnsVertical(false)
         }
         setModalButtons(modalBtns);
     }, [ingName, ingCost, ingUnit])
@@ -66,6 +70,7 @@ export default function RecipeScreen ({navigation, route}) {
         let modalBtns = [modalCancelBtn];
         if (ingPerItem > 0) {
             modalBtns.push(modalSaveAmountBtn)
+            setModalBtnsVertical(false)
         }
         setModalButtons(modalBtns);
     }, [ingPerItem])
@@ -84,9 +89,7 @@ export default function RecipeScreen ({navigation, route}) {
                             label: Strings.English.label.ingPerItem, 
                             default: ingredients[id] ? ingredients[id].toString() : "", 
                             onChange: text => {
-                                let trimmed = text.trim();
-                                let num = parseFloat(trimmed);
-                                setIngPerItem(isNaN(num) ? 0 : num);
+                                setIngPerItem(getNum(text));
                             }
                         }]);
                         setModalMessage(Strings.English.messages.ingPerItem.replace(/\*unit\*/g, allIngredients[id].unit));
@@ -97,6 +100,9 @@ export default function RecipeScreen ({navigation, route}) {
             }
         }
         setIngTextList(list);
+        if (list.length) {
+            setTotalCost(calculateTotalCost())
+        }
     }, [ingredients])
 
     useEffect(() => {
@@ -108,12 +114,39 @@ export default function RecipeScreen ({navigation, route}) {
         return unsubscribe
     }, [])
 
+    // useEffect(() => {
+    //     profitAmount && totalCost ? setProfitPercent(shortenNum(profitAmount/totalCost*100)) : setProfitPercent(0) 
+    // }, [profitAmount])
+
+    // useEffect(() => {
+    //     profitPercent && totalCost? setProfitAmount(shortenNum(profitPercent/100*totalCost)) : setProfitAmount(0)
+    // }, [profitPercent])
+
+    useEffect(() => {
+        if (name && (hour || minute) && amountPerTime && wage && profitAmount) {
+            setCanSave(true);
+        } else {
+            setCanSave(false)
+        }
+    }, [name, hour, minute, amountPerTime, wage, profitAmount])
+
+    useEffect(() => {
+        if ((hour || minute) && amountPerTime && wage) {
+            setTotalCost(calculateTotalCost())
+        }
+    }, [hour, minute, amountPerTime, wage])
+
+    useEffect(() => {
+        profitPercent && totalCost? setProfitAmount(shortenNum(profitPercent/100*totalCost)) : setProfitAmount(0)
+    }, [totalCost])
+
     const closeModal = () => {
         setModalVisible(false);
         setModalMessage("");
         setModalPickers([]);
         setModalInputs([]);
         setModalButtons([]);
+        setModalBtnsVertical(true)
     }
 
     const createIngPickers = () => {
@@ -169,6 +202,29 @@ export default function RecipeScreen ({navigation, route}) {
         setIngPerItem(0);
         setIngId("");
     }
+
+    const saveRecipe = () => {
+
+    }
+
+    const calculateTotalCost = () => {
+        let cost = 0;
+        cost += ((wage * hour) + (wage * minute / 60)) / amountPerTime
+        for (const id in ingredients) {
+            cost += ingredients[id] * allIngredients[id].cost
+        }
+        return cost
+    }
+
+    const getNum = (text) => {
+        let trimmed = text.trim();
+        let num = parseFloat(trimmed);
+        return isNaN(num) ? 0 : num
+    } 
+
+    const shortenNum = (num) => {
+        return parseFloat(num.toFixed(10))
+    }
     
     let deleteBtn = {
         title: Strings.English.buttons.delete,
@@ -192,7 +248,8 @@ export default function RecipeScreen ({navigation, route}) {
         iconName: Icons.save,
         onPress: () => {
             navigation.navigate("Recipe")
-        }
+        },
+        disabled: !canSave
     }
     let duplicateBtn = {
         title: Strings.English.buttons.duplicate,
@@ -218,9 +275,11 @@ export default function RecipeScreen ({navigation, route}) {
         onPress: () => {
             setModalMessage(Strings.English.label.newIngredient);
             setModalInputs([
-                {label: Strings.English.label.ingName, default: "", onChange: text => {setIngName(text)}},
-                {label: Strings.English.label.ingUnit, default: "", onChange: text => {setIngUnit(text)}},
-                {label: Strings.English.label.ingCost, default: 0, onChange: text => {setIngCost(text)}, keyboardType: "decimal-pad"}
+                {label: Strings.English.label.ingName, default: "", maxChar: 50, onChange: (text) => {setIngName(text)}},
+                {label: Strings.English.label.ingUnit, default: "", maxChar: 30, onChange: (text) => {setIngUnit(text)}},
+                {label: Strings.English.label.ingCost, default: "", maxChar: 15, onChange: text => {
+                    setIngCost(getNum(text));
+                }, keyboardType: "decimal-pad"}
             ])
             setModalPickers([]);
             setModalButtons([modalCancelBtn]);
@@ -270,12 +329,15 @@ export default function RecipeScreen ({navigation, route}) {
                 <TextInput
                     accessibilityLabel={Strings.English.label.hour}
                     style={[inputStyles.inputField, {color: Colors.lightTheme.text, marginEnd: 10}]}
-                    value={hour}
+                    value={hour.toString()}
                     placeholder={'1'}
+                    maxLength={2}
                     keyboardType={'number-pad'}
                     onChangeText={text => {
-                        if (text.length === 0 || !Strings.util.regex.numbers.test(text)) {
-                            setHour(text)
+                        if (text.length === 0) {
+                            setHour(0)
+                        } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
+                            setHour(getNum(text))
                         }
                     }}
                 />
@@ -285,12 +347,15 @@ export default function RecipeScreen ({navigation, route}) {
                 <TextInput
                     accessibilityLabel={Strings.English.label.minute}
                     style={[inputStyles.inputField, {color: Colors.lightTheme.text, marginEnd: 10}]}
-                    value={minute}
+                    value={minute.toString()}
                     placeholder={'15'}
+                    maxLength={2}
                     keyboardType={'number-pad'}
                     onChangeText={text => {
-                        if (text.length === 0 || !Strings.util.regex.numbers.test(text)) {
-                            setMinute(text)
+                        if (text.length === 0) {
+                            setMinute(0)
+                        } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
+                            setMinute(getNum(text))
                         }
                     }}
                 />
@@ -300,12 +365,15 @@ export default function RecipeScreen ({navigation, route}) {
                 <TextInput
                     accessibilityLabel={Strings.English.label.amount}
                     style={[inputStyles.inputField, {color: Colors.lightTheme.text}]}
-                    value={amountPerTime}
+                    value={amountPerTime.toString()}
                     placeholder={'1'}
+                    maxLength={6}
                     keyboardType={'number-pad'}
                     onChangeText={text => {
-                        if (text.length === 0 || !Strings.util.regex.numbers.test(text)) {
-                            setAmountPerTime(text)
+                        if (text.length === 0) {
+                            setAmountPerTime(0)
+                        } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
+                            setAmountPerTime(getNum(text))
                         }
                     }}
                 />
@@ -313,6 +381,9 @@ export default function RecipeScreen ({navigation, route}) {
                     {Strings.English.hint.amount}
                 </Text> */}
             </View>
+            <Text>{hour}</Text>
+            <Text>{minute}</Text>
+            <Text>{amountPerTime}</Text>
             <View style={rows.row1} >
                 <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
                     {Strings.English.label.wage}
@@ -320,16 +391,18 @@ export default function RecipeScreen ({navigation, route}) {
                 <TextInput
                     accessibilityLabel={Strings.English.label.wage}
                     style={[inputStyles.inputField, {color: Colors.lightTheme.text}]}
-                    value={wage}
                     placeholder={'15.00'}
                     keyboardType={'decimal-pad'}
                     onChangeText={text => {
-                        if (text.length === 0 || !Strings.util.regex.numbers.test(text)) {
-                            setWage(text)
+                        if (text.length === 0) {
+                            setWage(0)
+                        } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
+                            setWage(getNum(text))
                         }
                     }}
                 />
             </View>
+            <Text>{wage}</Text>
             <View style={rows.row1} >
                 <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
                     {Strings.English.label.profit}
@@ -340,13 +413,19 @@ export default function RecipeScreen ({navigation, route}) {
                 <TextInput
                     accessibilityLabel={Strings.English.label.profit}
                     style={[inputStyles.inputField, {color: Colors.lightTheme.text}]}
-                    value={profitAmount}
+                    defaultValue={profitAmount.toString().slice(0,10)}
                     placeholder={'0'}
+                    maxLength={10}
                     keyboardType={'decimal-pad'}
                     onChangeText={text => {
-                        if (text.length === 0 || !Strings.util.regex.numbers.test(text)) {
-                            setProfitAmount(text)
+                        if (text.length === 0) {
+                            setProfitAmount(0)
+                        } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
+                            setProfitAmount(getNum(text))
                         }
+                    }}
+                    onBlur={() => {
+                        profitAmount && totalCost ? setProfitPercent(shortenNum(profitAmount/totalCost*100)) : setProfitPercent(0) 
                     }}
                 />
                 <Text>
@@ -355,19 +434,26 @@ export default function RecipeScreen ({navigation, route}) {
                 <TextInput
                     accessibilityLabel={Strings.English.label.profPercent}
                     style={[inputStyles.inputField, {color: Colors.lightTheme.text}]}
-                    value={profitPercent}
+                    value={profitPercent.toString()}
                     placeholder={'0'}
+                    maxLength={10}
                     keyboardType={'decimal-pad'}
                     onChangeText={text => {
-                        if (text.length === 0 || !Strings.util.regex.numbers.test(text)) {
-                            setProfitPercent(text)
+                        if (text.length === 0) {
+                            setProfitAmount(0)
+                        } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
+                            setProfitPercent(getNum(text))
                         }
+                    }}
+                    onBlur={() => {
+                        profitPercent && totalCost? setProfitAmount(shortenNum(profitPercent/100*totalCost)) : setProfitAmount(0)
                     }}
                 />
                 <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
                     {Strings.English.label.profPercent}
                 </Text>
             </View>
+            <Text>{"Profit: $" + profitAmount + " = " + profitPercent + "%"}</Text>
             <View>
                 <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
                     {Strings.English.label.ingredients}
@@ -387,6 +473,7 @@ export default function RecipeScreen ({navigation, route}) {
                     </Text>
                 </Pressable>
             </View>
+            <Text>{"Total Cost: " + totalCost.toString()}</Text>
         </View>
         <Modal 
             visible={modalVisible} 
@@ -394,7 +481,7 @@ export default function RecipeScreen ({navigation, route}) {
             pickers={modalPickers}
             inputs={modalInputs}
             buttons={modalButtons} 
-            vertical={true}
+            vertical={modalBtnsVertical}
             darkmode={false}
         />
         {Platform.OS === 'ios' && <ButtonBar buttons={navBtns} />}

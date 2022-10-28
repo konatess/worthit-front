@@ -25,6 +25,8 @@ export default {
         },
         inputBorder: darkCool,
         text: darkText,
+        disabledText: lightGrey,
+        inputErrorText: darkOrange,
     },
     darkTheme: {
         background: darkText,
