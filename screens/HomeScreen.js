@@ -140,20 +140,25 @@ export default function HomeScreen ({ route, navigation }) {
             setModalMessage(Strings.English.messages.ingNameBadChar)
         } else if (newUnit.length === 0) {
             setModalMessage(Strings.English.messages.ingUnitTooShort)
+        } else if (Strings.util.regex.units.test(newUnit)) {
+            setModalMessage(Strings.English.messages.ingUnitBadChar)
         } else if (ingCost === 0) {
             setModalMessage(Strings.English.messages.ingCostZero)
         }
-        let ing = {
-            name: newName,
-            unit: newUnit,
-            cost: newCost,
+        else {
+            let ing = {
+                name: newName,
+                unit: newUnit,
+                cost: newCost,
+            }
+            if (ingId) {
+                await set(ref(database, `users/${user.uid}/ingredients/${ingId}`), ing).catch(error => console.log(error.message))
+            } else {
+                await push(ingRef, ing).catch(error => console.log(error.message));
+            }
+            closeModal();
+            setViewIng(false);
         }
-        if (ingId) {
-            await set(ref(database, `users/${user.uid}/ingredients/${ingId}`), ing).catch(error => console.log(error.message))
-        } else {
-            await push(ingRef, ing).catch(error => console.log(error.message));
-        }
-        setViewIng(false);
     }
 
     const deleteIngredient = (id) => {
@@ -188,7 +193,6 @@ export default function HomeScreen ({ route, navigation }) {
         iconName: Icons.create,
         onPress: () => {
             saveIngredient();
-            closeModal();
         }
     }
 

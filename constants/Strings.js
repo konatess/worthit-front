@@ -16,7 +16,7 @@ export default {
         website: "https://www.buddingapps.com/projects/divide-%26-de-stress",
         dateFormats: ["MM/DD", "DD/MM", "MM-DD", "DD-MM", "YY/MM/DD", "DD/MM/YY", "MM/DD/YY", "YY-MM-DD", "DD-MM-YY", "MM-DD-YY"],
         regex: {
-            titles: /[^\wÀ-ÖØ-öø-ÿ'\- _/&:!]/,
+            titles: /[^\wÀ-ÖØ-öø-ÿ'\- _/&:!()]/,
             units: /[^A-Za-zÀ-ÖØ-öø-ÿ ]/,
             numbers: /^([0-9\.]+)$/,
         },
@@ -27,6 +27,7 @@ export default {
             loginWithEmail: "Log In With Email",
             save: "Save",
             delete: "Delete",
+            remove: "Remove",
             create: "New",
             cancel: "Cancel",
             done: "Done",
@@ -67,9 +68,9 @@ export default {
         messages: {
             ingredients: "Choose an ingredient: ",
             ingNameTooShort: "Your ingredient needs a name",
-            ingNameBadChar: "Ingredient names can only contain letters, numbers, spaces, and these symbols: '-_/&:!",
+            ingNameBadChar: "Ingredient names can only contain letters, numbers, spaces, and these symbols: '-_/&:!()",
             ingUnitTooShort: "Your ingredient needs a unit of measurement. How do you count it? By item, pair, skein, box, bottle...",
-            ingUnitBadChar: "Your ingredient can't contain special characters",
+            ingUnitBadChar: "Unit names can't contain special characters",
             ingCostZero: "Your ingredient should have a cost. Even if you didn't pay for it, look up what it would cost to buy.",
             ingPerItem: "How much of this ingredient do you use to make one of this product? You're counting by *unit*."
         },

@@ -68,9 +68,12 @@ export default function RecipeScreen ({navigation, route}) {
 
     useEffect(() => {
         let modalBtns = [modalCancelBtn];
+        if (ingId.length) {
+            modalBtns.unshift(removeIngredientBtn)
+        }
         if (ingPerItem > 0) {
             modalBtns.push(modalSaveAmountBtn)
-            setModalBtnsVertical(false)
+            setModalBtnsVertical(true)
         }
         setModalButtons(modalBtns);
     }, [ingPerItem])
@@ -113,14 +116,6 @@ export default function RecipeScreen ({navigation, route}) {
         })
         return unsubscribe
     }, [])
-
-    // useEffect(() => {
-    //     profitAmount && totalCost ? setProfitPercent(shortenNum(profitAmount/totalCost*100)) : setProfitPercent(0) 
-    // }, [profitAmount])
-
-    // useEffect(() => {
-    //     profitPercent && totalCost? setProfitAmount(shortenNum(profitPercent/100*totalCost)) : setProfitAmount(0)
-    // }, [profitPercent])
 
     useEffect(() => {
         if (name && (hour || minute) && amountPerTime && wage && profitAmount) {
@@ -179,18 +174,19 @@ export default function RecipeScreen ({navigation, route}) {
             setModalMessage(Strings.English.messages.ingNameBadChar)
         } else if (newUnit.length === 0) {
             setModalMessage(Strings.English.messages.ingUnitTooShort)
+        } else if (Strings.util.regex.units.test(newUnit)) {
+            setModalMessage(Strings.English.messages.ingUnitBadChar)
         } else if (ingCost === 0) {
             setModalMessage(Strings.English.messages.ingCostZero)
         }
-        let ing = {
-            name: newName,
-            unit: newUnit,
-            cost: newCost,
-        }
-        if (ingId) {
-            await set(ref(database, `users/${user.uid}/ingredients/${ingId}`), ing).catch(error => console.log(error.message))
-        } else {
+        else {
+            let ing = {
+                name: newName,
+                unit: newUnit,
+                cost: newCost,
+            }
             await push(ref(database, `users/${user.uid}/ingredients`), ing).catch(error => console.log(error.message));
+            closeModal();
         }
     }
 
@@ -285,13 +281,26 @@ export default function RecipeScreen ({navigation, route}) {
             setModalButtons([modalCancelBtn]);
         }
     }
+    let removeIngredientBtn = {
+        title: Strings.English.buttons.remove,
+        color: Colors.lightTheme.buttons.delete,
+        iconName: Icons.delete,
+        onPress: () => {
+            let copy = {...ingredients}
+            console.log(copy)
+            delete copy[ingId];
+            console.log(copy)
+            setIngredients(copy)
+            closeModal();
+            setIngId("");
+        }
+    }
     let modalSaveIngBtn = {
         title: Strings.English.buttons.save,
         color: Colors.lightTheme.buttons.create,
         iconName: Icons.create,
         onPress: () => {
             saveIngredient(); 
-            closeModal();
         }
     }
 
@@ -319,6 +328,7 @@ export default function RecipeScreen ({navigation, route}) {
                 autoCapitalize={'words'}
                 onChangeText={text => setName(text)}
             />
+            <Text>{ingId}</Text>
             <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
                 {Strings.English.label.time}
             </Text>
@@ -474,6 +484,7 @@ export default function RecipeScreen ({navigation, route}) {
                 </Pressable>
             </View>
             <Text>{"Total Cost: " + totalCost.toString()}</Text>
+            <Text>{"Price: " + (totalCost + profitAmount).toString()}</Text>
         </View>
         <Modal 
             visible={modalVisible} 
