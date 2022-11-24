@@ -43,6 +43,7 @@ export default {
                 // darkMode: "Dark Mode On/Off",
                 // language: "Language",
                 // dateFormat: "Date Format:  ",
+                // profitPrioritizeAmount: "Prioritize profit amount over percent: ",
                 delete: "Start Fresh - Delete All Projects",
                 feedback: "Send Us Your Feedback",
                 site: "Visit Our Website",

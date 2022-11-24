@@ -393,7 +393,6 @@ export default function RecipeScreen ({navigation, route}) {
                     }
                 }}
             />
-            <Text>{ingId}</Text>
             <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
                 {Strings.English.label.time}
             </Text>
@@ -461,9 +460,6 @@ export default function RecipeScreen ({navigation, route}) {
                     {Strings.English.hint.amount}
                 </Text> */}
             </View>
-            <Text>{hour}</Text>
-            <Text>{minute}</Text>
-            <Text>{amountPerTime}</Text>
             <View style={rows.row1} >
                 <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
                     {Strings.English.label.wage}
@@ -483,7 +479,6 @@ export default function RecipeScreen ({navigation, route}) {
                     }}
                 />
             </View>
-            <Text>{wage}</Text>
             <View style={rows.row1} >
                 <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
                     {Strings.English.label.profit}
@@ -534,7 +529,6 @@ export default function RecipeScreen ({navigation, route}) {
                     {Strings.English.label.profPercent}
                 </Text>
             </View>
-            <Text>{"Profit: $" + profitAmount + " = " + profitPercent + "%"}</Text>
             <View>
                 <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
                     {Strings.English.label.ingredients}
@@ -554,8 +548,6 @@ export default function RecipeScreen ({navigation, route}) {
                     </Text>
                 </Pressable>
             </View>
-            <Text>{"Total Cost: " + totalCost.toString()}</Text>
-            <Text>{"Price: " + (totalCost + profitAmount).toString()}</Text>
             <KeyboardAvoidingView
                 keyboardVerticalOffset={100}
                 behavior={'padding'}

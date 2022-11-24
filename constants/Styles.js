@@ -209,6 +209,8 @@ const textStyles = StyleSheet.create({
     labelText: {
         fontSize: 20 * sizer,
         paddingRight: 5,
+        marginTop: 5,
+        marginBottom: 2,
         textAlignVertical: 'center',
         // flexWrap: 'wrap',
         flexShrink: 1,
