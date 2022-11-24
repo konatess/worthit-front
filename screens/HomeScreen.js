@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import { Text, SafeAreaView, FlatList, ke } from "react-native";
 
 import ButtonBar from '../components/ButtonBar';
-import { containers } from '../constants/Styles';
+import { containers, textStyles } from '../constants/Styles';
 import Icons from "../constants/Icons";
 import IngButton from "../components/IngButton";
 import Modal from "../components/Modal";
@@ -12,6 +12,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { UserContext } from "../constants/UserContext";
 import { app } from "../storage/firebaseInit";
 import { getDatabase, ref, set, push, onValue, get, child, remove } from 'firebase/database';
+import ProdButton from "../components/ProdButton";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -23,7 +24,9 @@ export default function HomeScreen ({ route, navigation }) {
     const { user } = useContext(UserContext);
     const [viewIng, setViewIng] = useState(false);
     const [allIngredients, setAllIngredients] = useState({});
-    const [ingButtons, setIngButtons] = useState([])
+    const [ingButtons, setIngButtons] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [prodButtons, setProdButtons] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
     const [modalButtons, setModalButtons] = useState([]);
@@ -38,6 +41,7 @@ export default function HomeScreen ({ route, navigation }) {
 
     const userDbStr = `users/${user.uid}`
     const ingStr = "/ingredients"
+    const recStr = "/recipes"
 
     useEffect(() => {
         let unsubscribe = onValue(ref(database, userDbStr + ingStr), (snapshot) => {
@@ -50,8 +54,14 @@ export default function HomeScreen ({ route, navigation }) {
     }, [])
 
     useEffect(() => {
-        console.log(`ingId: ${ingId}`)
-    }, [ingId])
+        let unsubscribe = onValue(ref(database, userDbStr + recStr), (snapshot) => {
+            if (snapshot.exists()) {
+                setProducts(snapshot.val())
+                createProdButtons();
+            }
+        })
+        return unsubscribe
+    }, [])
 
     useEffect(() => {
         let modalBtns = [modalCancelBtn];
@@ -87,19 +97,35 @@ export default function HomeScreen ({ route, navigation }) {
         setIngButtons(buttons)
     }
 
-    const navToRecipe = () => {
-        navigation.navigate(Strings.util.routes.recipe, {
-            prodObj: {
-                name: "",
-                note: "",
+    const createProdButtons = () => {
+        let buttons = [];
+        for (const id in products) {
+            let button = {
+                    id: id,
+                    title: products[id].title,
+                }
+            buttons.push(button)
+        }
+        setProdButtons(buttons)
+    }
+
+    const navToRecipe = (id) => {
+        let product = id.length ? products[id] :  {
+            name: "",
+            note: "",
+            time: {
                 hour: 0,
                 minute: 0,
-                amount: 0,
-                wage: 0.00,
-                profitPercent: 0.0,
-                profitAmount: 0,
-                ingredients: {}
-            }, 
+                amount: 0
+            },
+            wage: 0.00,
+            profitPercent: 0.0,
+            profitAmount: 0,
+            ingredients: {}
+        }
+        navigation.navigate(Strings.util.routes.recipe, {
+            prodDbId: id,
+            prodObj: product, 
             knownIng: allIngredients
         })
     };
@@ -208,19 +234,19 @@ export default function HomeScreen ({ route, navigation }) {
         title: Strings.English.buttons.create,
         color: Colors.lightTheme.buttons.create,
         iconName: Icons.create,
-        onPress: viewIng ? () => {callIngModal(false)} : navToRecipe
+        onPress: viewIng ? () => callIngModal(false) : () => navToRecipe("")
     }
     let ingBtn = {
-        title: viewIng ? "Products" : "Ingredients",
+        title: viewIng ? Strings.English.buttons.products : Strings.English.buttons.ingredients,
         color: Colors.lightTheme.buttons.filter,
         iconName: viewIng ? Icons.product : Icons.ingredient,
         onPress: () => {
-            if (!viewIng) { createIngButtons() }
+            if (!viewIng) { createIngButtons() } else { createProdButtons() }
             setViewIng(!viewIng)
         }
     }
     return (<SafeAreaView style={[containers.safeArea, {backgroundColor: Colors.lightTheme.background}]}> 
-        <Text>{"viewIng: " + viewIng}</Text>
+        <Text style={[textStyles.headerText]}>{viewIng ? Strings.English.headers.ingredients : Strings.English.headers.recipes}</Text>
         {ingButtons.length > 0 && viewIng && <FlatList 
             style={[ containers.projArea ]}
             data={ingButtons}
@@ -236,6 +262,17 @@ export default function HomeScreen ({ route, navigation }) {
                         cost: item.cost,
                         unit: item.unit,
                     })
+                }}
+            />}
+        />}
+        {prodButtons.length > 0 && !viewIng && <FlatList 
+            style={[ containers.projArea ]}
+            data={prodButtons}
+            renderItem={({ item }) => <ProdButton 
+                key={"prod" + item.id} 
+                title={item.title}
+                onPress={() => {
+                    navToRecipe(item.id);
                 }}
             />}
         />}

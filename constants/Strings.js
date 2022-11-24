@@ -17,6 +17,7 @@ export default {
         dateFormats: ["MM/DD", "DD/MM", "MM-DD", "DD-MM", "YY/MM/DD", "DD/MM/YY", "MM/DD/YY", "YY-MM-DD", "DD-MM-YY", "MM-DD-YY"],
         regex: {
             titles: /[^\wÀ-ÖØ-öø-ÿ'\- _/&:!()]/,
+            notes: /[^\wÀ-ÖØ-öø-ÿ'\- _/&:!(),.?\n]/,
             units: /[^A-Za-zÀ-ÖØ-öø-ÿ ]/,
             numbers: /^([0-9\.]+)$/,
         },
@@ -25,6 +26,8 @@ export default {
         buttons: {
             settings: "Settings",
             loginWithEmail: "Log In With Email",
+            products: "Products", 
+            ingredients: "Ingredients",
             save: "Save",
             delete: "Delete",
             remove: "Remove",
@@ -46,15 +49,20 @@ export default {
                 logout: "Log out"
             }
         },
+        headers: {
+            recipes: "Product Recipes",
+            ingredients: "All Ingredients"
+        },
         label: {
             login: "Log in to Begin",
             prodName: "Product Name: ",
+            prodNote: "Notes: ",
             time: "Average Time to Make: ",
             number: "Items: ",
             hour: "H: ",
             minute: "M: ",
             amount: "#: ",
-            wage: "Wage per Hour",
+            wage: "Wage per Hour: $ ",
             profit: "Profit: ",
             profAmount: "$ ",
             profPercent: " %",
@@ -75,6 +83,7 @@ export default {
             ingPerItem: "How much of this ingredient do you use to make one of this product? You're counting by *unit*.",
             prodNameShort: "Your product needs a name",
             prodNameBadChar: "Product names can only contain letters, numbers, spaces, and these symbols: '-_/&:!()",
+            prodNoteBadChar: "Product notes can only contain letters, numbers, spaces, returns, and these symbols: '-_/&:!(),.?",
             prodTime: "Please set a time of at least one minute and less than 100 hours",
             prodAmount: "Please set an amount greater than 0 and less than 1,000,000",
             ingredientsAmounts: "Please set amounts for ingredients, or remove them from the list"
@@ -86,10 +95,12 @@ export default {
             email: "email@example.com",
             password: "password",
             prodName: "What is your product called?",
+            prodNote: "Any additional information you'd like to keep with this product recipe...",
             ingName: "What is the ingredient called?",
             ingUnit: "bottle, skein, sheet, unit, etc.",
             ingCost: "0.00",
             ingPerItem: "0",
+            duplicate: "_Copy"
         },
     },
     Espanñol: {

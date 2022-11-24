@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { Text, SafeAreaView, View, TextInput, Keyboard, Pressable } from "react-native";
+import { Text, SafeAreaView, View, TextInput, Keyboard, Pressable, KeyboardAvoidingView, ScrollView } from "react-native";
 
 import ButtonBar from '../components/ButtonBar';
 import { containers, textStyles, inputStyles, rows, buttonStyles } from '../constants/Styles';
@@ -11,11 +11,12 @@ import { UserContext } from "../constants/UserContext";
 import { app } from "../storage/firebaseInit";
 import { getDatabase, ref, set, push, onValue, get, child, remove } from 'firebase/database';
 import IngAmount from "../components/IngAmount";
+import { async } from "@firebase/util";
 
 const database = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com/");
 
 export default function RecipeScreen ({navigation, route}) {
-    const { knownIng, prodObj } = route.params;
+    const { knownIng, prodObj, prodDbId } = route.params;
     const { user } = useContext(UserContext);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
@@ -25,11 +26,12 @@ export default function RecipeScreen ({navigation, route}) {
     const [modalBtnsVertical, setModalBtnsVertical] = useState(false);
     const [canSave, setCanSave] = useState(false)
     const [allIngredients, setAllIngredients] = useState(knownIng);
-    const [name, setName] = useState(prodObj ? prodObj.name : "");
+    const [prodId, setProdId] = useState(prodDbId ? prodDbId : "");
+    const [name, setName] = useState(prodObj ? prodObj.title : "");
     const [note, setNote] = useState(prodObj ? prodObj.note : "");
-    const [hour, setHour] = useState(prodObj ? prodObj.hour : 0);
-    const [minute, setMinute] = useState(prodObj ? prodObj.minute : 0);
-    const [amountPerTime, setAmountPerTime] = useState(prodObj ? prodObj.amount : 0)
+    const [hour, setHour] = useState(prodObj ? prodObj.time.hour : 0);
+    const [minute, setMinute] = useState(prodObj ? prodObj.time.minute : 0);
+    const [amountPerTime, setAmountPerTime] = useState(prodObj ? prodObj.time.amount : 0)
     const [wage, setWage] = useState(prodObj ? prodObj.wage : 15.00);
     const [profitPercent, setProfitPercent] = useState(prodObj ? prodObj.profitPercent : 0);
     const [profitAmount, setProfitAmount] = useState(prodObj ? prodObj.profitAmount : 0);
@@ -44,6 +46,7 @@ export default function RecipeScreen ({navigation, route}) {
 
     const userDbStr = `users/${user.uid}`
     const ingStr = "/ingredients"
+    const recStr = "/recipes"
 
     const [keyboardOut, setKeyboardOut] = useState(false);
     Platform.OS === 'android' &&  useEffect(() => {
@@ -203,7 +206,7 @@ export default function RecipeScreen ({navigation, route}) {
         setIngId("");
     }
 
-    const saveRecipe = () => {
+    const saveRecipe = async () => {
         let title = name.trim()
         if (!title.length) {
             setModalMessage(Strings.English.messages.prodNameShort)
@@ -213,36 +216,39 @@ export default function RecipeScreen ({navigation, route}) {
             setModalMessage(Strings.English.messages.prodNameBadChar)
             setModalButtons([modalOkayBtn])
             setModalVisible(true)
+        } else if (Strings.util.regex.notes.test(note)) {
+            setModalMessage(Strings.English.messages.prodNoteBadChar)
+            setModalButtons([modalOkayBtn])
+            setModalVisible(true)
         } else {
             for (id in ingredients) {
                 if (ingredients[id] === 0) {
                     setModalMessage(Strings.English.messages.ingredientsAmounts)
                     setModalButtons([modalOkayBtn])
                     setModalVisible(true)
+                    return
                 }
             }
             let recipe = {
                 title: title,
+                note: note,
                 time: {
                     hour: hour,
                     minute: minute,
+                    amount: amountPerTime
                 },
-                amount: amountPerTime,
                 wage: wage,
-                percentProfit: profitPercent,
-                amountProfit: profitAmount,
+                profitPercent: profitPercent,
+                profitAmount: profitAmount,
                 ingredients: ingredients
             }
+            if (prodId) {
+                await set(ref(database, `${userDbStr + recStr}/${prodId}`), recipe).catch(error => console.log(error.message))
+            } else {
+                await push(ref(database, `${userDbStr + recStr}`), recipe).catch(error => console.log(error.message));
+            }
+            navigation.navigate("Home")
         }
-
-        // title: ""
-        // description: ""
-        // time: {hour: #}
-        // amount: #
-        // wage: #
-        // percentProfit: #
-        // amountProfit: #
-        // ingredients
     }
 
     const calculateTotalCost = () => {
@@ -269,6 +275,7 @@ export default function RecipeScreen ({navigation, route}) {
         color: Colors.lightTheme.buttons.delete,
         iconName: Icons.delete,
         onPress: () => {
+            remove(ref(database, `${userDbStr + recStr}/${prodId}`)).catch(error => console.log(error.message));
             navigation.goBack()
         }
     }
@@ -294,7 +301,8 @@ export default function RecipeScreen ({navigation, route}) {
         color: Colors.lightTheme.buttons.duplicate,
         iconName: Icons.duplicate,
         onPress: () => {
-            navigation.navigate("Home")
+            setProdId("")
+            setName(name + Strings.English.placeholder.duplicate)
         }
     }
     let modalCancelBtn = {
@@ -337,9 +345,7 @@ export default function RecipeScreen ({navigation, route}) {
         iconName: Icons.delete,
         onPress: () => {
             let copy = {...ingredients}
-            console.log(copy)
             delete copy[ingId];
-            console.log(copy)
             setIngredients(copy)
             closeModal();
             setIngId("");
@@ -364,15 +370,16 @@ export default function RecipeScreen ({navigation, route}) {
         }
     }
 
-    // let navBtns = prodObj ? [ deleteBtn, cancelBtn, duplicateBtn, createBtn ] : [ cancelBtn, duplicateBtn, createBtn ]
-    let navBtns = [ deleteBtn, cancelBtn, duplicateBtn, createBtn ]
+    let navBtns = prodId ? [ deleteBtn, cancelBtn, duplicateBtn, createBtn ] : [ cancelBtn, createBtn ]
+    // let navBtns = [ deleteBtn, cancelBtn, duplicateBtn, createBtn ]
     return <SafeAreaView style={[containers.safeArea, {backgroundColor: Colors.lightTheme.background}]}> 
          <View style={containers.projArea}>
+         <ScrollView>
             <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>{Strings.English.label.prodName}</Text>
             <TextInput
                 accessibilityLabel={Strings.English.label.prodName}
                 accessibilityHint={Strings.English.placeholder.prodName}
-                style={[inputStyles.inputField, {marginBottom: 10}, {color: Colors.lightTheme.text}]}
+                style={[inputStyles.inputField, inputStyles.longInputs, {marginBottom: 10}, {color: Colors.lightTheme.text}]}
                 placeholder={Strings.English.placeholder.prodName}
                 value={name}
                 autoCapitalize={'words'}
@@ -464,6 +471,7 @@ export default function RecipeScreen ({navigation, route}) {
                 <TextInput
                     accessibilityLabel={Strings.English.label.wage}
                     style={[inputStyles.inputField, {color: Colors.lightTheme.text}]}
+                    value={wage.toString()}
                     placeholder={'15.00'}
                     keyboardType={'decimal-pad'}
                     onChangeText={text => {
@@ -548,6 +556,32 @@ export default function RecipeScreen ({navigation, route}) {
             </View>
             <Text>{"Total Cost: " + totalCost.toString()}</Text>
             <Text>{"Price: " + (totalCost + profitAmount).toString()}</Text>
+            <KeyboardAvoidingView
+                keyboardVerticalOffset={100}
+                behavior={'padding'}
+                // style={[{backgroundColor: "orange", opacity: 1, zIndex: 40}]}
+            >
+                <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>{Strings.English.label.prodNote}</Text>
+                <TextInput
+                    accessibilityLabel={Strings.English.label.prodNote}
+                    accessibilityHint={Strings.English.placeholder.prodNote}
+                    style={[inputStyles.inputField, inputStyles.longInputs, {marginBottom: 10}, {color: Colors.lightTheme.text}]}
+                    placeholder={Strings.English.placeholder.prodNote}
+                    value={note}
+                    autoCapitalize={'sentences'}
+                    multiline={true}
+                    onChangeText={(text) => {
+                        if (!text.length) {
+                            setNote("")
+                        } else if (text.trim().length > 500) {
+                            setNote(text.trim().slice(0,500))
+                        } else {
+                            setNote(text)
+                        }
+                    }}
+                />
+            </KeyboardAvoidingView>
+            </ScrollView>
         </View>
         <Modal 
             visible={modalVisible} 

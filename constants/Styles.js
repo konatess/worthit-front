@@ -138,19 +138,27 @@ const buttonStyles = StyleSheet.create({
         padding: 15,
         justifyContent: 'flex-start', 
         alignItems: 'stretch',
-        backgroundColor: Colors.lightTheme.buttons.settings
+        borderWidth: .5,
+        borderColor: Colors.lightTheme.buttons.settings,
     },
-    projectBtnArea: {
+    prodBtn: {
         padding: 15,
+        justifyContent: 'flex-start', 
+        alignItems: 'stretch',
+        borderWidth: .5,
+        borderColor: Colors.lightTheme.buttons.settings
     },
-    projectTitleArea: {
-        flexShrink: 1,
-        paddingRight: 10,
-    },
-    projectDueArea: {
-        paddingLeft: 5,
-        justifyContent: 'center',
-    },
+    // projectBtnArea: {
+    //     padding: 15,
+    // },
+    // projectTitleArea: {
+    //     flexShrink: 1,
+    //     paddingRight: 10,
+    // },
+    // projectDueArea: {
+    //     paddingLeft: 5,
+    //     justifyContent: 'center',
+    // },
     settingsBtnArea: {
         flexDirection: "row",
         paddingHorizontal: 15,
@@ -191,6 +199,9 @@ const inputStyles = StyleSheet.create({
         padding: 3,
         paddingHorizontal: 10,
         fontSize: 18 * sizer,
+    },
+    longInputs: {
+        maxWidth: '100%'
     }
 });
 
@@ -202,6 +213,11 @@ const textStyles = StyleSheet.create({
         // flexWrap: 'wrap',
         flexShrink: 1,
     }, 
+    headerText: {
+        fontSize: 25 * sizer,
+        padding: 3,
+        textAlign: 'center',
+    },
     buttonText: {
         color: Colors.navButtonText,
         fontWeight: "bold",
