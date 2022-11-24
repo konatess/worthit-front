@@ -135,14 +135,16 @@ const buttonStyles = StyleSheet.create({
         alignItems: 'center'
     },
     ingBtn: {
-        padding: 15,
+        paddingHorizontal: 15,
+        paddingVertical: 8,
         justifyContent: 'flex-start', 
         alignItems: 'stretch',
         borderWidth: .5,
         borderColor: Colors.lightTheme.buttons.settings,
     },
     prodBtn: {
-        padding: 15,
+        paddingHorizontal: 15,
+        paddingVertical: 8,
         justifyContent: 'flex-start', 
         alignItems: 'stretch',
         borderWidth: .5,
@@ -217,7 +219,7 @@ const textStyles = StyleSheet.create({
     }, 
     headerText: {
         fontSize: 25 * sizer,
-        padding: 3,
+        marginTop: 30,
         textAlign: 'center',
     },
     buttonText: {
@@ -249,7 +251,7 @@ const textStyles = StyleSheet.create({
     displayMargin: {
         marginBottom: 15,
     }, 
-    projectTitleText: {
+    productTitleText: {
         fontSize: 21 * sizer,
     },
     projectDueText: {
