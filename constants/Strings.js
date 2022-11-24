@@ -40,9 +40,9 @@ export default {
             addIngredient: "Add Ingredients",
             newIngredient: "New Ingredient",
             allSettings: {
-                darkMode: "Dark Mode On/Off",
-                language: "Language",
-                dateFormat: "Date Format:  ",
+                // darkMode: "Dark Mode On/Off",
+                // language: "Language",
+                // dateFormat: "Date Format:  ",
                 delete: "Start Fresh - Delete All Projects",
                 feedback: "Send Us Your Feedback",
                 site: "Visit Our Website",
