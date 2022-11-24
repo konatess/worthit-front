@@ -36,11 +36,11 @@ export default function HomeScreen ({ route, navigation }) {
     const [ingCost, setIngCost] = useState(0);
 
 
-    const ingRef = ref(database, `users/${user.uid}/ingredients`)
-    // const userRef = ref(database, `users/${user.uid}`)
+    const userDbStr = `users/${user.uid}`
+    const ingStr = "/ingredients"
 
     useEffect(() => {
-        let unsubscribe = onValue(ingRef, (snapshot) => {
+        let unsubscribe = onValue(ref(database, userDbStr + ingStr), (snapshot) => {
             if (snapshot.exists()) {
                 setAllIngredients(snapshot.val())
                 createIngButtons();
@@ -152,9 +152,9 @@ export default function HomeScreen ({ route, navigation }) {
                 cost: newCost,
             }
             if (ingId) {
-                await set(ref(database, `users/${user.uid}/ingredients/${ingId}`), ing).catch(error => console.log(error.message))
+                await set(ref(database, `${userDbStr + ingStr}/${ingId}`), ing).catch(error => console.log(error.message))
             } else {
-                await push(ingRef, ing).catch(error => console.log(error.message));
+                await push(ref(database, userDbStr + ingStr), ing).catch(error => console.log(error.message));
             }
             closeModal();
             setViewIng(false);
@@ -162,7 +162,7 @@ export default function HomeScreen ({ route, navigation }) {
     }
 
     const deleteIngredient = (id) => {
-        remove(ref(database, `users/${user.uid}/ingredients/${id}`)).catch(error => console.log(error.message));
+        remove(ref(database, `${userDbStr + ingStr}/${id}`)).catch(error => console.log(error.message));
         setIngId("");
         setViewIng(false);
     }

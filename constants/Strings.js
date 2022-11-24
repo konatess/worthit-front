@@ -72,7 +72,12 @@ export default {
             ingUnitTooShort: "Your ingredient needs a unit of measurement. How do you count it? By item, pair, skein, box, bottle...",
             ingUnitBadChar: "Unit names can't contain special characters",
             ingCostZero: "Your ingredient should have a cost. Even if you didn't pay for it, look up what it would cost to buy.",
-            ingPerItem: "How much of this ingredient do you use to make one of this product? You're counting by *unit*."
+            ingPerItem: "How much of this ingredient do you use to make one of this product? You're counting by *unit*.",
+            prodNameShort: "Your product needs a name",
+            prodNameBadChar: "Product names can only contain letters, numbers, spaces, and these symbols: '-_/&:!()",
+            prodTime: "Please set a time of at least one minute and less than 100 hours",
+            prodAmount: "Please set an amount greater than 0 and less than 1,000,000",
+            ingredientsAmounts: "Please set amounts for ingredients, or remove them from the list"
         },
         hint: {
             amount: "If it takes more than one hour to produce one, we recommend setting amount to 1"

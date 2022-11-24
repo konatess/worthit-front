@@ -42,6 +42,9 @@ export default function RecipeScreen ({navigation, route}) {
     const [ingPerItem, setIngPerItem] = useState(0);
     const [totalCost, setTotalCost] = useState(0);
 
+    const userDbStr = `users/${user.uid}`
+    const ingStr = "/ingredients"
+
     const [keyboardOut, setKeyboardOut] = useState(false);
     Platform.OS === 'android' &&  useEffect(() => {
         const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -83,6 +86,7 @@ export default function RecipeScreen ({navigation, route}) {
         for (const id in ingredients) {
             if (id) {
                 list.push(<IngAmount 
+                    key={id}
                     id={id}
                     amount={ingredients[id]}
                     name={allIngredients[id].name}
@@ -109,7 +113,7 @@ export default function RecipeScreen ({navigation, route}) {
     }, [ingredients])
 
     useEffect(() => {
-        let unsubscribe = onValue(ref(database, `users/${user.uid}/ingredients`), (snapshot) => {
+        let unsubscribe = onValue(ref(database, `${userDbStr + ingStr}`), (snapshot) => {
             if (snapshot.exists()) {
                 setAllIngredients(snapshot.val())
             }
@@ -185,7 +189,7 @@ export default function RecipeScreen ({navigation, route}) {
                 unit: newUnit,
                 cost: newCost,
             }
-            await push(ref(database, `users/${user.uid}/ingredients`), ing).catch(error => console.log(error.message));
+            await push(ref(database, `${userDbStr + ingStr}`), ing).catch(error => console.log(error.message));
             closeModal();
         }
     }
@@ -200,7 +204,45 @@ export default function RecipeScreen ({navigation, route}) {
     }
 
     const saveRecipe = () => {
+        let title = name.trim()
+        if (!title.length) {
+            setModalMessage(Strings.English.messages.prodNameShort)
+            setModalButtons([modalOkayBtn])
+            setModalVisible(true)
+        } else if (Strings.util.regex.titles.test(title)) {
+            setModalMessage(Strings.English.messages.prodNameBadChar)
+            setModalButtons([modalOkayBtn])
+            setModalVisible(true)
+        } else {
+            for (id in ingredients) {
+                if (ingredients[id] === 0) {
+                    setModalMessage(Strings.English.messages.ingredientsAmounts)
+                    setModalButtons([modalOkayBtn])
+                    setModalVisible(true)
+                }
+            }
+            let recipe = {
+                title: title,
+                time: {
+                    hour: hour,
+                    minute: minute,
+                },
+                amount: amountPerTime,
+                wage: wage,
+                percentProfit: profitPercent,
+                amountProfit: profitAmount,
+                ingredients: ingredients
+            }
+        }
 
+        // title: ""
+        // description: ""
+        // time: {hour: #}
+        // amount: #
+        // wage: #
+        // percentProfit: #
+        // amountProfit: #
+        // ingredients
     }
 
     const calculateTotalCost = () => {
@@ -243,7 +285,7 @@ export default function RecipeScreen ({navigation, route}) {
         color: Colors.lightTheme.buttons.save,
         iconName: Icons.save,
         onPress: () => {
-            navigation.navigate("Recipe")
+            saveRecipe()
         },
         disabled: !canSave
     }
@@ -262,6 +304,14 @@ export default function RecipeScreen ({navigation, route}) {
         onPress: () => {
             closeModal();
             setIngId("");
+        }
+    }
+    let modalOkayBtn = {
+        title: Strings.English.buttons.okay,
+        color: Colors.lightTheme.buttons.cancel,
+        iconName: Icons.okay,
+        onPress: () => {
+            closeModal();
         }
     }
     let newIngredientBtn = {
@@ -326,7 +376,15 @@ export default function RecipeScreen ({navigation, route}) {
                 placeholder={Strings.English.placeholder.prodName}
                 value={name}
                 autoCapitalize={'words'}
-                onChangeText={text => setName(text)}
+                onChangeText={(text) => {
+                    if (!text.length) {
+                        setName("")
+                    } else if (text.trim().length > 50) {
+                        setName(text.trim().slice(0,50))
+                    } else {
+                        setName(text)
+                    }
+                }}
             />
             <Text>{ingId}</Text>
             <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
@@ -364,8 +422,13 @@ export default function RecipeScreen ({navigation, route}) {
                     onChangeText={text => {
                         if (text.length === 0) {
                             setMinute(0)
-                        } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
-                            setMinute(getNum(text))
+                        } else if (Strings.util.regex.numbers.test(text)) {
+                            let num = getNum(text);
+                            if (num >= 60) {
+                                setMinute(59)
+                            } else {
+                                setMinute(num)
+                            }
                         }
                     }}
                 />
@@ -450,7 +513,7 @@ export default function RecipeScreen ({navigation, route}) {
                     keyboardType={'decimal-pad'}
                     onChangeText={text => {
                         if (text.length === 0) {
-                            setProfitAmount(0)
+                            setProfitPercent(0)
                         } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
                             setProfitPercent(getNum(text))
                         }
