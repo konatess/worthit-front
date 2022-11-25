@@ -13,6 +13,7 @@ import { UserContext } from "../constants/UserContext";
 import { app } from "../storage/firebaseInit";
 import { getDatabase, ref, set, push, onValue, get, child, remove } from 'firebase/database';
 import ProdButton from "../components/ProdButton";
+import DataLimits from "../constants/DataLimits";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -37,6 +38,8 @@ export default function HomeScreen ({ route, navigation }) {
     const [ingName, setIngName] = useState("");
     const [ingUnit, setIngUnit] = useState("");
     const [ingCost, setIngCost] = useState(0);
+    const [maxRec, setMaxRec] = useState(false);
+    const [maxIng, setMaxIng] = useState(false);
 
 
     const userDbStr = `users/${user.uid}`
@@ -46,22 +49,45 @@ export default function HomeScreen ({ route, navigation }) {
     useEffect(() => {
         let unsubscribe = onValue(ref(database, userDbStr + ingStr), (snapshot) => {
             if (snapshot.exists()) {
-                setAllIngredients(snapshot.val())
-                createIngButtons();
+                setAllIngredients(snapshot.val());
             }
         })
         return unsubscribe
     }, [])
 
     useEffect(() => {
+        createIngButtons();
+    }, [allIngredients])
+
+    useEffect(() => {
         let unsubscribe = onValue(ref(database, userDbStr + recStr), (snapshot) => {
             if (snapshot.exists()) {
-                setProducts(snapshot.val())
-                createProdButtons();
+                setProducts(snapshot.val());
             }
         })
         return unsubscribe
     }, [])
+    
+    useEffect(() => {
+        createProdButtons();
+    }, [products])
+
+    useEffect(() => {
+        console.log(ingButtons.length)
+        if (ingButtons.length < DataLimits.ingredients.level1) {
+            setMaxIng(false);
+        } else {
+            setMaxIng(true);
+        }
+    }, [ingButtons])
+
+    useEffect(() => {
+        if (prodButtons.length <= DataLimits.recipes.level1) {
+            setMaxRec(false);
+        } else {
+            setMaxRec(true);
+        }
+    }, [prodButtons])
 
     useEffect(() => {
         let modalBtns = [modalCancelBtn];
@@ -183,7 +209,6 @@ export default function HomeScreen ({ route, navigation }) {
                 await push(ref(database, userDbStr + ingStr), ing).catch(error => console.log(error.message));
             }
             closeModal();
-            setViewIng(false);
         }
     }
 
@@ -234,14 +259,14 @@ export default function HomeScreen ({ route, navigation }) {
         title: Strings.English.buttons.create,
         color: Colors.lightTheme.buttons.create,
         iconName: Icons.create,
-        onPress: viewIng ? () => callIngModal(false) : () => navToRecipe("")
+        onPress: viewIng ? () => callIngModal(false) : () => navToRecipe(""),
+        disabled: viewIng ? maxIng : maxRec
     }
     let ingBtn = {
         title: viewIng ? Strings.English.buttons.products : Strings.English.buttons.ingredients,
         color: Colors.lightTheme.buttons.filter,
         iconName: viewIng ? Icons.product : Icons.ingredient,
         onPress: () => {
-            if (!viewIng) { createIngButtons() } else { createProdButtons() }
             setViewIng(!viewIng)
         }
     }

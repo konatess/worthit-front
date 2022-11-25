@@ -20,6 +20,7 @@ const containers = StyleSheet.create({
     projArea: {
         flex: 1,
         padding: 10,
+        marginBottom: 50 * sizer,
     }, 
     buttonBar: {
         flexDirection: 'row',

@@ -371,7 +371,6 @@ export default function RecipeScreen ({navigation, route}) {
     }
 
     let navBtns = prodId ? [ deleteBtn, cancelBtn, duplicateBtn, createBtn ] : [ cancelBtn, createBtn ]
-    // let navBtns = [ deleteBtn, cancelBtn, duplicateBtn, createBtn ]
     return <SafeAreaView style={[containers.safeArea, {backgroundColor: Colors.lightTheme.background}]}> 
          <View style={containers.projArea}>
          <ScrollView>
