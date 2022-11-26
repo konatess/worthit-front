@@ -11,7 +11,7 @@ import { UserContext } from "../constants/UserContext";
 import { app } from "../storage/firebaseInit";
 import { getDatabase, ref, set, push, onValue, get, child, remove } from 'firebase/database';
 import IngAmount from "../components/IngAmount";
-import { async } from "@firebase/util";
+import DataLimits from "../constants/DataLimits";
 
 const database = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com/");
 
@@ -42,6 +42,7 @@ export default function RecipeScreen ({navigation, route}) {
     const [ingUnit, setIngUnit] = useState("");
     const [ingCost, setIngCost] = useState(0);
     const [ingPerItem, setIngPerItem] = useState(0);
+    const [maxIng, setMaxIng] = useState(false);
     const [totalCost, setTotalCost] = useState(0);
 
     const userDbStr = `users/${user.uid}`
@@ -123,6 +124,14 @@ export default function RecipeScreen ({navigation, route}) {
         })
         return unsubscribe
     }, [])
+
+    useEffect(() => {
+        if (Object.keys(allIngredients).length < DataLimits.ingredients.level1) {
+            setMaxIng(false);
+        } else {
+            setMaxIng(true);
+        }
+    }, [allIngredients])
 
     useEffect(() => {
         if (name && (hour || minute) && amountPerTime && wage && profitAmount) {
@@ -538,7 +547,8 @@ export default function RecipeScreen ({navigation, route}) {
                     onPress={() => {
                         setModalMessage(Strings.English.messages.ingredients)
                         setModalPickers( createIngPickers() );
-                        setModalButtons([modalCancelBtn, newIngredientBtn]);
+                        setModalButtons(maxIng ? [modalCancelBtn] : [modalCancelBtn, newIngredientBtn]);
+                        setModalBtnsVertical(true);
                         setModalVisible(true);
                     }}
                 >

@@ -82,7 +82,7 @@ export default function HomeScreen ({ route, navigation }) {
     }, [ingButtons])
 
     useEffect(() => {
-        if (prodButtons.length <= DataLimits.recipes.level1) {
+        if (prodButtons.length < DataLimits.recipes.level1) {
             setMaxRec(false);
         } else {
             setMaxRec(true);
