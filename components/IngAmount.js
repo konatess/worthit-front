@@ -7,6 +7,5 @@ export default function IngAmount ({ id, name, amount, onPress }) {
         <Pressable onPress={onPress}>
             <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>{amount + " -- " + name}</Text>
         </Pressable>
-        {/* <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>{name}</Text> */}
     </View> 
 }

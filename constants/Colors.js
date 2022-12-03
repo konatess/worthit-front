@@ -22,6 +22,8 @@ export default {
             duplicate: lightText,
             newIngredient: lightGreen,
             addIngredient: lightGreen,
+            navButtonText: '#eee',
+            navButtonIcon: '#eee',
         },
         inputBorder: darkCool,
         text: darkText,
@@ -32,24 +34,12 @@ export default {
         background: darkText,
         text: lightText
     },
-    tabIconDefault: '#fff',
-    errorBackground: 'red',
-    errorText: '#fff',
-    warningBackground: '#EAEB5E',
-    warningText: '#666804',
-    noticeText: '#fff',
-    navButtonText: '#eee',
-    navButtonIcon: '#eee',
-    mainbackground: '#fcfcfc',
-    maintext: '#111',
-    modalbackground: '#eee',
-    settingsIcons: '#888',
     transparent: '#0000',
-    toggle: {
-        trackfalse: darkCool, 
-        tracktrue: darkText,
-        thumbfalse: lightText,
-        thumbtrue: lightTurquoise,
-        ios_backgroundColor: "#3e3e3e"
-    },
+    // toggle: {
+    //     trackfalse: darkCool, 
+    //     tracktrue: darkText,
+    //     thumbfalse: lightText,
+    //     thumbtrue: lightTurquoise,
+    //     ios_backgroundColor: "#3e3e3e"
+    // },
 };

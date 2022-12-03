@@ -394,8 +394,8 @@ export default function RecipeScreen ({navigation, route}) {
                 onChangeText={(text) => {
                     if (!text.length) {
                         setName("")
-                    } else if (text.trim().length > 50) {
-                        setName(text.trim().slice(0,50))
+                    } else if (text.trim().length > DataLimits.inputs.recNameMax) {
+                        setName(text.trim().slice(0,DataLimits.inputs.recNameMax))
                     } else {
                         setName(text)
                     }
@@ -574,8 +574,8 @@ export default function RecipeScreen ({navigation, route}) {
                     onChangeText={(text) => {
                         if (!text.length) {
                             setNote("")
-                        } else if (text.trim().length > 500) {
-                            setNote(text.trim().slice(0,500))
+                        } else if (text.trim().length > DataLimits.inputs.recNoteMax) {
+                            setNote(text.trim().slice(0,DataLimits.inputs.recNoteMax))
                         } else {
                             setNote(text)
                         }

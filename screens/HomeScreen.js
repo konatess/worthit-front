@@ -170,9 +170,9 @@ export default function HomeScreen ({ route, navigation }) {
             setIngCost(0);
         }
         setModalInputs([
-            {label: Strings.English.label.ingName, default: ingObj.name || "", maxChar: 50, onChange: (text) => {setIngName(text)}},
-            {label: Strings.English.label.ingUnit, default: ingObj.unit || "", maxChar: 30, onChange: (text) => {setIngUnit(text)}},
-            {label: Strings.English.label.ingCost, default: ingObj ? ingObj.cost.toString() : "", maxChar: 15, onChange: text => {
+            {label: Strings.English.label.ingName, default: ingObj.name || "", maxChar: DataLimits.inputs.ingNameMax, onChange: (text) => {setIngName(text)}},
+            {label: Strings.English.label.ingUnit, default: ingObj.unit || "", maxChar: DataLimits.inputs.ingUnitMax, onChange: (text) => {setIngUnit(text)}},
+            {label: Strings.English.label.ingCost, default: ingObj ? ingObj.cost.toString() : "", maxChar: DataLimits.inputs.ingCostMax, onChange: text => {
                 let trimmed = text.trim();
                 let num = parseFloat(trimmed);
                 setIngCost(isNaN(num) ? 0 : num);

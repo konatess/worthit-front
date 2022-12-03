@@ -58,9 +58,6 @@ const containers = StyleSheet.create({
         borderRadius: 10,
         padding: 5,
     },
-    datetimeSpinner: {
-        width: width * .8,
-    },
     loginInputs: {
         width: 200 * sizer,
     }
@@ -70,19 +67,6 @@ const rows = StyleSheet.create({
     row1: {
         flexDirection: 'row', 
         marginBottom: 10,
-        alignItems: 'center',
-    },
-    row2: {
-        flexDirection: 'row', 
-        justifyContent: 'space-between',
-        marginBottom: 15,
-    }, 
-    row3: {
-        justifyContent: 'flex-start', 
-        flexWrap: 'wrap'
-    },
-    rowSetBtn: {
-        flexDirection: 'row',
         alignItems: 'center',
     },
     rowModal: {
@@ -151,17 +135,6 @@ const buttonStyles = StyleSheet.create({
         borderWidth: .5,
         borderColor: Colors.lightTheme.buttons.settings
     },
-    // projectBtnArea: {
-    //     padding: 15,
-    // },
-    // projectTitleArea: {
-    //     flexShrink: 1,
-    //     paddingRight: 10,
-    // },
-    // projectDueArea: {
-    //     paddingLeft: 5,
-    //     justifyContent: 'center',
-    // },
     settingsBtnArea: {
         flexDirection: "row",
         paddingHorizontal: 15,
@@ -215,7 +188,6 @@ const textStyles = StyleSheet.create({
         marginTop: 5,
         marginBottom: 2,
         textAlignVertical: 'center',
-        // flexWrap: 'wrap',
         flexShrink: 1,
     }, 
     headerText: {
@@ -224,13 +196,13 @@ const textStyles = StyleSheet.create({
         textAlign: 'center',
     },
     buttonText: {
-        color: Colors.navButtonText,
+        color: Colors.lightTheme.buttons.navButtonText,
         fontWeight: "bold",
         textAlign: "center",
         fontSize: 14 * sizer,
     },
     navBtnText: {
-        color: Colors.navButtonText,
+        color: Colors.lightTheme.buttons.navButtonText,
         fontSize: 18 * sizer,
     },
     modalMsgText: {
@@ -239,7 +211,7 @@ const textStyles = StyleSheet.create({
         fontSize: 18 * sizer,
     },
     modalBtnText: {
-        color: Colors.navButtonText,
+        color: Colors.lightTheme.buttons.navButtonText,
         fontWeight: "bold",
         textAlign: "center",
         fontSize: 18 * sizer,
@@ -248,14 +220,11 @@ const textStyles = StyleSheet.create({
         fontSize: 16 * sizer,
         alignSelf: 'flex-start',
         marginTop: 1,
-      },
-    displayMargin: {
-        marginBottom: 15,
-    }, 
+    },
     productTitleText: {
         fontSize: 21 * sizer,
     },
-    projectDueText: {
+    productPriceText: {
         fontSize: 17 * sizer,
     },
     settingsBtnText: {
@@ -263,25 +232,6 @@ const textStyles = StyleSheet.create({
     },
     hintText: {
         fontSize: 14 * sizer,
-    },
-});
-
-const progressbar = StyleSheet.create({
-    outline: {
-        flexDirection: 'row',
-        height: 15,
-        width: '100%',
-        borderColor: Colors.edit,
-        borderWidth: 2,
-        borderRadius: 5,
-    },
-    fill: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        backgroundColor: Colors.edit,
     },
 });
 
@@ -293,4 +243,4 @@ const iconSizes = StyleSheet.create({
     loginIconSize: 50 * sizer
 });
 
-export {containers, rows, buttonStyles, inputStyles, textStyles, progressbar, iconSizes};
+export {containers, rows, buttonStyles, inputStyles, textStyles, iconSizes};

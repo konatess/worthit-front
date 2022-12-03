@@ -32,15 +32,15 @@ export default function App() {
 	// Load any resources or data that we need prior to rendering the app
 	useEffect(() => {
 		async function loadResourcesAndDataAsync() {
-		try {
-			SplashScreen.preventAutoHideAsync();
-		} catch (e) {
-			// We might want to provide this error information to an error reporting service
-			Notify('English', e.message);
-		} finally {
-			setLoadingComplete(true);
-			SplashScreen.hideAsync();
-		}
+			try {
+				SplashScreen.preventAutoHideAsync();
+			} catch (e) {
+				// We might want to provide this error information to an error reporting service
+				Notify('English', e.message);
+			} finally {
+				setLoadingComplete(true);
+				SplashScreen.hideAsync();
+			}
 		}
 
 		loadResourcesAndDataAsync();
