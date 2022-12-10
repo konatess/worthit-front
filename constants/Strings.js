@@ -26,6 +26,7 @@ export default {
         buttons: {
             settings: "Settings",
             loginWithEmail: "Log In With Email",
+            signInGoogle: "Sign In With Google",
             products: "Products", 
             ingredients: "Ingredients",
             save: "Save",
@@ -52,7 +53,8 @@ export default {
         },
         headers: {
             recipes: "Product Recipes",
-            ingredients: "All Ingredients"
+            ingredients: "All Ingredients",
+            errorAlert: "Error: ",
         },
         label: {
             login: "Log in to Begin",

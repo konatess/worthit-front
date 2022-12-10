@@ -1,10 +1,10 @@
 import { useContext, useState, useEffect } from "react";
-import { SafeAreaView, View, Text, TextInput, Pressable, KeyboardAvoidingView } from "react-native";
+import { SafeAreaView, View, Text, TextInput, Pressable, KeyboardAvoidingView, Alert } from "react-native";
 import * as Facebook from 'expo-auth-session/providers/facebook';
 import * as Google from 'expo-auth-session/providers/google';
 import { ResponseType } from 'expo-auth-session';
 import { signInWithEmailAndPassword } from 'firebase/app';
-import { getAuth, FacebookAuthProvider, signInWithCredential,setPersistence, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, FacebookAuthProvider, GoogleAuthProvider, linkWithCredential, signInWithCredential, onAuthStateChanged, signOut, } from 'firebase/auth';
 import { app } from '../storage/firebaseInit';
 import LoginButton from "../components/LoginBtn";
 import { containers, textStyles, inputStyles, buttonStyles } from "../constants/Styles";
@@ -37,32 +37,46 @@ export default function LoginScreen ({ navigation, route }) {
             // Sign in with the credential from the Facebook user.
             signInWithCredential(auth, credential)
             .then(userCredential => console.log(`FB signin userCredential: ${JSON.stringify(userCredential)}`))
-            .catch(error => alert(error.message));
+            .catch(async (error) => {
+                if (error.code === "auth/account-exists-with-different-credential") {
+                    console.log(credential)
+                    console.log(error.customData.email)
+                    Alert.alert(Strings.English.headers.errorAlert, JSON.stringify(error), [
+                        {
+                            text: Strings.English.buttons.cancel, 
+                            style: "cancel"
+                        },
+                        {
+                            text: Strings.English.buttons.signInGoogle,
+                            onPress: () => gPromptAsync()
+                        }
+                    ])
+                } else {
+                    Alert.alert(error.message)
+                }})
         }
     }, [fResponse]);
 
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
-            // console.log(`User = ${JSON.stringify(user)}`)
             return user ? setUser(user) : setUser({uid: ""})
         })
     }, [])
 
     
-    // const [gRequest, gResponse, gPromptAsync] = Google.useIdTokenAuthRequest(
-    //     {
-    //         clientId: '383268290551-h0k4mfj02umgmc9o1rv1deglt53bpnv3.apps.googleusercontent.com',
-    //     },
-    // );
+    const [gRequest, gResponse, gPromptAsync] = Google.useIdTokenAuthRequest(
+        {
+            clientId: '383268290551-h0k4mfj02umgmc9o1rv1deglt53bpnv3.apps.googleusercontent.com',
+        },
+    );
   
-    // useEffect(() => {
-    //   if (gResponse?.type === 'success') {
-    //     const { id_token } = gResponse.params;
-    //     const auth = getAuth();
-    //     const credential = GoogleAuthProvider.credential(id_token);
-    //     signInWithCredential(auth, credential);
-    //   }
-    // }, [gResponse]);
+    useEffect(() => {
+      if (gResponse?.type === 'success') {
+        const { id_token } = gResponse.params;
+        const credential = GoogleAuthProvider.credential(id_token);
+        signInWithCredential(auth, credential);
+      }
+    }, [gResponse]);
 
     // const emailSignin = () => {
     //     let auth;
@@ -114,14 +128,55 @@ export default function LoginScreen ({ navigation, route }) {
             />
             <LoginButton 
                 iconName={Icons.google}
-                // onPress={() => { gPromptAsync() }}
+                onPress={() => { gPromptAsync() }}
             />
             </>}
-            <LoginButton 
+            {/* <LoginButton 
                 iconName={Icons.email}
                 onPress={() => {setUseEmail(!useEmail)}}
-            />
-            {/* <Text>{JSON.stringify(user)}</Text> */}
+            /> */}
         </SafeAreaView>
     )
 }
+
+
+// "code":"auth/account-exists-with-different-credential",
+// "customData":
+//     {
+//         "appName":"[DEFAULT]",
+//         "email":"konatess@gmail.com",
+//         "_tokenResponse":
+//             {
+//                 "federatedId":"http://facebook.com/10166849694930068",
+//                 "providerId":"facebook.com","email":"konatess@gmail.com",
+//                 "emailVerified":false,
+//                 "firstName":"Theresa",
+//                 "fullName":"Theresa Benkman",
+//                 "lastName":"Benkman",
+//                 "photoUrl":"https://graph.facebook.com/10166849694930068/picture",
+//                 "localId":"w9zXoKZiPUXqo0rGVizFp5gNXlm1",
+//                 "displayName":"Theresa Benkman",
+//                 "verifiedProvider":["google.com"],
+//                 "needConfirmation":true,
+//                 "oauthAccessToken":"EAALpZConF2FcBAK5WqUvlZAVaPYAfRJ5XaM4ei2fMr6FqZABZB11hgX6zZBwvi2MZC3hfOcVerRB6TCfEZAbvxIdgPwvu0CnXbtuUwYGflaReoNRAlu6eqTFnxZCvyD4wa6AbdpyUoUKEPETTYTsDiJOjZAoEQUMHCLdrXpbnR7J5iGZCNZBZCtgGKzw",
+//                 "rawUserInfo":
+//                     "{
+//                     \"name\":\"Theresa Benkman\",
+//                     \"last_name\":\"Benkman\",
+//                     \"id\":\"10166849694930068\",
+//                     \"first_name\":\"Theresa\",
+//                     \"email\":\"konatess@gmail.com\",
+//                     \"picture\":
+//                         {\"data\":
+//                             {
+//                                 \"is_silhouette\":false,
+//                                 \"width\":100,
+//                                 \"url\":\"https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=10166849694930068&height=100&width=100&ext=1672987757&hash=AeQg7Pt9VrvdoCXgO6M\",
+//                                 \"height\":100
+//                             }
+//                         }
+//                     }",
+//                 "kind":"identitytoolkit#VerifyAssertionResponse"
+//             }
+//     },
+// "name":"FirebaseError"
