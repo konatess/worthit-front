@@ -14,6 +14,7 @@ import { app } from "../storage/firebaseInit";
 import { getDatabase, ref, set, push, onValue, get, child, remove } from 'firebase/database';
 import ProdButton from "../components/ProdButton";
 import DataLimits from "../constants/DataLimits";
+import Calculate from "../constants/Calculate";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -126,9 +127,14 @@ export default function HomeScreen ({ route, navigation }) {
     const createProdButtons = () => {
         let buttons = [];
         for (const id in products) {
+            let wage = Calculate.wagePerItem(products[id].wage, products[id].time.hour, products[id].time.minute, products[id].time.amount);
+            let ing = Calculate.ingredientCost(products[id].ingredients, allIngredients)
+            let totalCost = Calculate.totalCost(wage, ing);
             let button = {
                     id: id,
                     title: products[id].title,
+                    profitAmount: products[id].profitAmount,
+                    price: Calculate.priceByAmount(totalCost, products[id].profitAmount),
                 }
             buttons.push(button)
         }
@@ -296,6 +302,8 @@ export default function HomeScreen ({ route, navigation }) {
             renderItem={({ item }) => <ProdButton 
                 key={"prod" + item.id} 
                 title={item.title}
+                price={item.price}
+                profitAmount={item.profitAmount}
                 onPress={() => {
                     navToRecipe(item.id);
                 }}

@@ -12,6 +12,7 @@ import { app } from "../storage/firebaseInit";
 import { getDatabase, ref, set, push, onValue, get, child, remove } from 'firebase/database';
 import IngAmount from "../components/IngAmount";
 import DataLimits from "../constants/DataLimits";
+import Calculate from "../constants/Calculate";
 
 const database = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com/");
 
@@ -261,12 +262,14 @@ export default function RecipeScreen ({navigation, route}) {
     }
 
     const calculateTotalCost = () => {
-        let cost = 0;
-        cost += ((wage * hour) + (wage * minute / 60)) / amountPerTime
-        for (const id in ingredients) {
-            cost += ingredients[id] * allIngredients[id].cost
-        }
-        return cost
+        let ingCost = Calculate.ingredientCost(ingredients, allIngredients);
+        let wageCost = Calculate.wagePerItem(wage, hour, minute, amountPerTime);
+        // let cost = 0;
+        // cost += ((wage * hour) + (wage * minute / 60)) / amountPerTime
+        // for (const id in ingredients) {
+        //     cost += ingredients[id] * allIngredients[id].cost
+        // }
+        return Calculate.totalCost(wageCost, ingCost)
     }
 
     const getNum = (text) => {
@@ -537,6 +540,7 @@ export default function RecipeScreen ({navigation, route}) {
                     {Strings.English.label.profPercent}
                 </Text>
             </View>
+            {/* <Text>{totalCost+profitAmount}</Text> */}
             <View>
                 <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
                     {Strings.English.label.ingredients}

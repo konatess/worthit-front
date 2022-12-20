@@ -44,14 +44,6 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      [
-        "react-native-fbsdk-next",
-        {
-          "appID": "820229395830871",
-          "clientToken": "7b44d39df309e832a98f75d97af3bac5",
-          "displayName": "Worth It"
-        }
-      ]
     ]
   }
 }
