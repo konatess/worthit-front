@@ -10,8 +10,8 @@ import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import * as WebBrowser from 'expo-web-browser';
 import { UserContext } from "../constants/UserContext";
-import { app } from "../storage/firebaseInit";
-import { getDatabase, ref, set, push, onValue, get, child, remove } from 'firebase/database';
+import firebaseInit, { app } from "../storage/firebaseInit";
+import { getDatabase, ref, onValue } from 'firebase/database';
 import ProdButton from "../components/ProdButton";
 import DataLimits from "../constants/DataLimits";
 import Calculate from "../constants/Calculate";
@@ -41,14 +41,10 @@ export default function HomeScreen ({ route, navigation }) {
     const [ingCost, setIngCost] = useState(0);
     const [maxRec, setMaxRec] = useState(false);
     const [maxIng, setMaxIng] = useState(false);
-
-
-    const userDbStr = `users/${user.uid}`
-    const ingStr = "/ingredients"
-    const recStr = "/recipes"
+    // const []
 
     useEffect(() => {
-        let unsubscribe = onValue(ref(database, userDbStr + ingStr), (snapshot) => {
+        let unsubscribe = onValue(ref(database, `users/${user.uid}/ingredients`), (snapshot) => {
             if (snapshot.exists()) {
                 setAllIngredients(snapshot.val());
             }
@@ -61,7 +57,7 @@ export default function HomeScreen ({ route, navigation }) {
     }, [allIngredients])
 
     useEffect(() => {
-        let unsubscribe = onValue(ref(database, userDbStr + recStr), (snapshot) => {
+        let unsubscribe = onValue(ref(database, `users/${user.uid}/recipes`), (snapshot) => {
             if (snapshot.exists()) {
                 setProducts(snapshot.val());
             }
@@ -74,7 +70,6 @@ export default function HomeScreen ({ route, navigation }) {
     }, [products])
 
     useEffect(() => {
-        console.log(ingButtons.length)
         if (ingButtons.length < DataLimits.ingredients.level1) {
             setMaxIng(false);
         } else {
@@ -210,16 +205,16 @@ export default function HomeScreen ({ route, navigation }) {
                 cost: newCost,
             }
             if (ingId) {
-                await set(ref(database, `${userDbStr + ingStr}/${ingId}`), ing).catch(error => console.log(error.message))
+                firebaseInit.dbMethods.updateIngredient(user.uid, ingId, ing);
             } else {
-                await push(ref(database, userDbStr + ingStr), ing).catch(error => console.log(error.message));
+                firebaseInit.dbMethods.newIngredient(user.uid, ing);
             }
             closeModal();
         }
     }
 
     const deleteIngredient = (id) => {
-        remove(ref(database, `${userDbStr + ingStr}/${id}`)).catch(error => console.log(error.message));
+        firebaseInit.dbMethods.deleteIngredient(user.uid, id);
         setIngId("");
         setViewIng(false);
     }

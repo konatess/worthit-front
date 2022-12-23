@@ -1,44 +1,59 @@
-const darkText = '#001B2E';
-const darkCool = '#294C60';
-const darkGreen = '#5F956E';
-const darkBrown = '#A78162';
-const darkOrange = '#F55600';
+// const darkText = '#001B2E';
+// const darkGray = '#294C60';
+// const darkTeal = '#1AC7C7';
+// const darkGreen = '#5F956E';
+// const darkBrown = '#A78162';
+// const darkOrange = '#F55600';
+// const lightGrey = '#ADB6C4';
+// const lightGreen = '#B4CFBC';
+// const lightBrown = '#FFAC70';
+// const lightTurquoise = '#69F2F2'  // '#5DEAEA';
+// const lightText ='#FFF0D6';  //f3f4f6
+
+
+const darkGray = '#294C60';
 const lightGrey = '#ADB6C4';
+const offWhite ='#FFFAEF';  
+const offBlack = '#001B2E';
+const darkGreen = '#5F956E';
 const lightGreen = '#B4CFBC';
-const lightBrown = '#FFAC70';
-const lightTurquoise = '#1CD9D9'
-const lightText ='#FFF0D6';
+const darkOrange = '#F55600';
+const lightOrange = '#FFAC70';
+const darkTurquoise = '#1AC7C7';
+const lightTurquoise = '#69F2F2'
+const darkBrown = '#A78162';
+const lightBrown = '#FFDDA1';
 
 export default {
     lightTheme: {
-        background: '#fdfdfd',
+        background: offWhite,
         buttons:{
-            settings: lightText,
+            settings: lightBrown,
             save: lightGreen,
             create: lightGreen,
             cancel: lightGrey,
-            delete: lightBrown,
+            delete: lightOrange,
             filter: lightTurquoise,
-            duplicate: lightText,
+            duplicate: lightBrown,
             newIngredient: lightGreen,
             addIngredient: lightGreen,
-            navButtonText: '#eee',
-            navButtonIcon: '#eee',
+            navButtonText: offWhite,
+            navButtonIcon: offWhite,
         },
-        inputBorder: darkCool,
-        text: darkText,
-        disabledText: lightGrey,
+        inputBorder: darkGray,
+        text:  offBlack, // darkGray,
+        disabledText: darkGray,
         inputErrorText: darkOrange,
     },
     darkTheme: {
-        background: darkText,
-        text: lightText
+        background: offBlack,
+        text: offWhite
     },
     transparent: '#0000',
     // toggle: {
-    //     trackfalse: darkCool, 
-    //     tracktrue: darkText,
-    //     thumbfalse: lightText,
+    //     trackfalse: darkGray, 
+    //     tracktrue: offBlack,
+    //     thumbfalse: lightGray,
     //     thumbtrue: lightTurquoise,
     //     ios_backgroundColor: "#3e3e3e"
     // },

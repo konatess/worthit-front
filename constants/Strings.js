@@ -1,6 +1,6 @@
 export default {
     util: {
-        languages: ["English", "Espanñol"],
+        languages: ["English", "Español"],
         keys: {
             settings: "USER_SETTINGS",
             prodPrefix: "PROD-",
@@ -106,7 +106,7 @@ export default {
             duplicate: "_Copy"
         },
     },
-    Espanñol: {
+    Español: {
         buttons: {
             settings: "Ajustes",
             save: "Guardar",

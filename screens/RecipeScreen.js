@@ -8,7 +8,7 @@ import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import Modal from "../components/Modal";
 import { UserContext } from "../constants/UserContext";
-import { app } from "../storage/firebaseInit";
+import firebaseInit, { app } from "../storage/firebaseInit";
 import { getDatabase, ref, set, push, onValue, get, child, remove } from 'firebase/database';
 import IngAmount from "../components/IngAmount";
 import DataLimits from "../constants/DataLimits";
@@ -45,10 +45,6 @@ export default function RecipeScreen ({navigation, route}) {
     const [ingPerItem, setIngPerItem] = useState(0);
     const [maxIng, setMaxIng] = useState(false);
     const [totalCost, setTotalCost] = useState(0);
-
-    const userDbStr = `users/${user.uid}`
-    const ingStr = "/ingredients"
-    const recStr = "/recipes"
 
     const [keyboardOut, setKeyboardOut] = useState(false);
     Platform.OS === 'android' &&  useEffect(() => {
@@ -118,7 +114,7 @@ export default function RecipeScreen ({navigation, route}) {
     }, [ingredients])
 
     useEffect(() => {
-        let unsubscribe = onValue(ref(database, `${userDbStr + ingStr}`), (snapshot) => {
+        let unsubscribe = onValue(ref(database, `users/${user.uid}/ingredients`), (snapshot) => {
             if (snapshot.exists()) {
                 setAllIngredients(snapshot.val())
             }
@@ -202,7 +198,7 @@ export default function RecipeScreen ({navigation, route}) {
                 unit: newUnit,
                 cost: newCost,
             }
-            await push(ref(database, `${userDbStr + ingStr}`), ing).catch(error => console.log(error.message));
+            firebaseInit.dbMethods.newIngredient(user.uid, ing)
             closeModal();
         }
     }
@@ -253,9 +249,9 @@ export default function RecipeScreen ({navigation, route}) {
                 ingredients: ingredients
             }
             if (prodId) {
-                await set(ref(database, `${userDbStr + recStr}/${prodId}`), recipe).catch(error => console.log(error.message))
+                firebaseInit.dbMethods.updateRecipe(user.uid, prodDbId, recipe)
             } else {
-                await push(ref(database, `${userDbStr + recStr}`), recipe).catch(error => console.log(error.message));
+                firebaseInit.dbMethods.newRecipe(user.uid, recipe)
             }
             navigation.navigate("Home")
         }
@@ -287,7 +283,7 @@ export default function RecipeScreen ({navigation, route}) {
         color: Colors.lightTheme.buttons.delete,
         iconName: Icons.delete,
         onPress: () => {
-            remove(ref(database, `${userDbStr + recStr}/${prodId}`)).catch(error => console.log(error.message));
+            firebaseInit.dbMethods.deleteRecipe(user.uid, prodId)
             navigation.goBack()
         }
     }
