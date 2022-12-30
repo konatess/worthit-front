@@ -1,6 +1,8 @@
 export default {
     util: {
         languages: ["English", "Español"],
+        currencies: ["$", "£"],
+        logins: ["local", "Facebook", "Google", "email"],
         keys: {
             settings: "USER_SETTINGS",
             prodPrefix: "PROD-",
@@ -42,8 +44,8 @@ export default {
             newIngredient: "New Ingredient",
             allSettings: {
                 // darkMode: "Dark Mode On/Off",
+                // currency: "Currency"
                 // language: "Language",
-                // dateFormat: "Date Format:  ",
                 // profitPrioritizeAmount: "Prioritize profit amount over percent: ",
                 delete: "Start Fresh - Delete All Projects",
                 feedback: "Send Us Your Feedback",

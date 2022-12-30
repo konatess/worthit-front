@@ -9,7 +9,7 @@ import Strings from "../constants/Strings";
 import Modal from "../components/Modal";
 import { UserContext } from "../constants/UserContext";
 import firebaseInit, { app } from "../storage/firebaseInit";
-import { getDatabase, ref, set, push, onValue, get, child, remove } from 'firebase/database';
+import { getDatabase, ref, onValue } from 'firebase/database';
 import IngAmount from "../components/IngAmount";
 import DataLimits from "../constants/DataLimits";
 import Calculate from "../constants/Calculate";
@@ -45,8 +45,8 @@ export default function RecipeScreen ({navigation, route}) {
     const [ingPerItem, setIngPerItem] = useState(0);
     const [maxIng, setMaxIng] = useState(false);
     const [totalCost, setTotalCost] = useState(0);
-
     const [keyboardOut, setKeyboardOut] = useState(false);
+
     Platform.OS === 'android' &&  useEffect(() => {
         const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
           setKeyboardOut(true);
@@ -93,6 +93,7 @@ export default function RecipeScreen ({navigation, route}) {
                     name={allIngredients[id].name}
                     onPress={() => {
                         setIngId(id)
+                        setIngPerItem(ingredients[id]);
                         setModalInputs([{
                             label: Strings.English.label.ingPerItem, 
                             default: ingredients[id] ? ingredients[id].toString() : "", 
@@ -320,6 +321,10 @@ export default function RecipeScreen ({navigation, route}) {
         onPress: () => {
             closeModal();
             setIngId("");
+            setIngName("");
+            setIngUnit("");
+            setIngCost(0);
+            setIngPerItem(0);
         }
     }
     let modalOkayBtn = {

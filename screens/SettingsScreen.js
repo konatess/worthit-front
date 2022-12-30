@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { SafeAreaView, Linking } from "react-native";
 import { getAuth, signOut } from 'firebase/auth';
 import { app } from "../storage/firebaseInit"
@@ -10,11 +10,17 @@ import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import { UserContext } from "../constants/UserContext";
+import { showError } from "../components/Notify" 
+import { storeSettings } from "../storage/localAsync";
 
 
 export default function SettingsScreen ({ route, navigation }) {
     const { settings } = route.params;
-    const { user, setUser } = useContext(UserContext)
+    const { user, setUser } = useContext(UserContext);
+    const [darkMode, setDarkMode] = useState(settings.darkMode || false);
+    const [currency, setCurrency] = useState(settings.currency || Strings.util.currencies[0]);
+    const [language, setLanguage] = useState(settings.language || Strings.util.languages[0]);
+
     let cancelBtn = {
         title: "Cancel",
         color: Colors.lightTheme.buttons.cancel,
@@ -28,14 +34,22 @@ export default function SettingsScreen ({ route, navigation }) {
         color: Colors.lightTheme.buttons.save,
         iconName: Icons.save,
         onPress: () => {
-            // navigation.navigate("Recipe")
+            let obj = {
+                darkMode: darkMode, 
+                currency: currency, 
+                language: language, 
+            }
             console.log("Save Button")
+            storeSettings(obj);
+            navigation.navigate(Strings.util.routes.home)
         }
     }
     let settingsPress = {
-        darkMode: () => {},
+        darkMode: () => {
+            setDarkMode(!darkMode)
+        },
+        currency: () => {},
         language: () => {},
-        dateFormat: () => {},
         delete: () => {},
         feedback: async () => {
             let supported = await Linking.canOpenURL(Strings.util.mailto);
@@ -43,7 +57,7 @@ export default function SettingsScreen ({ route, navigation }) {
                 await Linking.openURL(Strings.util.mailto)
             }
             else {
-                console.log("Error: " + Strings.util.mailto);
+                showError(Strings.util.languages[0], "Error: " + Strings.util.mailto);
             }
         },
         site: async () => {
@@ -52,7 +66,7 @@ export default function SettingsScreen ({ route, navigation }) {
                 await Linking.openURL(Strings.util.website)
             }
             else {
-                console.log("Error: " + Strings.util.website)
+                showError(Strings.util.languages[0],"Error: " + Strings.util.website)
             }
         },
         logout: () => {
@@ -71,7 +85,7 @@ export default function SettingsScreen ({ route, navigation }) {
         settingsBtns.push(button)
     }
 
-    return <SafeAreaView style={[containers.safeArea, {backgroundColor: Colors.lightTheme.background}]}> 
+    return <SafeAreaView style={[containers.safeArea, {backgroundColor: darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
         {settingsBtns.map( button => button )}
         <ButtonBar buttons={[cancelBtn, saveBtn]} />
     </SafeAreaView>

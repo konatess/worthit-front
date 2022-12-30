@@ -13,6 +13,7 @@ import RecipeScreen from './screens/RecipeScreen';
 import LoginScreen from './screens/LoginScreen';
 import Notify from './components/Notify';
 import Strings from './constants/Strings';
+import { getSettings } from './storage/localAsync';
 
 
 
@@ -34,6 +35,7 @@ export default function App() {
 		async function loadResourcesAndDataAsync() {
 			try {
 				SplashScreen.preventAutoHideAsync();
+				setSettingsObj(await getSettings());
 			} catch (e) {
 				// We might want to provide this error information to an error reporting service
 				Notify('English', e.message);

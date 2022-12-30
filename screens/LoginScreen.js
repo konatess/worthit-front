@@ -12,10 +12,6 @@ import Strings from "../constants/Strings";
 import { UserContext } from "../constants/UserContext";
 import Icons from "../constants/Icons";
 
-
-
-// const facebookAppId = "820229395830871";
-const googleClientId = "383268290551-h0k4mfj02umgmc9o1rv1deglt53bpnv3.apps.googleusercontent.com"
 const auth = getAuth(app)
 
 export default function LoginScreen ({ navigation, route }) { 
@@ -39,8 +35,8 @@ export default function LoginScreen ({ navigation, route }) {
             .then(userCredential => console.log(`FB signin userCredential: ${JSON.stringify(userCredential)}`))
             .catch(async (error) => {
                 if (error.code === "auth/account-exists-with-different-credential") {
-                    console.log(credential)
-                    console.log(error.customData.email)
+                    // console.log(credential)
+                    // console.log(error.customData.email)
                     Alert.alert(Strings.English.headers.errorAlert, JSON.stringify(error), [
                         {
                             text: Strings.English.buttons.cancel, 
