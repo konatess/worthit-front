@@ -24,6 +24,7 @@ const database = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com
 export default function HomeScreen ({ route, navigation }) {
 	const { settings } = route.params;
     const { user } = useContext(UserContext);
+    const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
     const [viewIng, setViewIng] = useState(false);
     const [allIngredients, setAllIngredients] = useState({});
     const [ingButtons, setIngButtons] = useState([]);

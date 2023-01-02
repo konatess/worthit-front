@@ -15,7 +15,9 @@ import Icons from "../constants/Icons";
 const auth = getAuth(app)
 
 export default function LoginScreen ({ navigation, route }) { 
+	const { settings } = route.params;
     const { user, setUser } = useContext(UserContext);
+    const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
     const [useEmail, setUseEmail] = useState(false);
     // const [email, setEmail] = useState("");
     // const [password, setPassword] = useState("");

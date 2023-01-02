@@ -17,8 +17,9 @@ import Calculate from "../constants/Calculate";
 const database = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com/");
 
 export default function RecipeScreen ({navigation, route}) {
-    const { knownIng, prodObj, prodDbId } = route.params;
+    const { knownIng, prodObj, prodDbId, settings } = route.params;
     const { user } = useContext(UserContext);
+    const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
     const [modalButtons, setModalButtons] = useState([]);
