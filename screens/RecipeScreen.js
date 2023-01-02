@@ -29,15 +29,15 @@ export default function RecipeScreen ({navigation, route}) {
     const [canSave, setCanSave] = useState(false)
     const [allIngredients, setAllIngredients] = useState(knownIng);
     const [prodId, setProdId] = useState(prodDbId ? prodDbId : "");
-    const [name, setName] = useState(prodObj ? prodObj.title : "");
-    const [note, setNote] = useState(prodObj ? prodObj.note : "");
-    const [hour, setHour] = useState(prodObj ? prodObj.time.hour : 0);
-    const [minute, setMinute] = useState(prodObj ? prodObj.time.minute : 0);
+    const [name, setName] = useState(prodObj?.title ? prodObj.title : "");
+    const [note, setNote] = useState(prodObj?.note ? prodObj.note : "");
+    const [hour, setHour] = useState(prodObj?.time ? prodObj.time.hour : 0);
+    const [minute, setMinute] = useState(prodObj?.time ? prodObj.time.minute : 0);
     const [amountPerTime, setAmountPerTime] = useState(prodObj ? prodObj.time.amount : 0)
-    const [wage, setWage] = useState(prodObj ? prodObj.wage : 15.00);
-    const [profitPercent, setProfitPercent] = useState(prodObj ? prodObj.profitPercent : 0);
-    const [profitAmount, setProfitAmount] = useState(prodObj ? prodObj.profitAmount : 0);
-    const [ingredients, setIngredients] = useState(prodObj ? prodObj.ingredients : {});
+    const [wage, setWage] = useState(prodObj?.wage ? prodObj.wage : 15.00);
+    const [profitPercent, setProfitPercent] = useState(prodObj?.profitPercent ? prodObj.profitPercent : 0);
+    const [profitAmount, setProfitAmount] = useState(prodObj?.profitAmount ? prodObj.profitAmount : 0);
+    const [ingredients, setIngredients] = useState(prodObj?.ingredients ? prodObj.ingredients : {});
     const [ingTextList, setIngTextList] = useState([]);
     const [ingId, setIngId] = useState("");
     const [ingName, setIngName] = useState("");
@@ -351,9 +351,9 @@ export default function RecipeScreen ({navigation, route}) {
                 {label: Strings.English.label.ingCost, default: "", maxChar: DataLimits.inputs.ingCostMax, onChange: (text) => {
                     setIngCost(getNum(text));
                 }, keyboardType: "decimal-pad"},
-                {label: Strings.English.label.inventory, default: "", maxChar: 15, onChange: (text) => {
+                {label: Strings.English.label.inventory, default: "", maxChar: DataLimits.inputs.ingInventoryMax, onChange: (text) => {
                     setIngInventory(getNum(text));
-                }}
+                }, keyboardType: "decimal-pad"}
             ])
             setModalPickers([]);
             setModalButtons([modalCancelBtn]);

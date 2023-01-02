@@ -188,7 +188,6 @@ export default function HomeScreen ({ route, navigation }) {
                 let trimmed = text.trim();
                 let num = parseFloat(trimmed);
                 setIngInventory(isNaN(num) ? 0 : num);
-                console.log(num)
             }, keyboardType: "decimal-pad"}
         ])
         setModalButtons([modalCancelBtn])
@@ -218,8 +217,6 @@ export default function HomeScreen ({ route, navigation }) {
                 cost: newCost,
                 inventory: newInventory
             }
-            console.log(ing);
-            console.log(ingInventory);
             if (ingId) {
                 firebaseInit.dbMethods.updateIngredient(user.uid, ingId, ing);
             } else {
