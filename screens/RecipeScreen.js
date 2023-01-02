@@ -47,6 +47,8 @@ export default function RecipeScreen ({navigation, route}) {
     const [maxIng, setMaxIng] = useState(false);
     const [totalCost, setTotalCost] = useState(0);
     const [keyboardOut, setKeyboardOut] = useState(false);
+    const [ingInventory, setIngInventory] = useState(0);
+    const [prodInventory, setProdInventory] = useState(0);
 
     Platform.OS === 'android' &&  useEffect(() => {
         const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -182,7 +184,6 @@ export default function RecipeScreen ({navigation, route}) {
     const saveIngredient = async () => {
         let newName = ingName.trim();
         let newUnit = ingUnit.trim();
-        let newCost = ingCost;
         if(newName.length === 0) {
             setModalMessage(Strings.English.messages.ingNameTooShort)
         } else if (Strings.util.regex.titles.test(newName)) {
@@ -198,7 +199,8 @@ export default function RecipeScreen ({navigation, route}) {
             let ing = {
                 name: newName,
                 unit: newUnit,
-                cost: newCost,
+                cost: ingCost,
+                inventory: ingInventory
             }
             firebaseInit.dbMethods.newIngredient(user.uid, ing)
             closeModal();
@@ -248,7 +250,8 @@ export default function RecipeScreen ({navigation, route}) {
                 wage: wage,
                 profitPercent: profitPercent,
                 profitAmount: profitAmount,
-                ingredients: ingredients
+                ingredients: ingredients,
+                inventory: prodInventory
             }
             if (prodId) {
                 firebaseInit.dbMethods.updateRecipe(user.uid, prodDbId, recipe)
@@ -343,11 +346,14 @@ export default function RecipeScreen ({navigation, route}) {
         onPress: () => {
             setModalMessage(Strings.English.label.newIngredient);
             setModalInputs([
-                {label: Strings.English.label.ingName, default: "", maxChar: 50, onChange: (text) => {setIngName(text)}},
-                {label: Strings.English.label.ingUnit, default: "", maxChar: 30, onChange: (text) => {setIngUnit(text)}},
-                {label: Strings.English.label.ingCost, default: "", maxChar: 15, onChange: text => {
+                {label: Strings.English.label.ingName, default: "", maxChar: DataLimits.inputs.ingNameMax, onChange: (text) => {setIngName(text)}},
+                {label: Strings.English.label.ingUnit, default: "", maxChar: DataLimits.inputs.ingUnitMax, onChange: (text) => {setIngUnit(text)}},
+                {label: Strings.English.label.ingCost, default: "", maxChar: DataLimits.inputs.ingCostMax, onChange: (text) => {
                     setIngCost(getNum(text));
-                }, keyboardType: "decimal-pad"}
+                }, keyboardType: "decimal-pad"},
+                {label: Strings.English.label.inventory, default: "", maxChar: 15, onChange: (text) => {
+                    setIngInventory(getNum(text));
+                }}
             ])
             setModalPickers([]);
             setModalButtons([modalCancelBtn]);

@@ -8,7 +8,8 @@ export default {
     inputs: {
         ingNameMax: 50,
         ingUnitMax: 30,
-        ingCostMax:15,
+        ingCostMax: 15,
+        ingInventoryMax: 15,
         recNameMax: 50,
         recNoteMax: 500
     }

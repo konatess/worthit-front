@@ -66,7 +66,7 @@ export default function App() {
 					: 
 					<>
 						<Stack.Screen name="Login" component={LoginScreen} 
-							// initialParams={{routeAuth: JSON.stringify(auth)}}
+							initialParams={{settings: settingsObj}}
 						/>
 						{/* <Stack.Screen name="Signup" component={SignUpScreen}/> */}
 					</>}

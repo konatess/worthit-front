@@ -42,7 +42,8 @@ export default function HomeScreen ({ route, navigation }) {
     const [ingCost, setIngCost] = useState(0);
     const [maxRec, setMaxRec] = useState(false);
     const [maxIng, setMaxIng] = useState(false);
-    // const []
+    const [ingInventory, setIngInventory] = useState(0);
+    // const [prodInventory, setProdInventory] = useState(0);
 
     useEffect(() => {
         let unsubscribe = onValue(ref(database, `users/${user.uid}/ingredients`), (snapshot) => {
@@ -114,6 +115,7 @@ export default function HomeScreen ({ route, navigation }) {
                     name: allIngredients[id].name,
                     cost: allIngredients[id].cost,
                     unit: allIngredients[id].unit,
+                    inventory: allIngredients[id].inventory
                 }
             buttons.push(button)
         }
@@ -154,7 +156,8 @@ export default function HomeScreen ({ route, navigation }) {
         navigation.navigate(Strings.util.routes.recipe, {
             prodDbId: id,
             prodObj: product, 
-            knownIng: allIngredients
+            knownIng: allIngredients,
+            settings: settings
         })
     };
 
@@ -164,12 +167,14 @@ export default function HomeScreen ({ route, navigation }) {
             setIngName(ingObj.name);
             setIngUnit(ingObj.unit);
             setIngCost(ingObj.cost);
+            setIngInventory(ingObj.inventory);
             setModalBtnsVertical(true);
         } else {
             setIngId("");
             setIngName("");
             setIngUnit("");
             setIngCost(0);
+            setIngInventory(0);
         }
         setModalInputs([
             {label: Strings.English.label.ingName, default: ingObj.name || "", maxChar: DataLimits.inputs.ingNameMax, onChange: (text) => {setIngName(text)}},
@@ -178,6 +183,12 @@ export default function HomeScreen ({ route, navigation }) {
                 let trimmed = text.trim();
                 let num = parseFloat(trimmed);
                 setIngCost(isNaN(num) ? 0 : num);
+            }, keyboardType: "decimal-pad"},
+            {label: Strings.English.label.inventory, default: ingObj ? ingObj.inventory.toString() : "0", maxChar: DataLimits.inputs.ingInventoryMax, onChange: text => {
+                let trimmed = text.trim();
+                let num = parseFloat(trimmed);
+                setIngInventory(isNaN(num) ? 0 : num);
+                console.log(num)
             }, keyboardType: "decimal-pad"}
         ])
         setModalButtons([modalCancelBtn])
@@ -188,6 +199,7 @@ export default function HomeScreen ({ route, navigation }) {
         let newName = ingName.trim();
         let newUnit = ingUnit.trim();
         let newCost = ingCost;
+        let newInventory = ingInventory;
         if(newName.length === 0) {
             setModalMessage(Strings.English.messages.ingNameTooShort)
         } else if (Strings.util.regex.titles.test(newName)) {
@@ -204,7 +216,10 @@ export default function HomeScreen ({ route, navigation }) {
                 name: newName,
                 unit: newUnit,
                 cost: newCost,
+                inventory: newInventory
             }
+            console.log(ing);
+            console.log(ingInventory);
             if (ingId) {
                 firebaseInit.dbMethods.updateIngredient(user.uid, ingId, ing);
             } else {
@@ -282,12 +297,14 @@ export default function HomeScreen ({ route, navigation }) {
                 name={item.name}
                 cost={item.cost}
                 unit={item.unit}
+                inventory={item.inventory}
                 onPress={() => {
                     callIngModal({
                         id: item.id,
                         name: item.name,
                         cost: item.cost,
                         unit: item.unit,
+                        inventory: item.inventory
                     })
                 }}
             />}

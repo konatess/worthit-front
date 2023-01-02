@@ -77,6 +77,7 @@ export default {
             ingUnit: "Unit: ",
             ingCost: "Cost: ",
             ingPerItem: "Amount: ",
+            inventory: "In Inventory: "
         },
         messages: {
             ingredients: "Choose an ingredient: ",
