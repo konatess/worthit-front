@@ -92,7 +92,7 @@ export default function HomeScreen ({ route, navigation }) {
         if (ingName && ingCost && ingUnit) {
             modalBtns.push(modalSaveIngBtn)
         }
-        if (ingId) {
+        if (ingId && !(allIngredients[ingId].recipes)) {
             modalBtns.unshift(modalDeleteIngBtn)
         }
         setModalButtons(modalBtns);
