@@ -222,14 +222,17 @@ export default function RecipeScreen ({navigation, route}) {
             setModalMessage(Strings.English.messages.prodNameShort)
             setModalButtons([modalOkayBtn])
             setModalVisible(true)
+            return
         } else if (Strings.util.regex.titles.test(title)) {
             setModalMessage(Strings.English.messages.prodNameBadChar)
             setModalButtons([modalOkayBtn])
             setModalVisible(true)
+            return
         } else if (Strings.util.regex.notes.test(note)) {
             setModalMessage(Strings.English.messages.prodNoteBadChar)
             setModalButtons([modalOkayBtn])
             setModalVisible(true)
+            return
         } else {
             for (id in ingredients) {
                 if (ingredients[id] === 0) {
@@ -254,9 +257,17 @@ export default function RecipeScreen ({navigation, route}) {
                 inventory: prodInventory
             }
             if (prodId) {
-                firebaseInit.dbMethods.updateRecipe(user.uid, prodDbId, recipe)
+                firebaseInit.dbMethods.updateRecipe(user.uid, prodDbId, recipe);
+                for (id in allIngredients) {
+                    let inUse = id in ingredients
+                    firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, inUse)
+                } 
             } else {
-                firebaseInit.dbMethods.newRecipe(user.uid, recipe)
+                let newRec = await firebaseInit.dbMethods.newRecipe(user.uid, recipe);
+                for (id in allIngredients) {
+                    let inUse = id in ingredients
+                    firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, newRec, inUse)
+                } 
             }
             navigation.navigate("Home")
         }
@@ -265,11 +276,6 @@ export default function RecipeScreen ({navigation, route}) {
     const calculateTotalCost = () => {
         let ingCost = Calculate.ingredientCost(ingredients, allIngredients);
         let wageCost = Calculate.wagePerItem(wage, hour, minute, amountPerTime);
-        // let cost = 0;
-        // cost += ((wage * hour) + (wage * minute / 60)) / amountPerTime
-        // for (const id in ingredients) {
-        //     cost += ingredients[id] * allIngredients[id].cost
-        // }
         return Calculate.totalCost(wageCost, ingCost)
     }
 
@@ -288,7 +294,10 @@ export default function RecipeScreen ({navigation, route}) {
         color: Colors.lightTheme.buttons.delete,
         iconName: Icons.delete,
         onPress: () => {
-            firebaseInit.dbMethods.deleteRecipe(user.uid, prodId)
+            firebaseInit.dbMethods.deleteRecipe(user.uid, prodId);
+            for (id in allIngredients) {
+                firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, false);
+            }
             navigation.goBack()
         }
     }

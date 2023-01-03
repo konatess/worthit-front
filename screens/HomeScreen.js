@@ -218,6 +218,9 @@ export default function HomeScreen ({ route, navigation }) {
                 inventory: newInventory
             }
             if (ingId) {
+                if (allIngredients[ingId]?.recipes) {
+                    ing.recipes = allIngredients[ingId].recipes
+                }
                 firebaseInit.dbMethods.updateIngredient(user.uid, ingId, ing);
             } else {
                 firebaseInit.dbMethods.newIngredient(user.uid, ing);

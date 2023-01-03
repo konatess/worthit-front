@@ -23,12 +23,15 @@ const dbMethods = {
     },
     updateIngredient: (uid, ingId, ing) => {
         set(ref(db, `users/${uid}/ingredients/${ingId}`), ing).catch(error => showError(Strings.util.languages[0], error.message));
+    }, 
+    updateIRCrossRef: (uid, ingId, recId, inUse) => {
+        set(ref(db, `users/${uid}/ingredients/${ingId}/recipes/${recId}`), (inUse || null)).catch(error => showError(Strings.util.languages[0], error.message));
     },
     deleteIngredient: (uid, ingId) => {
         remove(ref(db, `users/${uid}/ingredients/${ingId}`)).catch(error => showError(Strings.util.languages[0], error.message));
     },
     newRecipe: (uid, rec) => {
-        push(ref(db, `users/${uid}/recipes`), rec).catch(error => showError(Strings.util.languages[0], error.message));
+        return push(ref(db, `users/${uid}/recipes`), rec).then(newRef => newRef.key).catch(error => showError(Strings.util.languages[0], error.message));
     },
     updateRecipe: (uid, recId, rec) => {
         set(ref(db, `users/${uid}/recipes/${recId}`), rec).catch(error => showError(Strings.util.languages[0], error.message));
