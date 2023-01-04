@@ -48,7 +48,7 @@ export default function RecipeScreen ({navigation, route}) {
     const [totalCost, setTotalCost] = useState(0);
     const [keyboardOut, setKeyboardOut] = useState(false);
     const [ingInventory, setIngInventory] = useState(0);
-    const [prodInventory, setProdInventory] = useState(0);
+    const [prodInventory, setProdInventory] = useState(prodObj?.inventory ? prodObj.inventory : 0);
 
     Platform.OS === 'android' &&  useEffect(() => {
         const showSubscription = Keyboard.addListener("keyboardDidShow", () => {

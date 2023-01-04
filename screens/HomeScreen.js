@@ -133,6 +133,7 @@ export default function HomeScreen ({ route, navigation }) {
                     title: products[id].title,
                     profitAmount: products[id].profitAmount,
                     price: Calculate.priceByAmount(totalCost, products[id].profitAmount),
+                    inventory: products[id].inventory
                 }
             buttons.push(button)
         }
@@ -317,6 +318,7 @@ export default function HomeScreen ({ route, navigation }) {
                 title={item.title}
                 price={item.price}
                 profitAmount={item.profitAmount}
+                inventory={item.inventory}
                 onPress={() => {
                     navToRecipe(item.id);
                 }}
