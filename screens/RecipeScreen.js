@@ -557,6 +557,25 @@ export default function RecipeScreen ({navigation, route}) {
                     {Strings.English.label.profPercent}
                 </Text>
             </View>
+            <View style={rows.row1} >
+                <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
+                    {Strings.English.label.inventory}
+                </Text>
+                <TextInput
+                    accessibilityLabel={Strings.English.label.inventory}
+                    style={[inputStyles.inputField, {color: Colors.lightTheme.text}]}
+                    value={prodInventory.toString()}
+                    placeholder={'0'}
+                    keyboardType={'number-pad'}
+                    onChangeText={text => {
+                        if (text.length === 0) {
+                            setProdInventory(0)
+                        } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
+                            setProdInventory(getNum(text))
+                        }
+                    }}
+                />
+            </View>
             {/* <Text>{totalCost+profitAmount}</Text> */}
             <View>
                 <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
