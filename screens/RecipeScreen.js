@@ -101,7 +101,7 @@ export default function RecipeScreen ({navigation, route}) {
                             label: Strings.English.label.ingPerItem, 
                             default: ingredients[id] ? ingredients[id].toString() : "", 
                             onChange: text => {
-                                setIngPerItem(getNum(text));
+                                setIngPerItem(Calculate.getNum(text));
                             }
                         }]);
                         setModalMessage(Strings.English.messages.ingPerItem.replace(/\*unit\*/g, allIngredients[id].unit));
@@ -149,7 +149,7 @@ export default function RecipeScreen ({navigation, route}) {
     }, [hour, minute, amountPerTime, wage])
 
     useEffect(() => {
-        profitPercent && totalCost? setProfitAmount(shortenNum(profitPercent/100*totalCost)) : setProfitAmount(0)
+        profitPercent && totalCost? setProfitAmount(Calculate.shortenNum(profitPercent/100*totalCost)) : setProfitAmount(0)
     }, [totalCost])
 
     const closeModal = () => {
@@ -278,16 +278,6 @@ export default function RecipeScreen ({navigation, route}) {
         let wageCost = Calculate.wagePerItem(wage, hour, minute, amountPerTime);
         return Calculate.totalCost(wageCost, ingCost)
     }
-
-    const getNum = (text) => {
-        let trimmed = text.trim();
-        let num = parseFloat(trimmed);
-        return isNaN(num) ? 0 : num
-    } 
-
-    const shortenNum = (num) => {
-        return parseFloat(num.toFixed(10))
-    }
     
     let deleteBtn = {
         title: Strings.English.buttons.delete,
@@ -358,10 +348,10 @@ export default function RecipeScreen ({navigation, route}) {
                 {label: Strings.English.label.ingName, default: "", maxChar: DataLimits.inputs.ingNameMax, onChange: (text) => {setIngName(text)}},
                 {label: Strings.English.label.ingUnit, default: "", maxChar: DataLimits.inputs.ingUnitMax, onChange: (text) => {setIngUnit(text)}},
                 {label: Strings.English.label.ingCost, default: "", maxChar: DataLimits.inputs.ingCostMax, onChange: (text) => {
-                    setIngCost(getNum(text));
+                    setIngCost(Calculate.getNum(text));
                 }, keyboardType: "decimal-pad"},
                 {label: Strings.English.label.inventory, default: "", maxChar: DataLimits.inputs.ingInventoryMax, onChange: (text) => {
-                    setIngInventory(getNum(text));
+                    setIngInventory(Calculate.getNum(text));
                 }, keyboardType: "decimal-pad"}
             ])
             setModalPickers([]);
@@ -439,7 +429,7 @@ export default function RecipeScreen ({navigation, route}) {
                         if (text.length === 0) {
                             setHour(0)
                         } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
-                            setHour(getNum(text))
+                            setHour(Calculate.getNum(text))
                         }
                     }}
                 />
@@ -457,7 +447,7 @@ export default function RecipeScreen ({navigation, route}) {
                         if (text.length === 0) {
                             setMinute(0)
                         } else if (Strings.util.regex.numbers.test(text)) {
-                            let num = getNum(text);
+                            let num = Calculate.getNum(text);
                             if (num >= 60) {
                                 setMinute(59)
                             } else {
@@ -480,7 +470,7 @@ export default function RecipeScreen ({navigation, route}) {
                         if (text.length === 0) {
                             setAmountPerTime(0)
                         } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
-                            setAmountPerTime(getNum(text))
+                            setAmountPerTime(Calculate.getNum(text))
                         }
                     }}
                 />
@@ -502,7 +492,7 @@ export default function RecipeScreen ({navigation, route}) {
                         if (text.length === 0) {
                             setWage(0)
                         } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
-                            setWage(getNum(text))
+                            setWage(Calculate.getNum(text))
                         }
                     }}
                 />
@@ -525,11 +515,11 @@ export default function RecipeScreen ({navigation, route}) {
                         if (text.length === 0) {
                             setProfitAmount(0)
                         } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
-                            setProfitAmount(getNum(text))
+                            setProfitAmount(Calculate.getNum(text))
                         }
                     }}
                     onBlur={() => {
-                        profitAmount && totalCost ? setProfitPercent(shortenNum(profitAmount/totalCost*100)) : setProfitPercent(0) 
+                        profitAmount && totalCost ? setProfitPercent(Calculate.shortenNum(profitAmount/totalCost*100)) : setProfitPercent(0) 
                     }}
                 />
                 <Text>
@@ -546,11 +536,11 @@ export default function RecipeScreen ({navigation, route}) {
                         if (text.length === 0) {
                             setProfitPercent(0)
                         } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
-                            setProfitPercent(getNum(text))
+                            setProfitPercent(Calculate.getNum(text))
                         }
                     }}
                     onBlur={() => {
-                        profitPercent && totalCost? setProfitAmount(shortenNum(profitPercent/100*totalCost)) : setProfitAmount(0)
+                        profitPercent && totalCost? setProfitAmount(Calculate.shortenNum(profitPercent/100*totalCost)) : setProfitAmount(0)
                     }}
                 />
                 <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
@@ -571,7 +561,7 @@ export default function RecipeScreen ({navigation, route}) {
                         if (text.length === 0) {
                             setProdInventory(0)
                         } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
-                            setProdInventory(getNum(text))
+                            setProdInventory(Calculate.getNum(text))
                         }
                     }}
                 />

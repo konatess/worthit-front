@@ -131,8 +131,8 @@ export default function HomeScreen ({ route, navigation }) {
             let button = {
                     id: id,
                     title: products[id].title,
-                    profitAmount: products[id].profitAmount,
-                    price: Calculate.priceByAmount(totalCost, products[id].profitAmount),
+                    profitAmount: Calculate.limitDec(products[id].profitAmount, settings.decimalLength),
+                    price: Calculate.limitDec(Calculate.priceByAmount(totalCost, products[id].profitAmount), settings.decimalLength),
                     inventory: products[id].inventory
                 }
             buttons.push(button)
@@ -152,7 +152,8 @@ export default function HomeScreen ({ route, navigation }) {
             wage: 0.00,
             profitPercent: 0.0,
             profitAmount: 0,
-            ingredients: {}
+            ingredients: {},
+            inventory: 0
         }
         navigation.navigate(Strings.util.routes.recipe, {
             prodDbId: id,
@@ -181,14 +182,10 @@ export default function HomeScreen ({ route, navigation }) {
             {label: Strings.English.label.ingName, default: ingObj.name || "", maxChar: DataLimits.inputs.ingNameMax, onChange: (text) => {setIngName(text)}},
             {label: Strings.English.label.ingUnit, default: ingObj.unit || "", maxChar: DataLimits.inputs.ingUnitMax, onChange: (text) => {setIngUnit(text)}},
             {label: Strings.English.label.ingCost, default: ingObj ? ingObj.cost.toString() : "", maxChar: DataLimits.inputs.ingCostMax, onChange: text => {
-                let trimmed = text.trim();
-                let num = parseFloat(trimmed);
-                setIngCost(isNaN(num) ? 0 : num);
+                setIngCost(getNum(text));
             }, keyboardType: "decimal-pad"},
             {label: Strings.English.label.inventory, default: ingObj ? ingObj.inventory.toString() : "0", maxChar: DataLimits.inputs.ingInventoryMax, onChange: text => {
-                let trimmed = text.trim();
-                let num = parseFloat(trimmed);
-                setIngInventory(isNaN(num) ? 0 : num);
+                setIngInventory(getNum(text));
             }, keyboardType: "decimal-pad"}
         ])
         setModalButtons([modalCancelBtn])

@@ -21,6 +21,7 @@ export default function SettingsScreen ({ route, navigation }) {
     const [currency, setCurrency] = useState(settings.currency || Strings.util.currencies[0]);
     const [language, setLanguage] = useState(settings.language || Strings.util.languages[0]);
     const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
+    const [decimalLength, setDecimalLength] = useState(settings.decimalLength || 2)
 
     let cancelBtn = {
         title: "Cancel",
@@ -39,7 +40,8 @@ export default function SettingsScreen ({ route, navigation }) {
                 darkMode: darkMode, 
                 currency: currency, 
                 language: language, 
-                login: prefLogin
+                login: prefLogin,
+                decimalLength: decimalLength
             }
             console.log("Save Button")
             storeSettings(obj);
