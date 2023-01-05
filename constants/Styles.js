@@ -20,6 +20,7 @@ const containers = StyleSheet.create({
     projArea: {
         flex: 1,
         padding: 10,
+        marginBottom: 50 * sizer,
     }, 
     buttonBar: {
         flexDirection: 'row',
@@ -31,6 +32,7 @@ const containers = StyleSheet.create({
     },
     centerModal: {
         flex: 1,
+        flexShrink: 1,
         justifyContent: "center",
         alignItems: "center",
     },
@@ -56,9 +58,6 @@ const containers = StyleSheet.create({
         borderRadius: 10,
         padding: 5,
     },
-    datetimeSpinner: {
-        width: width * .8,
-    },
     loginInputs: {
         width: 200 * sizer,
     }
@@ -68,19 +67,6 @@ const rows = StyleSheet.create({
     row1: {
         flexDirection: 'row', 
         marginBottom: 10,
-        alignItems: 'center',
-    },
-    row2: {
-        flexDirection: 'row', 
-        justifyContent: 'space-between',
-        marginBottom: 15,
-    }, 
-    row3: {
-        justifyContent: 'flex-start', 
-        flexWrap: 'wrap'
-    },
-    rowSetBtn: {
-        flexDirection: 'row',
         alignItems: 'center',
     },
     rowModal: {
@@ -134,21 +120,20 @@ const buttonStyles = StyleSheet.create({
         alignItems: 'center'
     },
     ingBtn: {
-        padding: 15,
+        paddingHorizontal: 15,
+        paddingVertical: 8,
         justifyContent: 'flex-start', 
         alignItems: 'stretch',
-        backgroundColor: Colors.lightTheme.buttons.settings
+        borderWidth: .5,
+        borderColor: Colors.lightTheme.buttons.settings,
     },
-    projectBtnArea: {
-        padding: 15,
-    },
-    projectTitleArea: {
-        flexShrink: 1,
-        paddingRight: 10,
-    },
-    projectDueArea: {
-        paddingLeft: 5,
-        justifyContent: 'center',
+    prodBtn: {
+        paddingHorizontal: 15,
+        paddingVertical: 8,
+        justifyContent: 'flex-start', 
+        alignItems: 'stretch',
+        borderWidth: .5,
+        borderColor: Colors.lightTheme.buttons.settings
     },
     settingsBtnArea: {
         flexDirection: "row",
@@ -181,6 +166,7 @@ const inputStyles = StyleSheet.create({
         padding: 3,
         paddingHorizontal: 10,
         fontSize: 18 * sizer,
+        maxWidth: '75%'
     }, 
     loginField: {
         marginTop: 10,
@@ -189,6 +175,9 @@ const inputStyles = StyleSheet.create({
         padding: 3,
         paddingHorizontal: 10,
         fontSize: 18 * sizer,
+    },
+    longInputs: {
+        maxWidth: '100%'
     }
 });
 
@@ -196,18 +185,24 @@ const textStyles = StyleSheet.create({
     labelText: {
         fontSize: 20 * sizer,
         paddingRight: 5,
+        marginTop: 5,
+        marginBottom: 2,
         textAlignVertical: 'center',
-        flexWrap: 'wrap',
         flexShrink: 1,
     }, 
+    headerText: {
+        fontSize: 25 * sizer,
+        marginTop: 30,
+        textAlign: 'center',
+    },
     buttonText: {
-        color: Colors.navButtonText,
+        color: Colors.lightTheme.buttons.navButtonText,
         fontWeight: "bold",
         textAlign: "center",
         fontSize: 14 * sizer,
     },
     navBtnText: {
-        color: Colors.navButtonText,
+        color: Colors.lightTheme.buttons.navButtonText,
         fontSize: 18 * sizer,
     },
     modalMsgText: {
@@ -216,7 +211,7 @@ const textStyles = StyleSheet.create({
         fontSize: 18 * sizer,
     },
     modalBtnText: {
-        color: Colors.navButtonText,
+        color: Colors.lightTheme.buttons.navButtonText,
         fontWeight: "bold",
         textAlign: "center",
         fontSize: 18 * sizer,
@@ -225,14 +220,11 @@ const textStyles = StyleSheet.create({
         fontSize: 16 * sizer,
         alignSelf: 'flex-start',
         marginTop: 1,
-      },
-    displayMargin: {
-        marginBottom: 15,
-    }, 
-    projectTitleText: {
+    },
+    productTitleText: {
         fontSize: 21 * sizer,
     },
-    projectDueText: {
+    productPriceText: {
         fontSize: 17 * sizer,
     },
     settingsBtnText: {
@@ -240,25 +232,6 @@ const textStyles = StyleSheet.create({
     },
     hintText: {
         fontSize: 14 * sizer,
-    },
-});
-
-const progressbar = StyleSheet.create({
-    outline: {
-        flexDirection: 'row',
-        height: 15,
-        width: '100%',
-        borderColor: Colors.edit,
-        borderWidth: 2,
-        borderRadius: 5,
-    },
-    fill: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        backgroundColor: Colors.edit,
     },
 });
 
@@ -270,4 +243,4 @@ const iconSizes = StyleSheet.create({
     loginIconSize: 50 * sizer
 });
 
-export {containers, rows, buttonStyles, inputStyles, textStyles, progressbar, iconSizes};
+export {containers, rows, buttonStyles, inputStyles, textStyles, iconSizes};

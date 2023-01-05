@@ -1,15 +1,9 @@
-import { useState, useEffect, createRef, createContext, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
-import { NavigationContainer, ServerContainer } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import * as Facebook from 'expo-auth-session/providers/facebook';
-import { ResponseType } from 'expo-auth-session';
-import { initializeApp } from 'firebase/app';
-import { getAuth, FacebookAuthProvider, signInWithCredential, onAuthStateChanged } from 'firebase/auth';
-import { auth } from './storage/firebaseInit'
 
 import { UserContext } from './constants/UserContext';
 
@@ -19,6 +13,7 @@ import RecipeScreen from './screens/RecipeScreen';
 import LoginScreen from './screens/LoginScreen';
 import Notify from './components/Notify';
 import Strings from './constants/Strings';
+import { getSettings } from './storage/localAsync';
 
 
 
@@ -34,21 +29,20 @@ export default function App() {
 	});
 	
 
-	
-
 
 	// Load any resources or data that we need prior to rendering the app
 	useEffect(() => {
 		async function loadResourcesAndDataAsync() {
-		try {
-			SplashScreen.preventAutoHideAsync();
-		} catch (e) {
-			// We might want to provide this error information to an error reporting service
-			Notify('English', e.message);
-		} finally {
-			setLoadingComplete(true);
-			SplashScreen.hideAsync();
-		}
+			try {
+				SplashScreen.preventAutoHideAsync();
+				setSettingsObj(await getSettings());
+			} catch (e) {
+				// We might want to provide this error information to an error reporting service
+				Notify('English', e.message);
+			} finally {
+				setLoadingComplete(true);
+				SplashScreen.hideAsync();
+			}
 		}
 
 		loadResourcesAndDataAsync();
@@ -72,7 +66,7 @@ export default function App() {
 					: 
 					<>
 						<Stack.Screen name="Login" component={LoginScreen} 
-							// initialParams={{routeAuth: JSON.stringify(auth)}}
+							initialParams={{settings: settingsObj}}
 						/>
 						{/* <Stack.Screen name="Signup" component={SignUpScreen}/> */}
 					</>}

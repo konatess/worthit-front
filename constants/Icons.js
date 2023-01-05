@@ -5,6 +5,8 @@ export default {
     order: 'reorder-three',
     save: 'save-sharp',
     delete: 'trash-sharp',
+    deleteIng: 'trash-sharp',
+    deleteRec: 'trash-sharp',
     edit: 'create-outline',
     cancel: 'close',
     duplicate: 'duplicate',
@@ -20,5 +22,6 @@ export default {
     logout: 'exit',
     email: 'at-sharp',
     facebook: 'logo-facebook',
-    google: 'logo-google'
+    google: 'logo-google',
+    subscriptions: 'cart' //analytics-sharp, apps, bookmarks, albums
 }
