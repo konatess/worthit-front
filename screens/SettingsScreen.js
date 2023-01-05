@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
-import { SafeAreaView, Linking } from "react-native";
-// import * as Linking from "expo-linking"
+import { SafeAreaView } from "react-native";
+import * as Linking from "expo-linking";
 import { getAuth, signOut } from 'firebase/auth';
 import { app } from "../storage/firebaseInit"
 import ButtonBar from '../components/ButtonBar';
