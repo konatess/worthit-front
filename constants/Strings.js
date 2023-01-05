@@ -14,7 +14,7 @@ export default {
             settings: "Settings",
             recipe: "Recipe"
         },
-        mailto: "mailto:<admin@buddingapps.com>?subject=Worth%20It%20App",
+        mailto: "mailto:admin@buddingapps.com?subject=Worth%20It%20App",
         website: "https://www.buddingapps.com/projects/divide-%26-de-stress",
         dateFormats: ["MM/DD", "DD/MM", "MM-DD", "DD-MM", "YY/MM/DD", "DD/MM/YY", "MM/DD/YY", "YY-MM-DD", "DD-MM-YY", "MM-DD-YY"],
         regex: {
@@ -47,7 +47,9 @@ export default {
                 // currency: "Currency"
                 // language: "Language",
                 // profitPrioritizeAmount: "Prioritize profit amount over percent: ",
-                delete: "Start Fresh - Delete All Projects",
+                subscriptions: "Manage Subscriptions",
+                deleteRec: "Start Fresh - Delete All Recipes",
+                deleteIng: "Start Fresh - Delete All Ingredients",
                 feedback: "Send Us Your Feedback",
                 site: "Visit Our Website",
                 logout: "Log out"

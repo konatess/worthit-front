@@ -1,16 +1,16 @@
 import { useContext, useState } from "react";
 import { SafeAreaView, Linking } from "react-native";
+// import * as Linking from "expo-linking"
 import { getAuth, signOut } from 'firebase/auth';
 import { app } from "../storage/firebaseInit"
-
 import ButtonBar from '../components/ButtonBar';
 import SettingButton from "../components/SettingButton";
 import { containers } from '../constants/Styles';
 import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
+import Notify from "../components/Notify";
 import { UserContext } from "../constants/UserContext";
-import { showError } from "../components/Notify" 
 import { storeSettings } from "../storage/localAsync";
 
 
@@ -54,14 +54,19 @@ export default function SettingsScreen ({ route, navigation }) {
         },
         currency: () => {},
         language: () => {},
-        delete: () => {},
+        deleteIng: () => {},
+        deleteRec: () => {},
+        subscriptions: () => {
+            // console.log("Subscriptions")
+            Notify.showError("English", Strings.English.buttons.allSettings.subscriptions)
+        },
         feedback: async () => {
             let supported = await Linking.canOpenURL(Strings.util.mailto);
             if (supported) {
                 await Linking.openURL(Strings.util.mailto)
             }
             else {
-                showError(Strings.util.languages[0], "Error: " + Strings.util.mailto);
+                Notify.showError(Strings.util.languages[0], "Error: " + Strings.util.mailto);
             }
         },
         site: async () => {
@@ -70,7 +75,7 @@ export default function SettingsScreen ({ route, navigation }) {
                 await Linking.openURL(Strings.util.website)
             }
             else {
-                showError(Strings.util.languages[0],"Error: " + Strings.util.website)
+                Notify.showError(Strings.util.languages[0],"Error: " + Strings.util.website)
             }
         },
         logout: () => {

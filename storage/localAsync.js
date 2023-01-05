@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { showError } from '../components/Notify';
+import Notify from '../components/Notify';
 
 
 const storageKeys = {
@@ -13,7 +13,7 @@ const storeIng = async (ingObj) => {
         const jsonValue = JSON.stringify(ingObj)
         await AsyncStorage.setItem(storageKeys.allIng, jsonValue)
     } catch (e) {
-        showError(Strings.util.languages[0], e.message);
+        Notify.showError(Strings.util.languages[0], e.message);
     }
 }
 
@@ -22,7 +22,7 @@ const getIng = async () => {
         const jsonValue = await AsyncStorage.getItem(storageKeys.allIng)
         return jsonValue != null ? JSON.parse(jsonValue) : null;
     } catch(e) {
-        showError(Strings.util.languages[0], e.message);
+        Notify.showError(Strings.util.languages[0], e.message);
     }
 }
 
@@ -31,7 +31,7 @@ const storeRec = async (recObj) => {
         const jsonValue = JSON.stringify(recObj)
         await AsyncStorage.setItem(storageKeys.allRec, jsonValue)
     } catch (e) {
-        showError(Strings.util.languages[0], e.message);
+        Notify.showError(Strings.util.languages[0], e.message);
     }
 }
 
@@ -40,7 +40,7 @@ const getRec = async () => {
         const jsonValue = await AsyncStorage.getItem(storageKeys.allRec)
         return jsonValue != null ? JSON.parse(jsonValue) : null;
     } catch(e) {
-        showError(Strings.util.languages[0], e.message);
+        Notify.showError(Strings.util.languages[0], e.message);
     }
 }
 
@@ -49,7 +49,7 @@ const storeSettings = async (settingsObj) => {
         const jsonValue = JSON.stringify(settingsObj)
         await AsyncStorage.setItem(storageKeys.settings, jsonValue)
     } catch (e) {
-        showError(Strings.util.languages[0], e.message);
+        Notify.showError(Strings.util.languages[0], e.message);
     }
 }
 
@@ -58,7 +58,7 @@ const getSettings = async () => {
       const jsonValue = await AsyncStorage.getItem(storageKeys.settings)
       return jsonValue != null ? JSON.parse(jsonValue) : {darkMode: false, currency: Strings.util.currencies[0], language: Strings.util.languages[0], };
     } catch(e) {
-        showError(Strings.util.languages[0], e.message);
+        Notify.showError(Strings.util.languages[0], e.message);
     }
 }
 
