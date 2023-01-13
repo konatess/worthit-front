@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from "react";
-import { Text, SafeAreaView, FlatList, ke } from "react-native";
+import { Text, SafeAreaView, FlatList } from "react-native";
+import uuid from "react-native-uuid";
 
 import ButtonBar from '../components/ButtonBar';
 import { containers, textStyles } from '../constants/Styles';
@@ -15,6 +16,7 @@ import { getDatabase, ref, onValue } from 'firebase/database';
 import ProdButton from "../components/ProdButton";
 import DataLimits from "../constants/DataLimits";
 import Calculate from "../constants/Calculate";
+import { storeIng } from "../storage/localAsync";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -43,7 +45,6 @@ export default function HomeScreen ({ route, navigation }) {
     const [maxRec, setMaxRec] = useState(false);
     const [maxIng, setMaxIng] = useState(false);
     const [ingInventory, setIngInventory] = useState(0);
-    // const [prodInventory, setProdInventory] = useState(0);
 
     useEffect(() => {
         let unsubscribe = onValue(ref(database, `users/${user.uid}/ingredients`), (snapshot) => {
@@ -182,10 +183,11 @@ export default function HomeScreen ({ route, navigation }) {
             {label: Strings.English.label.ingName, default: ingObj.name || "", maxChar: DataLimits.inputs.ingNameMax, onChange: (text) => {setIngName(text)}},
             {label: Strings.English.label.ingUnit, default: ingObj.unit || "", maxChar: DataLimits.inputs.ingUnitMax, onChange: (text) => {setIngUnit(text)}},
             {label: Strings.English.label.ingCost, default: ingObj ? ingObj.cost.toString() : "", maxChar: DataLimits.inputs.ingCostMax, onChange: text => {
-                setIngCost(getNum(text));
+                // setIngCost(Calculate.getNum(text));
+                setIngCost(Calculate.getNum(text));
             }, keyboardType: "decimal-pad"},
             {label: Strings.English.label.inventory, default: ingObj ? ingObj.inventory.toString() : "0", maxChar: DataLimits.inputs.ingInventoryMax, onChange: text => {
-                setIngInventory(getNum(text));
+                setIngInventory(Calculate.getNum(text));
             }, keyboardType: "decimal-pad"}
         ])
         setModalButtons([modalCancelBtn])
@@ -215,20 +217,41 @@ export default function HomeScreen ({ route, navigation }) {
                 cost: newCost,
                 inventory: newInventory
             }
-            if (ingId) {
-                if (allIngredients[ingId]?.recipes) {
-                    ing.recipes = allIngredients[ingId].recipes
+            if (prefLogin === Strings.util.logins[0]) {
+                let allIngObj = allIngredients
+                if (ingId) {
+                    if (allIngredients[ingId]?.recipes) {
+                        ing.recipes = allIngredients[ingId].recipes
+                    }
+                    allIngObj[ingId] = ing;
+                } else {
+                    let id = uuid.v4();
+                    allIngObj[id] = ing;
                 }
-                firebaseInit.dbMethods.updateIngredient(user.uid, ingId, ing);
-            } else {
-                firebaseInit.dbMethods.newIngredient(user.uid, ing);
+                storeIng(allIngObj);
+            } else if (prefLogin !== Strings.util.logins[0]) {
+                if (ingId) {
+                    if (allIngredients[ingId]?.recipes) {
+                        ing.recipes = allIngredients[ingId].recipes
+                    }
+                    firebaseInit.dbMethods.updateIngredient(user.uid, ingId, ing);
+                } else {
+                    firebaseInit.dbMethods.newIngredient(user.uid, ing);
+                }
             }
             closeModal();
         }
     }
 
     const deleteIngredient = (id) => {
-        firebaseInit.dbMethods.deleteIngredient(user.uid, id);
+        if (prefLogin === Strings.util.logins[0]) {
+            let allIngObj = allIngredients;
+            delete allIngObj[id];
+            storeIng(allIngObj);
+            setAllIngredients(allIngObj);
+        } else if (prefLogin !== Strings.util.logins[0]) {
+            firebaseInit.dbMethods.deleteIngredient(user.uid, id);
+        }
         setIngId("");
         setViewIng(false);
     }

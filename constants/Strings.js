@@ -4,9 +4,9 @@ export default {
         currencies: ["$", "£"],
         logins: ["local", "Facebook", "Google", "email"],
         keys: {
-            settings: "USER_SETTINGS",
-            prodPrefix: "PROD-",
-            ingPrefix: "ING-"
+            allIng: 'ALLINGREDIENTS',
+            allRec: 'ALLRECIPES',
+            settings: 'SETTINGS',
         },
         routes: {
             login: "Login",

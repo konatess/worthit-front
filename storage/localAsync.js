@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Notify from '../components/Notify';
+import Strings from '../constants/Strings';
 
 
 const storageKeys = {
