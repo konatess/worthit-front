@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { Text, SafeAreaView, View, TextInput, Keyboard, Pressable, KeyboardAvoidingView, ScrollView } from "react-native";
+import uuid from "react-native-uuid";
 
 import ButtonBar from '../components/ButtonBar';
 import { containers, textStyles, inputStyles, rows, buttonStyles } from '../constants/Styles';
@@ -10,6 +11,7 @@ import Modal from "../components/Modal";
 import { UserContext } from "../constants/UserContext";
 import firebaseInit, { app } from "../storage/firebaseInit";
 import { getDatabase, ref, onValue } from 'firebase/database';
+import { storeIng, getIng, storeRec, getRec } from "../storage/localAsync";
 import IngAmount from "../components/IngAmount";
 import DataLimits from "../constants/DataLimits";
 import Calculate from "../constants/Calculate";
@@ -17,7 +19,7 @@ import Calculate from "../constants/Calculate";
 const database = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com/");
 
 export default function RecipeScreen ({navigation, route}) {
-    const { knownIng, prodObj, prodDbId, settings } = route.params;
+    const { knownIng, prodObj, prodDbId, settings, products } = route.params;
     const { user } = useContext(UserContext);
     const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
     const [modalVisible, setModalVisible] = useState(false);
@@ -202,7 +204,14 @@ export default function RecipeScreen ({navigation, route}) {
                 cost: ingCost,
                 inventory: ingInventory
             }
-            firebaseInit.dbMethods.newIngredient(user.uid, ing)
+            if (prefLogin === Strings.util.logins[0]) {
+                let allIngObj = allIngredients;
+                let id = uuid.v4();
+                allIngObj[id] = ing;
+                storeIng(allIngObj);
+            } else if (prefLogin !== Strings.util.logins[0]) {
+                firebaseInit.dbMethods.newIngredient(user.uid, ing)
+            }
             closeModal();
         }
     }
@@ -256,18 +265,35 @@ export default function RecipeScreen ({navigation, route}) {
                 ingredients: ingredients,
                 inventory: prodInventory
             }
-            if (prodId) {
-                firebaseInit.dbMethods.updateRecipe(user.uid, prodDbId, recipe);
+            if (prefLogin === Strings.util.logins[0]) {
+                let allIngObj = allIngredients;
+                let allProdObj = products;
+                let recId = prodId ? prodId : uuid.v4();
+                allProdObj[recId] = recipe;
+                storeRec(allProdObj);
                 for (id in allIngredients) {
                     let inUse = id in ingredients
-                    firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, inUse)
-                } 
-            } else {
-                let newRec = await firebaseInit.dbMethods.newRecipe(user.uid, recipe);
-                for (id in allIngredients) {
-                    let inUse = id in ingredients
-                    firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, newRec, inUse)
-                } 
+                    if (inUse) {
+                        allIngObj[id].recipes[recId] = true
+                    } else {
+                        delete allIngObj[id].recipes[recId]
+                    }
+                }
+                storeIng(allIngObj);
+            } else if (prefLogin !== Strings.util.logins[0]) {
+                if (prodId) {
+                    firebaseInit.dbMethods.updateRecipe(user.uid, prodId, recipe);
+                    for (id in allIngredients) {
+                        let inUse = id in ingredients
+                        firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, inUse)
+                    } 
+                } else {
+                    let newRec = await firebaseInit.dbMethods.newRecipe(user.uid, recipe);
+                    for (id in allIngredients) {
+                        let inUse = id in ingredients
+                        firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, newRec, inUse)
+                    } 
+                }
             }
             navigation.navigate("Home")
         }
@@ -284,9 +310,21 @@ export default function RecipeScreen ({navigation, route}) {
         color: Colors.lightTheme.buttons.delete,
         iconName: Icons.delete,
         onPress: () => {
-            firebaseInit.dbMethods.deleteRecipe(user.uid, prodId);
-            for (id in allIngredients) {
-                firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, false);
+
+            if (prefLogin === Strings.util.logins[0]) {
+                let allIngObj = allIngredients;
+                let allProdObj = products;
+                delete allProdObj[recId]
+                storeRec(allProdObj);
+                for (id in allIngredients) {
+                    delete allIngObj[id].recipes[recId]
+                }
+                storeIng(allIngObj);
+            } else if (prefLogin !== Strings.util.logins[0]) {
+                firebaseInit.dbMethods.deleteRecipe(user.uid, prodId);
+                for (id in allIngredients) {
+                    firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, false);
+                }
             }
             navigation.goBack()
         }

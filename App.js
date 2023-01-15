@@ -22,11 +22,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
 	const [isLoadingComplete, setLoadingComplete] = useState(false);
 	const [user, setUser] = useState({uid: ""});
-	const [settingsObj, setSettingsObj] = useState({
-		darkmode: false,
-		language: 'English',
-		dateFormat: 'MM/DD',
-	});
+	const [settingsObj, setSettingsObj] = useState({});
 	
 
 

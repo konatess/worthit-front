@@ -160,7 +160,8 @@ export default function HomeScreen ({ route, navigation }) {
             prodDbId: id,
             prodObj: product, 
             knownIng: allIngredients,
-            settings: settings
+            settings: settings,
+            products: prefLogin !== Strings.util.logins[0] ? products : {}
         })
     };
 
@@ -217,12 +218,12 @@ export default function HomeScreen ({ route, navigation }) {
                 cost: newCost,
                 inventory: newInventory
             }
+            if (ingId && allIngredients[ingId]?.recipes) {
+                ing.recipes = allIngredients[ingId].recipes
+            }
             if (prefLogin === Strings.util.logins[0]) {
-                let allIngObj = allIngredients
+                let allIngObj = allIngredients;
                 if (ingId) {
-                    if (allIngredients[ingId]?.recipes) {
-                        ing.recipes = allIngredients[ingId].recipes
-                    }
                     allIngObj[ingId] = ing;
                 } else {
                     let id = uuid.v4();
@@ -231,9 +232,6 @@ export default function HomeScreen ({ route, navigation }) {
                 storeIng(allIngObj);
             } else if (prefLogin !== Strings.util.logins[0]) {
                 if (ingId) {
-                    if (allIngredients[ingId]?.recipes) {
-                        ing.recipes = allIngredients[ingId].recipes
-                    }
                     firebaseInit.dbMethods.updateIngredient(user.uid, ingId, ing);
                 } else {
                     firebaseInit.dbMethods.newIngredient(user.uid, ing);
