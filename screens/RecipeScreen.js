@@ -10,7 +10,7 @@ import Strings from "../constants/Strings";
 import Modal from "../components/Modal";
 import { UserContext } from "../constants/UserContext";
 import firebaseInit from "../storage/firebaseInit";
-import { storeIng, getIng, storeRec, getRec } from "../storage/localAsync";
+import { storeIng, getIng, storeRec } from "../storage/localAsync";
 import IngAmount from "../components/IngAmount";
 import DataLimits from "../constants/DataLimits";
 import Calculate from "../constants/Calculate";
@@ -18,8 +18,8 @@ import Calculate from "../constants/Calculate";
 export default function RecipeScreen ({navigation, route}) {
     const { knownIng, prodObj, prodDbId, settings, products } = route.params;
     const { user } = useContext(UserContext);
-    // const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
-    const [prefLogin, setPrefLogin] = useState(Strings.util.logins[1]);
+    const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
+    // const [prefLogin, setPrefLogin] = useState(Strings.util.logins[1]);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
     const [modalButtons, setModalButtons] = useState([]);
@@ -100,6 +100,7 @@ export default function RecipeScreen ({navigation, route}) {
                         setModalInputs([{
                             label: Strings.English.label.ingPerItem, 
                             default: ingredients[id] ? ingredients[id].toString() : "", 
+                            keyboardType: 'decimal-pad',
                             onChange: text => {
                                 setIngPerItem(Calculate.getNum(text));
                             }
@@ -119,7 +120,7 @@ export default function RecipeScreen ({navigation, route}) {
 
     useEffect(() => {
         if (prefLogin === Strings.util.logins[0]) {
-            setAllIngredients(getIng());
+            getIng(setAllIngredients);
         } else {
             let unsubscribe = firebaseInit.dbMethods.listen.ing(user.uid, setAllIngredients)
             return unsubscribe
@@ -264,17 +265,24 @@ export default function RecipeScreen ({navigation, route}) {
                 inventory: prodInventory
             }
             if (prefLogin === Strings.util.logins[0]) {
-                let allIngObj = allIngredients;
-                let allProdObj = products;
+                let allIngObj = allIngredients || {};
                 let recId = prodId ? prodId : uuid.v4();
-                allProdObj[recId] = recipe;
+                let allProdObj = {
+                    ...products,
+                    [recId]: recipe
+                };
                 storeRec(allProdObj);
                 for (id in allIngredients) {
                     let inUse = id in ingredients
                     if (inUse) {
-                        allIngObj[id].recipes[recId] = true
+                        // allIngObj[id].recipes[recId] = true
+                        let recs = allIngObj[id]?.recipes || {};
+                        allIngObj[id].recipes = {
+                            ...recs,
+                            [recId]: true
+                        }
                     } else if (allIngObj[id].recipes) {
-                         delete allIngObj[id].recipes[recId]
+                         delete allIngObj[id]?.recipes[recId]
                     }
                 }
                 storeIng(allIngObj);
@@ -308,7 +316,6 @@ export default function RecipeScreen ({navigation, route}) {
         color: Colors.lightTheme.buttons.delete,
         iconName: Icons.delete,
         onPress: () => {
-
             if (prefLogin === Strings.util.logins[0]) {
                 let allIngObj = allIngredients;
                 let allProdObj = products;
@@ -626,7 +633,6 @@ export default function RecipeScreen ({navigation, route}) {
             <KeyboardAvoidingView
                 keyboardVerticalOffset={100}
                 behavior={'padding'}
-                // style={[{backgroundColor: "orange", opacity: 1, zIndex: 40}]}
             >
                 <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>{Strings.English.label.prodNote}</Text>
                 <TextInput

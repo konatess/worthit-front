@@ -15,7 +15,7 @@ import firebaseInit from "../storage/firebaseInit";
 import ProdButton from "../components/ProdButton";
 import DataLimits from "../constants/DataLimits";
 import Calculate from "../constants/Calculate";
-import { storeIng, getIng, storeRec, getRec } from "../storage/localAsync";
+import { storeIng, getIng, getRec } from "../storage/localAsync";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -23,12 +23,12 @@ WebBrowser.maybeCompleteAuthSession();
 export default function HomeScreen ({ route, navigation }) {
 	const { settings } = route.params;
     const { user } = useContext(UserContext);
-    // const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
-    const [prefLogin, setPrefLogin] = useState(Strings.util.logins[1]);
+    const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
+    // const [prefLogin, setPrefLogin] = useState(Strings.util.logins[1]);
     const [viewIng, setViewIng] = useState(false);
     const [allIngredients, setAllIngredients] = useState({});
     const [ingButtons, setIngButtons] = useState([]);
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState({});
     const [prodButtons, setProdButtons] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
@@ -40,13 +40,13 @@ export default function HomeScreen ({ route, navigation }) {
     const [ingName, setIngName] = useState("");
     const [ingUnit, setIngUnit] = useState("");
     const [ingCost, setIngCost] = useState(0);
+    const [ingInventory, setIngInventory] = useState(0);
     const [maxRec, setMaxRec] = useState(false);
     const [maxIng, setMaxIng] = useState(false);
-    const [ingInventory, setIngInventory] = useState(0);
 
     useEffect(() => {
         if (prefLogin === Strings.util.logins[0]) {
-            setAllIngredients(getIng());
+            getIng(setAllIngredients)
         } else {
             let unsubscribe = firebaseInit.dbMethods.listen.ing(user.uid, setAllIngredients)
             return unsubscribe
@@ -59,7 +59,7 @@ export default function HomeScreen ({ route, navigation }) {
 
     useEffect(() => {
         if (prefLogin === Strings.util.logins[0]) {
-            setProducts(getRec());
+            getRec(setProducts);
         } else {
             let unsubscribe = firebaseInit.dbMethods.listen.rec(user.uid, setProducts)
             return unsubscribe
@@ -79,6 +79,11 @@ export default function HomeScreen ({ route, navigation }) {
     }, [ingButtons])
 
     useEffect(() => {
+        getIng(setAllIngredients);
+        getRec(setProducts);
+    }, [viewIng])
+
+    useEffect(() => {
         if (prodButtons.length < DataLimits.recipes.level1) {
             setMaxRec(false);
         } else {
@@ -91,7 +96,7 @@ export default function HomeScreen ({ route, navigation }) {
         if (ingName && ingCost && ingUnit) {
             modalBtns.push(modalSaveIngBtn)
         }
-        if (ingId && !(allIngredients[ingId].recipes)) {
+        if (ingId && !(allIngredients[ingId]?.recipes)) {
             modalBtns.unshift(modalDeleteIngBtn)
         }
         setModalButtons(modalBtns);
@@ -111,10 +116,10 @@ export default function HomeScreen ({ route, navigation }) {
         for (const id in allIngredients) {
             let button = {
                     id: id,
-                    name: allIngredients[id].name,
-                    cost: allIngredients[id].cost,
-                    unit: allIngredients[id].unit,
-                    inventory: allIngredients[id].inventory
+                    name: allIngredients[id]?.name,
+                    cost: allIngredients[id]?.cost,
+                    unit: allIngredients[id]?.unit,
+                    inventory: allIngredients[id]?.inventory
                 }
             buttons.push(button)
         }
@@ -124,15 +129,15 @@ export default function HomeScreen ({ route, navigation }) {
     const createProdButtons = () => {
         let buttons = [];
         for (const id in products) {
-            let wage = Calculate.wagePerItem(products[id].wage, products[id].time.hour, products[id].time.minute, products[id].time.amount);
-            let ing = Calculate.ingredientCost(products[id].ingredients, allIngredients)
+            let wage = Calculate.wagePerItem(products[id]?.wage, products[id]?.time?.hour, products[id]?.time?.minute, products[id]?.time?.amount);
+            let ing = Calculate.ingredientCost(products[id]?.ingredients, allIngredients)
             let totalCost = Calculate.totalCost(wage, ing);
             let button = {
                     id: id,
-                    title: products[id].title,
-                    profitAmount: Calculate.limitDec(products[id].profitAmount, settings.decimalLength),
-                    price: Calculate.limitDec(Calculate.priceByAmount(totalCost, products[id].profitAmount), settings.decimalLength),
-                    inventory: products[id].inventory
+                    title: products[id]?.title,
+                    profitAmount: Calculate.limitDec(products[id]?.profitAmount, settings.decimalLength),
+                    price: Calculate.limitDec(Calculate.priceByAmount(totalCost, products[id]?.profitAmount), settings.decimalLength),
+                    inventory: products[id]?.inventory
                 }
             buttons.push(button)
         }
@@ -159,7 +164,7 @@ export default function HomeScreen ({ route, navigation }) {
             prodObj: product, 
             knownIng: allIngredients,
             settings: settings,
-            products: prefLogin !== Strings.util.logins[0] ? products : {}
+            products: products
         })
     };
 
