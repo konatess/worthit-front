@@ -11,22 +11,20 @@ import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import * as WebBrowser from 'expo-web-browser';
 import { UserContext } from "../constants/UserContext";
-import firebaseInit, { app } from "../storage/firebaseInit";
-import { getDatabase, ref, onValue } from 'firebase/database';
+import firebaseInit from "../storage/firebaseInit";
 import ProdButton from "../components/ProdButton";
 import DataLimits from "../constants/DataLimits";
 import Calculate from "../constants/Calculate";
-import { storeIng } from "../storage/localAsync";
+import { storeIng, getIng, storeRec, getRec } from "../storage/localAsync";
 
 WebBrowser.maybeCompleteAuthSession();
-
-const database = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com/");
 
 
 export default function HomeScreen ({ route, navigation }) {
 	const { settings } = route.params;
     const { user } = useContext(UserContext);
-    const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
+    // const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
+    const [prefLogin, setPrefLogin] = useState(Strings.util.logins[1]);
     const [viewIng, setViewIng] = useState(false);
     const [allIngredients, setAllIngredients] = useState({});
     const [ingButtons, setIngButtons] = useState([]);
@@ -47,12 +45,12 @@ export default function HomeScreen ({ route, navigation }) {
     const [ingInventory, setIngInventory] = useState(0);
 
     useEffect(() => {
-        let unsubscribe = onValue(ref(database, `users/${user.uid}/ingredients`), (snapshot) => {
-            if (snapshot.exists()) {
-                setAllIngredients(snapshot.val());
-            }
-        })
-        return unsubscribe
+        if (prefLogin === Strings.util.logins[0]) {
+            setAllIngredients(getIng());
+        } else {
+            let unsubscribe = firebaseInit.dbMethods.listen.ing(user.uid, setAllIngredients)
+            return unsubscribe
+        }
     }, [])
 
     useEffect(() => {
@@ -60,12 +58,12 @@ export default function HomeScreen ({ route, navigation }) {
     }, [allIngredients])
 
     useEffect(() => {
-        let unsubscribe = onValue(ref(database, `users/${user.uid}/recipes`), (snapshot) => {
-            if (snapshot.exists()) {
-                setProducts(snapshot.val());
-            }
-        })
-        return unsubscribe
+        if (prefLogin === Strings.util.logins[0]) {
+            setProducts(getRec());
+        } else {
+            let unsubscribe = firebaseInit.dbMethods.listen.rec(user.uid, setProducts)
+            return unsubscribe
+        }
     }, [])
     
     useEffect(() => {
@@ -97,7 +95,7 @@ export default function HomeScreen ({ route, navigation }) {
             modalBtns.unshift(modalDeleteIngBtn)
         }
         setModalButtons(modalBtns);
-    }, [ingId, ingName, ingCost, ingUnit])
+    }, [ingId, ingName, ingCost, ingUnit, ingInventory])
 
     const closeModal = () => {
         setModalVisible(false);

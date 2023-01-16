@@ -46,6 +46,7 @@ export default ({visible, message, pickers, inputs, buttons, vertical, darkmode}
 								style={[inputStyles.inputField, {color: Colors.lightTheme.text}]}
 								placeholder={unit.placeholder}
 								defaultValue={unit.default || ''}
+								returnKeyType={'next'}
 								// value={unit.default}
 								multiline={true}
 								maxLength={unit.maxChar}

@@ -9,19 +9,17 @@ import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import Modal from "../components/Modal";
 import { UserContext } from "../constants/UserContext";
-import firebaseInit, { app } from "../storage/firebaseInit";
-import { getDatabase, ref, onValue } from 'firebase/database';
+import firebaseInit from "../storage/firebaseInit";
 import { storeIng, getIng, storeRec, getRec } from "../storage/localAsync";
 import IngAmount from "../components/IngAmount";
 import DataLimits from "../constants/DataLimits";
 import Calculate from "../constants/Calculate";
 
-const database = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com/");
-
 export default function RecipeScreen ({navigation, route}) {
     const { knownIng, prodObj, prodDbId, settings, products } = route.params;
     const { user } = useContext(UserContext);
-    const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
+    // const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
+    const [prefLogin, setPrefLogin] = useState(Strings.util.logins[1]);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
     const [modalButtons, setModalButtons] = useState([]);
@@ -120,12 +118,12 @@ export default function RecipeScreen ({navigation, route}) {
     }, [ingredients])
 
     useEffect(() => {
-        let unsubscribe = onValue(ref(database, `users/${user.uid}/ingredients`), (snapshot) => {
-            if (snapshot.exists()) {
-                setAllIngredients(snapshot.val())
-            }
-        })
-        return unsubscribe
+        if (prefLogin === Strings.util.logins[0]) {
+            setAllIngredients(getIng());
+        } else {
+            let unsubscribe = firebaseInit.dbMethods.listen.ing(user.uid, setAllIngredients)
+            return unsubscribe
+        }
     }, [])
 
     useEffect(() => {
@@ -275,8 +273,8 @@ export default function RecipeScreen ({navigation, route}) {
                     let inUse = id in ingredients
                     if (inUse) {
                         allIngObj[id].recipes[recId] = true
-                    } else {
-                        delete allIngObj[id].recipes[recId]
+                    } else if (allIngObj[id].recipes) {
+                         delete allIngObj[id].recipes[recId]
                     }
                 }
                 storeIng(allIngObj);

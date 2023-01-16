@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getDatabase, ref, set, push, remove } from 'firebase/database';
+import { getDatabase, ref, set, push, remove, onValue } from 'firebase/database';
 import Notify from '../components/Notify';
 
 let firebaseConfig = {
@@ -18,6 +18,22 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp()
 const db = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com/");
 
 const dbMethods = {
+    listen: {
+        ing: (uid, callback) => {
+            onValue(ref(db, `users/${uid}/ingredients`), (snapshot) => {
+                if (snapshot.exists()) {
+                    callback(snapshot.val());
+                }
+            })
+        },
+        rec: (uid, callback) => {
+            onValue(ref(db, `users/${uid}/recipes`), (snapshot) => {
+                if (snapshot.exists()) {
+                    callback(snapshot.val());
+                }
+            })
+        }
+    },
     newIngredient: (uid, ing) => {
         push(ref(db, `users/${uid}/ingredients`), ing).catch(error => Notify.showError(Strings.util.languages[0],error.message));
     },
