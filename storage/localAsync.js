@@ -29,10 +29,8 @@ const getIng = async (callback) => {
 }
 
 const storeRec = async (recObj) => {
-    console.log(recObj)
     try {
         const jsonValue = JSON.stringify(recObj);
-        console.log(jsonValue)
         await AsyncStorage.setItem(storageKeys.allRec, jsonValue);
     } catch (e) {
         Notify.showError(Strings.util.languages[0], e.message);

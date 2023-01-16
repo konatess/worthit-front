@@ -19,7 +19,6 @@ export default function RecipeScreen ({navigation, route}) {
     const { knownIng, prodObj, prodDbId, settings, products } = route.params;
     const { user } = useContext(UserContext);
     const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
-    // const [prefLogin, setPrefLogin] = useState(Strings.util.logins[1]);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
     const [modalButtons, setModalButtons] = useState([]);

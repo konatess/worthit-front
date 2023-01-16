@@ -24,7 +24,6 @@ export default function HomeScreen ({ route, navigation }) {
 	const { settings } = route.params;
     const { user } = useContext(UserContext);
     const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
-    // const [prefLogin, setPrefLogin] = useState(Strings.util.logins[1]);
     const [viewIng, setViewIng] = useState(false);
     const [allIngredients, setAllIngredients] = useState({});
     const [ingButtons, setIngButtons] = useState([]);
