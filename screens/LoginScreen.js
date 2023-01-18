@@ -18,7 +18,6 @@ export default function LoginScreen ({ navigation, route }) {
 	const { settings } = route.params;
     const { user, setUser } = useContext(UserContext);
     const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
-    const [useEmail, setUseEmail] = useState(false);
     // const [email, setEmail] = useState("");
     // const [password, setPassword] = useState("");
     
@@ -97,7 +96,7 @@ export default function LoginScreen ({ navigation, route }) {
     return (
         <SafeAreaView style={[containers.safeArea, containers.logins]}>
             <Text style={textStyles.labelText}>{Strings.English.label.login}</Text>
-            {useEmail && <KeyboardAvoidingView style={containers.loginInputs}>
+            {prefLogin === Strings.util.logins[5] && <KeyboardAvoidingView style={containers.loginInputs}>
                 <TextInput 
                     style={inputStyles.loginField} 
                     placeholder={Strings.English.placeholder.email}
@@ -119,15 +118,15 @@ export default function LoginScreen ({ navigation, route }) {
                     <Text style={textStyles.buttonText}>{Strings.English.buttons.loginWithEmail}</Text>
                 </Pressable>
             </KeyboardAvoidingView>}
-            {!useEmail && <>
-            <LoginButton 
+            {prefLogin !== Strings.util.logins[5] && <>
+            {(prefLogin === Strings.util.logins[2] || prefLogin === Strings.util.logins[3]) && <LoginButton 
                 iconName={Icons.facebook}
                 onPress={() => { fPromptAsync() }}
-            />
-            <LoginButton 
+            />}
+            {(prefLogin === Strings.util.logins[2] || prefLogin === Strings.util.logins[4]) && <LoginButton 
                 iconName={Icons.google}
                 onPress={() => { gPromptAsync() }}
-            />
+            />}
             </>}
             {/* <LoginButton 
                 iconName={Icons.email}

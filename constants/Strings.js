@@ -2,7 +2,7 @@ export default {
     util: {
         languages: ["English", "Español"],
         currencies: ["$", "£"],
-        logins: ["local", "Facebook", "Google", "email"],
+        logins: ["local", "newFirebase", "Facebook", "Google", "email"],
         keys: {
             allIng: 'ALLINGREDIENTS',
             allRec: 'ALLRECIPES',
