@@ -27,7 +27,7 @@ export default function RecipeScreen ({navigation, route}) {
     const [modalBtnsVertical, setModalBtnsVertical] = useState(false);
     const [canSave, setCanSave] = useState(false)
     const [allIngredients, setAllIngredients] = useState(knownIng);
-    const [prodId, setProdId] = useState(prodDbId ? prodDbId : "");
+    const [prodId, setProdId] = useState(prodDbId.length ? prodDbId : "");
     const [name, setName] = useState(prodObj?.title ? prodObj.title : "");
     const [note, setNote] = useState(prodObj?.note ? prodObj.note : "");
     const [hour, setHour] = useState(prodObj?.time ? prodObj.time.hour : 0);
@@ -206,7 +206,7 @@ export default function RecipeScreen ({navigation, route}) {
                 let allIngObj = allIngredients;
                 let id = uuid.v4();
                 allIngObj[id] = ing;
-                storeIng(allIngObj);
+                storeIng(allIngObj).then(getIng(setAllIngredients));
             } else if (prefLogin !== Strings.util.logins[0]) {
                 firebaseInit.dbMethods.newIngredient(user.uid, ing)
             }
@@ -265,7 +265,7 @@ export default function RecipeScreen ({navigation, route}) {
             }
             if (prefLogin === Strings.util.logins[0]) {
                 let allIngObj = allIngredients || {};
-                let recId = prodId ? prodId : uuid.v4();
+                let recId = prodId.length ? prodId : uuid.v4();
                 let allProdObj = {
                     ...products,
                     [recId]: recipe
@@ -274,17 +274,16 @@ export default function RecipeScreen ({navigation, route}) {
                 for (id in allIngredients) {
                     let inUse = id in ingredients
                     if (inUse) {
-                        // allIngObj[id].recipes[recId] = true
                         let recs = allIngObj[id]?.recipes || {};
                         allIngObj[id].recipes = {
                             ...recs,
                             [recId]: true
                         }
                     } else if (allIngObj[id].recipes) {
-                         delete allIngObj[id]?.recipes[recId]
+                         delete allIngObj[id].recipes[recId]
                     }
                 }
-                storeIng(allIngObj);
+                storeIng(allIngObj).then(getIng(setAllIngredients));
             } else if (prefLogin !== Strings.util.logins[0]) {
                 if (prodId) {
                     firebaseInit.dbMethods.updateRecipe(user.uid, prodId, recipe);
@@ -300,7 +299,7 @@ export default function RecipeScreen ({navigation, route}) {
                     } 
                 }
             }
-            navigation.navigate("Home")
+            navigation.push("Home")
         }
     }
 
@@ -318,19 +317,19 @@ export default function RecipeScreen ({navigation, route}) {
             if (prefLogin === Strings.util.logins[0]) {
                 let allIngObj = allIngredients;
                 let allProdObj = products;
-                delete allProdObj[recId]
+                delete allProdObj[prodId]
                 storeRec(allProdObj);
                 for (id in allIngredients) {
-                    delete allIngObj[id].recipes[recId]
+                    delete allIngObj[id].recipes[prodId]
                 }
-                storeIng(allIngObj);
+                storeIng(allIngObj).then(getIng(setAllIngredients));
             } else if (prefLogin !== Strings.util.logins[0]) {
                 firebaseInit.dbMethods.deleteRecipe(user.uid, prodId);
                 for (id in allIngredients) {
                     firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, false);
                 }
             }
-            navigation.goBack()
+            navigation.pop()
         }
     }
     let cancelBtn = {
@@ -338,7 +337,7 @@ export default function RecipeScreen ({navigation, route}) {
         color: Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
-            navigation.goBack()
+            navigation.pop()
         }
     }
     let createBtn = {

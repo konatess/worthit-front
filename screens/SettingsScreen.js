@@ -28,7 +28,7 @@ export default function SettingsScreen ({ route, navigation }) {
         color: Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
-            navigation.goBack()
+            navigation.pop()
         }
     }
     let saveBtn = {
@@ -45,7 +45,7 @@ export default function SettingsScreen ({ route, navigation }) {
             }
             console.log("Save Button")
             storeSettings(obj);
-            navigation.navigate(Strings.util.routes.home)
+            navigation.push(Strings.util.routes.home)
         }
     }
     let settingsPress = {

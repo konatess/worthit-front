@@ -1,5 +1,6 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useCallback } from "react";
 import { Text, SafeAreaView, FlatList } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import uuid from "react-native-uuid";
 
 import ButtonBar from '../components/ButtonBar';
@@ -101,6 +102,15 @@ export default function HomeScreen ({ route, navigation }) {
         setModalButtons(modalBtns);
     }, [ingId, ingName, ingCost, ingUnit, ingInventory])
 
+    useFocusEffect(
+        useCallback( () => {
+            if (prefLogin === Strings.util.logins[0]) {
+                getRec(setProducts);
+            }
+        }, []
+        )
+    )
+
     const closeModal = () => {
         setModalVisible(false);
         setModalMessage("");
@@ -158,7 +168,7 @@ export default function HomeScreen ({ route, navigation }) {
             ingredients: {},
             inventory: 0
         }
-        navigation.navigate(Strings.util.routes.recipe, {
+        navigation.push(Strings.util.routes.recipe, {
             prodDbId: id,
             prodObj: product, 
             knownIng: allIngredients,
@@ -231,7 +241,7 @@ export default function HomeScreen ({ route, navigation }) {
                     let id = uuid.v4();
                     allIngObj[id] = ing;
                 }
-                storeIng(allIngObj);
+                storeIng(allIngObj).then(getIng(setAllIngredients));
             } else if (prefLogin !== Strings.util.logins[0]) {
                 if (ingId) {
                     firebaseInit.dbMethods.updateIngredient(user.uid, ingId, ing);
@@ -247,13 +257,11 @@ export default function HomeScreen ({ route, navigation }) {
         if (prefLogin === Strings.util.logins[0]) {
             let allIngObj = allIngredients;
             delete allIngObj[id];
-            storeIng(allIngObj);
-            setAllIngredients(allIngObj);
+            storeIng(allIngObj).then(getIng(setAllIngredients));
         } else if (prefLogin !== Strings.util.logins[0]) {
             firebaseInit.dbMethods.deleteIngredient(user.uid, id);
         }
         setIngId("");
-        setViewIng(false);
     }
 
     let modalCancelBtn = {
@@ -290,7 +298,7 @@ export default function HomeScreen ({ route, navigation }) {
         color: Colors.lightTheme.buttons.settings,
         iconName: Icons.settings,
         onPress: () => {
-            navigation.navigate(Strings.util.routes.settings, {settings: settings})
+            navigation.push(Strings.util.routes.settings, {settings: settings})
         }
     }
     let createbtn = {
