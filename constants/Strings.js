@@ -72,7 +72,7 @@ export default {
             wage: "Wage per Hour: $ ",
             profit: "Profit: ",
             profAmount: "$ ",
-            profPercent: " %",
+            profPercent: " % of Cost",
             ingredients: "Ingredients: ",
             newIngredient: "Create new Ingredient:",
             ingName: "Name: ",
@@ -95,7 +95,9 @@ export default {
             prodNoteBadChar: "Product notes can only contain letters, numbers, spaces, returns, and these symbols: '-_/&:!(),.?",
             prodTime: "Please set a time of at least one minute and less than 100 hours",
             prodAmount: "Please set an amount greater than 0 and less than 1,000,000",
-            ingredientsAmounts: "Please set amounts for ingredients, or remove them from the list"
+            ingredientsAmounts: "Please set amounts for ingredients, or remove them from the list",
+            deleteAllIng: "Are you sure you want to delete all your ingredients? This cannot be undone.",
+            deleteAllRec: "Are you sure you want to delete all your recipes? This cannot be undone."
         },
         hint: {
             amount: "If it takes more than one hour to produce one, we recommend setting amount to 1"

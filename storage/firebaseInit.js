@@ -46,6 +46,9 @@ const dbMethods = {
     deleteIngredient: (uid, ingId) => {
         remove(ref(db, `users/${uid}/ingredients/${ingId}`)).catch(error => Notify.showError(Strings.util.languages[0], error.message));
     },
+    deleteAllIngredients: (uid) => {
+        remove(ref(db, `users/${uid}/ingredients`));
+    },
     newRecipe: (uid, rec) => {
         return push(ref(db, `users/${uid}/recipes`), rec).then(newRef => newRef.key).catch(error => Notify.showError(Strings.util.languages[0], error.message));
     },
@@ -54,7 +57,10 @@ const dbMethods = {
     },
     deleteRecipe: (uid, recId) => {
         remove(ref(db, `users/${uid}/recipes/${recId}`)).catch(error => Notify.showError(Strings.util.languages[0], error.message));
-    }
+    },
+    deleteAllRecipes: (uid) => {
+        remove(ref(db, `users/${uid}/recipes`));
+    },
 }
 
 export default { app, db, dbMethods }

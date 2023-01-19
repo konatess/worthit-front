@@ -298,7 +298,7 @@ export default function HomeScreen ({ route, navigation }) {
         color: Colors.lightTheme.buttons.settings,
         iconName: Icons.settings,
         onPress: () => {
-            navigation.push(Strings.util.routes.settings, {settings: settings})
+            navigation.push(Strings.util.routes.settings, {settings: settings, recLength: prodButtons.length})
         }
     }
     let createbtn = {

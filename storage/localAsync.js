@@ -28,6 +28,14 @@ const getIng = async (callback) => {
     }
 }
 
+const deleteIng = async () => {
+    try{
+        await AsyncStorage.removeItem(storageKeys.allIng);
+    } catch(e) {
+        Notify.showError(Strings.util.languages[0], e.message);
+    }
+}
+
 const storeRec = async (recObj) => {
     try {
         const jsonValue = JSON.stringify(recObj);
@@ -41,6 +49,14 @@ const getRec = async (callback) => {
     try {
         const jsonValue = await AsyncStorage.getItem(storageKeys.allRec);
         callback(jsonValue != null ? JSON.parse(jsonValue) : {});
+    } catch(e) {
+        Notify.showError(Strings.util.languages[0], e.message);
+    }
+}
+
+const deleteRec = async () => {
+    try{
+        await AsyncStorage.removeItem(storageKeys.allRec);
     } catch(e) {
         Notify.showError(Strings.util.languages[0], e.message);
     }
@@ -64,4 +80,4 @@ const getSettings = async (callback) => {
     }
 }
 
-export {storeIng, getIng, storeRec, getRec, storeSettings, getSettings}
+export {storeIng, getIng, deleteIng, storeRec, getRec, deleteRec, storeSettings, getSettings}

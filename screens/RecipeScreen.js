@@ -112,7 +112,7 @@ export default function RecipeScreen ({navigation, route}) {
             }
         }
         setIngTextList(list);
-        if (list.length) {
+        if (list.length && amountPerTime && (hour || minute)) {
             setTotalCost(calculateTotalCost())
         }
     }, [ingredients])
@@ -143,13 +143,13 @@ export default function RecipeScreen ({navigation, route}) {
     }, [name, hour, minute, amountPerTime, wage, profitAmount])
 
     useEffect(() => {
-        if ((hour || minute) && amountPerTime && wage) {
+        if ((hour || minute) && amountPerTime && wage && ingTextList.length) {
             setTotalCost(calculateTotalCost())
         }
     }, [hour, minute, amountPerTime, wage])
 
     useEffect(() => {
-        profitPercent && totalCost? setProfitAmount(Calculate.shortenNum(profitPercent/100*totalCost)) : setProfitAmount(0)
+        profitPercent && totalCost ? setProfitAmount(Calculate.shortenNum(profitPercent/100*totalCost)) : setProfitAmount(0)
     }, [totalCost])
 
     const closeModal = () => {
