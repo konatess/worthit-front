@@ -79,7 +79,7 @@ export default function SettingsScreen ({ route, navigation }) {
             if (prefLogin === Strings.util.logins[0]) {
                 deleteIng();
             } else if (prefLogin === !Strings.util.logins[0]) {
-                firebaseInit.dbMethods.deleteAllIngredients();
+                firebaseInit.dbMethods.deleteAllIngredients(user.uid);
             }
             navigation.pop();
         }
@@ -94,7 +94,7 @@ export default function SettingsScreen ({ route, navigation }) {
             if (prefLogin === Strings.util.logins[0]) {
                 deleteRec();
             } else if (prefLogin === !Strings.util.logins[0]) {
-                firebaseInit.dbMethods.deleteAllRecipes();
+                firebaseInit.dbMethods.deleteAllRecipes(user.uid);
             }
             navigation.pop();
         }
