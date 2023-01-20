@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getDatabase, ref, set, push, remove, onValue } from 'firebase/database';
+import { getDatabase, ref, set, push, get, remove, onValue } from 'firebase/database';
 import Notify from '../components/Notify';
+import Strings from '../constants/Strings';
 
 let firebaseConfig = {
     apiKey: "AIzaSyD5LuF_dEvcv3xcTg3-hIxJ_6Ps_f04YYw",
@@ -33,6 +34,15 @@ const dbMethods = {
                 }
             })
         }
+    },
+    getAllIngAndRec: (uid, callback) => {
+        get(ref(db, `users/${uid}`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                callback(snapshot.val())
+            } else {
+                callback(null)
+            }
+        }).catch(error => Notify.showError(Strings.util.languages[0],error.message));
     },
     newIngredient: (uid, ing) => {
         push(ref(db, `users/${uid}/ingredients`), ing).catch(error => Notify.showError(Strings.util.languages[0],error.message));

@@ -79,11 +79,6 @@ export default function HomeScreen ({ route, navigation }) {
     }, [ingButtons])
 
     useEffect(() => {
-        getIng(setAllIngredients);
-        getRec(setProducts);
-    }, [viewIng])
-
-    useEffect(() => {
         if (prodButtons.length < DataLimits.recipes.level1) {
             setMaxRec(false);
         } else {
@@ -106,6 +101,7 @@ export default function HomeScreen ({ route, navigation }) {
         useCallback( () => {
             if (prefLogin === Strings.util.logins[0]) {
                 getRec(setProducts);
+                getIng(setAllIngredients);
             }
         }, []
         )

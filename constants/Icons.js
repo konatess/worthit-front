@@ -23,5 +23,7 @@ export default {
     email: 'at-sharp',
     facebook: 'logo-facebook',
     google: 'logo-google',
-    subscriptions: 'cart' //analytics-sharp, apps, bookmarks, albums
+    subscriptions: 'cart', //analytics-sharp, apps, bookmarks, albums
+    overwriteLocal: 'arrow-down-circle-outline',
+    overwriteRemote: 'arrow-up-circle-outline'
 }

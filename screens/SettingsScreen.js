@@ -12,7 +12,7 @@ import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import Notify from "../components/Notify";
 import { UserContext } from "../constants/UserContext";
-import { storeSettings, deleteIng, deleteRec } from "../storage/localAsync";
+import { storeSettings, storeIng, deleteIng, storeRec, deleteRec } from "../storage/localAsync";
 
 
 export default function SettingsScreen ({ route, navigation }) {
@@ -79,7 +79,7 @@ export default function SettingsScreen ({ route, navigation }) {
             if (prefLogin === Strings.util.logins[0]) {
                 deleteIng();
             } else if (prefLogin === !Strings.util.logins[0]) {
-                firebaseInit.dbMethods.deleteAllIngredients(user.uid);
+                firebaseInit.dbMethods.deleteAllIngredients(user.uid, );
             }
             navigation.pop();
         }
@@ -100,6 +100,25 @@ export default function SettingsScreen ({ route, navigation }) {
         }
     }
 
+    let modalOverwriteLocalBtn = {
+        title: Strings.English.buttons.okay,
+        color: Colors.lightTheme.buttons.save,
+        iconName: Icons.okay,
+        onPress: ()=> {
+            setModalMessage(Strings.English.messages.overwriteInProgress);
+            setModalButtons([]);
+            let ingredients = {};
+            let recipes = {};
+            firebaseInit.dbMethods.getAllIngAndRec(user.uid,(value) => {
+                if (value) {
+                    ingredients = value.ingredients
+                    recipes = value.recipes
+                }
+                Promise.all([storeIng(ingredients), storeRec(recipes)]).then(closeModal());
+            })
+        }
+    }
+
     let settingsPress = {
         darkMode: () => {
             setDarkMode(!darkMode)
@@ -116,8 +135,13 @@ export default function SettingsScreen ({ route, navigation }) {
             setModalButtons([modalDeleteRecBtn, modalCancelBtn])
             setModalVisible(true);
         },
+        overwriteLocal: () => {
+            setModalMessage(Strings.English.messages.overwriteLocal);
+            setModalButtons([modalOverwriteLocalBtn, modalCancelBtn])
+            setModalVisible(true);
+        },
+        overwriteRemote: () => {},
         subscriptions: () => {
-            // console.log("Subscriptions")
             Notify.showError("English", Strings.English.buttons.allSettings.subscriptions)
         },
         feedback: async () => {
@@ -152,9 +176,11 @@ export default function SettingsScreen ({ route, navigation }) {
             onPress={settingsPress[property]}
         />
         if (property === "deleteIng" && recLength) {
-            console.log("skip")
+            // console.log("skip")
         } else if (property === "deleteRec" && !recLength) {
-            console.log("skip")
+            // console.log("skip")
+        } else if ((property === "overwriteLocal" || property === "overwriteRemote") && prefLogin === Strings.util.logins[0]) {
+            // console.log("skip")
         } else {
             settingsBtns.push(button)
         }
