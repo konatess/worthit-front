@@ -47,7 +47,6 @@ export default ({visible, message, pickers, inputs, buttons, vertical, darkmode}
 								placeholder={unit.placeholder}
 								defaultValue={unit.default || ''}
 								returnKeyType={'next'}
-								// value={unit.default}
 								multiline={true}
 								maxLength={unit.maxChar}
 								autoFocus={!index}
