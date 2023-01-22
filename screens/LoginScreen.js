@@ -4,7 +4,7 @@ import * as Facebook from 'expo-auth-session/providers/facebook';
 import * as Google from 'expo-auth-session/providers/google';
 import { ResponseType } from 'expo-auth-session';
 import { signInWithEmailAndPassword } from 'firebase/app';
-import { getAuth, FacebookAuthProvider, GoogleAuthProvider, linkWithCredential, signInWithCredential, onAuthStateChanged, signOut, } from 'firebase/auth';
+import { getAuth, FacebookAuthProvider, GoogleAuthProvider, signInWithCredential, onAuthStateChanged } from 'firebase/auth';
 import { app } from '../storage/firebaseInit';
 import LoginButton from "../components/LoginBtn";
 import { containers, textStyles, inputStyles, buttonStyles } from "../constants/Styles";
