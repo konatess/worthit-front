@@ -35,6 +35,9 @@ const dbMethods = {
             })
         }
     },
+    createId: () => {
+        return push(ref(db, `users`)).key
+    },
     getAllIngAndRec: (uid, callback) => {
         get(ref(db, `users/${uid}`)).then((snapshot) => {
             if (snapshot.exists()) {
@@ -43,6 +46,12 @@ const dbMethods = {
                 callback(null)
             }
         }).catch(error => Notify.showError(Strings.util.languages[0],error.message));
+    },
+    overwriteAllIngAndRec: (uid, dataObj) => {
+        Promise.all([
+            set(ref(db, `users/${uid}/ingredients`), dataObj.ingredients),
+            set(ref(db, `users/${uid}/recipes`), dataObj.recipes)
+        ])
     },
     newIngredient: (uid, ing) => {
         push(ref(db, `users/${uid}/ingredients`), ing).catch(error => Notify.showError(Strings.util.languages[0],error.message));

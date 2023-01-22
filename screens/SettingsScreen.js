@@ -12,7 +12,7 @@ import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import Notify from "../components/Notify";
 import { UserContext } from "../constants/UserContext";
-import { storeSettings, storeIng, deleteIng, storeRec, deleteRec } from "../storage/localAsync";
+import { storeSettings, storeIng, deleteIng, storeRec, deleteRec, getIngAndRec } from "../storage/localAsync";
 
 
 export default function SettingsScreen ({ route, navigation }) {
@@ -104,7 +104,7 @@ export default function SettingsScreen ({ route, navigation }) {
         title: Strings.English.buttons.okay,
         color: Colors.lightTheme.buttons.save,
         iconName: Icons.okay,
-        onPress: ()=> {
+        onPress: () => {
             setModalMessage(Strings.English.messages.overwriteInProgress);
             setModalButtons([]);
             let ingredients = {};
@@ -116,6 +116,19 @@ export default function SettingsScreen ({ route, navigation }) {
                 }
                 Promise.all([storeIng(ingredients), storeRec(recipes)]).then(closeModal());
             })
+        }
+    }
+
+    let modalOverwriteRemoteBtn = {
+        title: Strings.English.buttons.okay,
+        color: Colors.lightTheme.buttons.save,
+        iconName: Icons.okay,
+        onPress: async () => {
+            setModalMessage(Strings.English.messages.overwriteInProgress);
+            setModalButtons([]);
+            let value = await getIngAndRec();
+            firebaseInit.dbMethods.overwriteAllIngAndRec(user.uid, value);
+            closeModal();
         }
     }
 
@@ -140,7 +153,11 @@ export default function SettingsScreen ({ route, navigation }) {
             setModalButtons([modalOverwriteLocalBtn, modalCancelBtn])
             setModalVisible(true);
         },
-        overwriteRemote: () => {},
+        overwriteRemote: () => {
+            setModalMessage(Strings.English.messages.overwriteRemote);
+            setModalButtons([modalOverwriteRemoteBtn, modalCancelBtn])
+            setModalVisible(true);
+        },
         subscriptions: () => {
             Notify.showError("English", Strings.English.buttons.allSettings.subscriptions)
         },

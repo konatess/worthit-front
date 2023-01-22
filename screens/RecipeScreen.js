@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext } from "react";
 import { Text, SafeAreaView, View, TextInput, Keyboard, Pressable, KeyboardAvoidingView, ScrollView } from "react-native";
-import uuid from "react-native-uuid";
 
 import ButtonBar from '../components/ButtonBar';
 import { containers, textStyles, inputStyles, rows, buttonStyles } from '../constants/Styles';
@@ -204,7 +203,7 @@ export default function RecipeScreen ({navigation, route}) {
             }
             if (prefLogin === Strings.util.logins[0]) {
                 let allIngObj = allIngredients;
-                let id = uuid.v4();
+                let id = firebaseInit.dbMethods.createId();
                 allIngObj[id] = ing;
                 storeIng(allIngObj).then(getIng(setAllIngredients));
             } else if (prefLogin !== Strings.util.logins[0]) {
@@ -265,7 +264,7 @@ export default function RecipeScreen ({navigation, route}) {
             }
             if (prefLogin === Strings.util.logins[0]) {
                 let allIngObj = allIngredients || {};
-                let recId = prodId.length ? prodId : uuid.v4();
+                let recId = prodId.length ? prodId : firebaseInit.dbMethods.createId();
                 let allProdObj = {
                     ...products,
                     [recId]: recipe

@@ -1,7 +1,6 @@
 import { useState, useContext, useEffect, useCallback } from "react";
 import { Text, SafeAreaView, FlatList } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import uuid from "react-native-uuid";
 
 import ButtonBar from '../components/ButtonBar';
 import { containers, textStyles } from '../constants/Styles';
@@ -234,7 +233,7 @@ export default function HomeScreen ({ route, navigation }) {
                 if (ingId) {
                     allIngObj[ingId] = ing;
                 } else {
-                    let id = uuid.v4();
+                    let id = firebaseInit.dbMethods.createId();
                     allIngObj[id] = ing;
                 }
                 storeIng(allIngObj).then(getIng(setAllIngredients));

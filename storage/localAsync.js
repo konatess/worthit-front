@@ -80,4 +80,16 @@ const getSettings = async (callback) => {
     }
 }
 
-export {storeIng, getIng, deleteIng, storeRec, getRec, deleteRec, storeSettings, getSettings}
+const getIngAndRec = async () => {
+    try {
+        const ingJson = await AsyncStorage.getItem(storageKeys.allIng);
+        const recJson = await AsyncStorage.getItem(storageKeys.allRec);
+        let ing = ingJson != null ? JSON.parse(ingJson) : {}
+        let rec = recJson != null ? JSON.parse(recJson) : {}
+        return {ingredients: ing, recipes: rec}
+    } catch(e) {
+        Notify.showError(Strings.util.languages[0], e.message);
+    }
+}
+
+export {storeIng, getIng, deleteIng, storeRec, getRec, deleteRec, storeSettings, getSettings, getIngAndRec}
