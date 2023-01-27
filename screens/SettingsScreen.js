@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import * as Linking from "expo-linking";
 import { getAuth, signOut } from 'firebase/auth';
 import firebaseInit, { app } from "../storage/firebaseInit"
@@ -204,7 +204,10 @@ export default function SettingsScreen ({ route, navigation }) {
     }
 
     return <SafeAreaView style={[containers.safeArea, {backgroundColor: darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
-        {settingsBtns.map( button => button )}
+        <View style={containers.topPadding}></View>
+        <View style={containers.settingsBtnList}>
+            {settingsBtns.map( button => button )}
+        </View>
         <Modal 
             visible={modalVisible} 
             message={modalMessage} 

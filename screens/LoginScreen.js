@@ -98,7 +98,7 @@ export default function LoginScreen ({ navigation, route }) {
             <Text style={textStyles.labelText}>{Strings.English.label.login}</Text>
             {prefLogin === Strings.util.logins[4] && <KeyboardAvoidingView style={containers.loginInputs}>
                 <TextInput 
-                    style={inputStyles.loginField} 
+                    style={[inputStyles.loginField, {borderColor: Colors.lightTheme.inputBorder}]} 
                     placeholder={Strings.English.placeholder.email}
                     autoComplete="email"
                     keyboardType="email-address"
@@ -106,7 +106,7 @@ export default function LoginScreen ({ navigation, route }) {
                     onChange={text => setEmail(text)}
                 />
                 <TextInput 
-                    style={inputStyles.loginField} 
+                    style={[inputStyles.loginField, {borderColor: Colors.lightTheme.inputBorder}]} 
                     placeholder={Strings.English.placeholder.password}
                     autoComplete="password"
                     autoCapitalize="none"

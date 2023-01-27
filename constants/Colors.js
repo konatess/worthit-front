@@ -28,6 +28,7 @@ export default {
     lightTheme: {
         background: offWhite,
         buttons:{
+            emptyBtnBorders: darkBrown,
             settings: lightBrown,
             save: lightGreen,
             create: lightGreen,

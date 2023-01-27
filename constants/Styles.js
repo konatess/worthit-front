@@ -22,6 +22,12 @@ const containers = StyleSheet.create({
         padding: 10,
         marginBottom: 50 * sizer,
     }, 
+    topPadding: {
+        height: 10 * sizer
+    },
+    settingsBtnList: {
+        padding:10
+    },
     buttonBar: {
         flexDirection: 'row',
         height: 70 * sizer,
@@ -53,7 +59,6 @@ const containers = StyleSheet.create({
     pickerArea: {
         maxHeight: 150 * sizer,
         marginVertical: 10,
-        borderColor: Colors.done,
         borderWidth: .5,
         borderRadius: 10,
         padding: 5,
@@ -110,7 +115,6 @@ const buttonStyles = StyleSheet.create({
         marginBottom: 3,
         borderRadius: 10,
         borderWidth: .5,
-        borderColor: Colors.done,
     },
     navBtn: {
         flex:1, 
@@ -125,7 +129,6 @@ const buttonStyles = StyleSheet.create({
         justifyContent: 'flex-start', 
         alignItems: 'stretch',
         borderWidth: .5,
-        borderColor: Colors.lightTheme.buttons.settings,
     },
     prodBtn: {
         paddingHorizontal: 15,
@@ -133,7 +136,6 @@ const buttonStyles = StyleSheet.create({
         justifyContent: 'flex-start', 
         alignItems: 'stretch',
         borderWidth: .5,
-        borderColor: Colors.lightTheme.buttons.settings
     },
     settingsBtnArea: {
         flexDirection: "row",
@@ -142,7 +144,6 @@ const buttonStyles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: StyleSheet.hairlineWidth,
         borderBottomWidth: 0,
-        borderColor: Colors.settings
     },
     settingsIconArea: {
         marginRight: 12,
@@ -161,7 +162,6 @@ const buttonStyles = StyleSheet.create({
 
 const inputStyles = StyleSheet.create({
     inputField: {
-        borderColor: Colors.inputBorder, 
         borderWidth: 1, 
         padding: 3,
         paddingHorizontal: 10,
@@ -170,7 +170,6 @@ const inputStyles = StyleSheet.create({
     }, 
     loginField: {
         marginTop: 10,
-        borderColor: Colors.inputBorder, 
         borderWidth: 1, 
         padding: 3,
         paddingHorizontal: 10,
