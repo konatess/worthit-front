@@ -22,11 +22,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
 	const [isLoadingComplete, setLoadingComplete] = useState(false);
 	const [user, setUser] = useState({uid: ""});
-	const [settingsObj, setSettingsObj] = useState({
-		darkmode: false,
-		language: 'English',
-		dateFormat: 'MM/DD',
-	});
+	const [settingsObj, setSettingsObj] = useState({});
 	
 
 
@@ -35,7 +31,7 @@ export default function App() {
 		async function loadResourcesAndDataAsync() {
 			try {
 				SplashScreen.preventAutoHideAsync();
-				setSettingsObj(await getSettings());
+				await getSettings(setSettingsObj);
 			} catch (e) {
 				// We might want to provide this error information to an error reporting service
 				Notify('English', e.message);
@@ -56,8 +52,8 @@ export default function App() {
 			<NavigationContainer>
 				<StatusBar style="auto" />
 				<UserContext.Provider value={{user, setUser}}>
-					<Stack.Navigator initialRouteName={user.uid ? Strings.util.routes.home : Strings.util.routes.login}  screenOptions={{headerShown:false}} >
-					{user.uid ? 
+					<Stack.Navigator initialRouteName={ (settingsObj.login === Strings.util.logins[0]) || user.uid ? Strings.util.routes.home : Strings.util.routes.login}  screenOptions={{headerShown:false}} >
+					{(settingsObj.login === Strings.util.logins[0]) || user.uid ? 
 					<>
 						<Stack.Screen name={Strings.util.routes.home} component={HomeScreen} initialParams={{settings: settingsObj}}/>
 						<Stack.Screen name={Strings.util.routes.settings} component={SettingsScreen} initialParams={{settings: settingsObj}}/>

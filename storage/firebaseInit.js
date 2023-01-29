@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getDatabase, ref, set, push, remove } from 'firebase/database';
+import { getDatabase, ref, set, push, get, remove, onValue } from 'firebase/database';
 import Notify from '../components/Notify';
+import Strings from '../constants/Strings';
 
 let firebaseConfig = {
     apiKey: "AIzaSyD5LuF_dEvcv3xcTg3-hIxJ_6Ps_f04YYw",
@@ -18,6 +19,40 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp()
 const db = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com/");
 
 const dbMethods = {
+    listen: {
+        ing: (uid, callback) => {
+            onValue(ref(db, `users/${uid}/ingredients`), (snapshot) => {
+                if (snapshot.exists()) {
+                    callback(snapshot.val());
+                }
+            })
+        },
+        rec: (uid, callback) => {
+            onValue(ref(db, `users/${uid}/recipes`), (snapshot) => {
+                if (snapshot.exists()) {
+                    callback(snapshot.val());
+                }
+            })
+        }
+    },
+    createId: () => {
+        return push(ref(db, `users`)).key
+    },
+    getAllIngAndRec: (uid, callback) => {
+        get(ref(db, `users/${uid}`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                callback(snapshot.val())
+            } else {
+                callback(null)
+            }
+        }).catch(error => Notify.showError(Strings.util.languages[0],error.message));
+    },
+    overwriteAllIngAndRec: (uid, dataObj) => {
+        Promise.all([
+            set(ref(db, `users/${uid}/ingredients`), dataObj.ingredients),
+            set(ref(db, `users/${uid}/recipes`), dataObj.recipes)
+        ])
+    },
     newIngredient: (uid, ing) => {
         push(ref(db, `users/${uid}/ingredients`), ing).catch(error => Notify.showError(Strings.util.languages[0],error.message));
     },
@@ -30,6 +65,9 @@ const dbMethods = {
     deleteIngredient: (uid, ingId) => {
         remove(ref(db, `users/${uid}/ingredients/${ingId}`)).catch(error => Notify.showError(Strings.util.languages[0], error.message));
     },
+    deleteAllIngredients: (uid) => {
+        remove(ref(db, `users/${uid}/ingredients`));
+    },
     newRecipe: (uid, rec) => {
         return push(ref(db, `users/${uid}/recipes`), rec).then(newRef => newRef.key).catch(error => Notify.showError(Strings.util.languages[0], error.message));
     },
@@ -38,7 +76,10 @@ const dbMethods = {
     },
     deleteRecipe: (uid, recId) => {
         remove(ref(db, `users/${uid}/recipes/${recId}`)).catch(error => Notify.showError(Strings.util.languages[0], error.message));
-    }
+    },
+    deleteAllRecipes: (uid) => {
+        remove(ref(db, `users/${uid}/recipes`));
+    },
 }
 
 export default { app, db, dbMethods }

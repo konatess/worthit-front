@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Notify from '../components/Notify';
+import Strings from '../constants/Strings';
 
 
 const storageKeys = {
@@ -7,6 +8,7 @@ const storageKeys = {
     allRec: 'ALLRECIPES',
     settings: 'SETTINGS',
 }
+
 
 const storeIng = async (ingObj) => {
     try {
@@ -17,10 +19,18 @@ const storeIng = async (ingObj) => {
     }
 }
 
-const getIng = async () => {
+const getIng = async (callback) => {
     try {
-        const jsonValue = await AsyncStorage.getItem(storageKeys.allIng)
-        return jsonValue != null ? JSON.parse(jsonValue) : null;
+        const jsonValue = await AsyncStorage.getItem(storageKeys.allIng);
+        callback(jsonValue != null ? JSON.parse(jsonValue) : {});
+    } catch(e) {
+        Notify.showError(Strings.util.languages[0], e.message);
+    }
+}
+
+const deleteIng = async () => {
+    try{
+        await AsyncStorage.removeItem(storageKeys.allIng);
     } catch(e) {
         Notify.showError(Strings.util.languages[0], e.message);
     }
@@ -28,17 +38,25 @@ const getIng = async () => {
 
 const storeRec = async (recObj) => {
     try {
-        const jsonValue = JSON.stringify(recObj)
-        await AsyncStorage.setItem(storageKeys.allRec, jsonValue)
+        const jsonValue = JSON.stringify(recObj);
+        await AsyncStorage.setItem(storageKeys.allRec, jsonValue);
     } catch (e) {
         Notify.showError(Strings.util.languages[0], e.message);
     }
 }
 
-const getRec = async () => {
+const getRec = async (callback) => {
     try {
-        const jsonValue = await AsyncStorage.getItem(storageKeys.allRec)
-        return jsonValue != null ? JSON.parse(jsonValue) : null;
+        const jsonValue = await AsyncStorage.getItem(storageKeys.allRec);
+        callback(jsonValue != null ? JSON.parse(jsonValue) : {});
+    } catch(e) {
+        Notify.showError(Strings.util.languages[0], e.message);
+    }
+}
+
+const deleteRec = async () => {
+    try{
+        await AsyncStorage.removeItem(storageKeys.allRec);
     } catch(e) {
         Notify.showError(Strings.util.languages[0], e.message);
     }
@@ -46,20 +64,32 @@ const getRec = async () => {
 
 const storeSettings = async (settingsObj) => {
     try {
-        const jsonValue = JSON.stringify(settingsObj)
-        await AsyncStorage.setItem(storageKeys.settings, jsonValue)
+        const jsonValue = JSON.stringify(settingsObj);
+        await AsyncStorage.setItem(storageKeys.settings, jsonValue);
     } catch (e) {
         Notify.showError(Strings.util.languages[0], e.message);
     }
 }
 
-const getSettings = async () => {
+const getSettings = async (callback) => {
     try {
-      const jsonValue = await AsyncStorage.getItem(storageKeys.settings)
-      return jsonValue != null ? JSON.parse(jsonValue) : {darkMode: false, currency: Strings.util.currencies[0], language: Strings.util.languages[0], };
+      const jsonValue = await AsyncStorage.getItem(storageKeys.settings);
+    callback(jsonValue != null ? JSON.parse(jsonValue) : {darkMode: false, currency: Strings.util.currencies[0], language: Strings.util.languages[0], login: Strings.util.logins[0]});
     } catch(e) {
         Notify.showError(Strings.util.languages[0], e.message);
     }
 }
 
-export {storeIng, getIng, storeRec, getRec, storeSettings, getSettings}
+const getIngAndRec = async () => {
+    try {
+        const ingJson = await AsyncStorage.getItem(storageKeys.allIng);
+        const recJson = await AsyncStorage.getItem(storageKeys.allRec);
+        let ing = ingJson != null ? JSON.parse(ingJson) : {}
+        let rec = recJson != null ? JSON.parse(recJson) : {}
+        return {ingredients: ing, recipes: rec}
+    } catch(e) {
+        Notify.showError(Strings.util.languages[0], e.message);
+    }
+}
+
+export {storeIng, getIng, deleteIng, storeRec, getRec, deleteRec, storeSettings, getSettings, getIngAndRec}

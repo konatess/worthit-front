@@ -8,16 +8,14 @@ import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import Modal from "../components/Modal";
 import { UserContext } from "../constants/UserContext";
-import firebaseInit, { app } from "../storage/firebaseInit";
-import { getDatabase, ref, onValue } from 'firebase/database';
+import firebaseInit from "../storage/firebaseInit";
+import { storeIng, getIng, storeRec } from "../storage/localAsync";
 import IngAmount from "../components/IngAmount";
 import DataLimits from "../constants/DataLimits";
 import Calculate from "../constants/Calculate";
 
-const database = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com/");
-
 export default function RecipeScreen ({navigation, route}) {
-    const { knownIng, prodObj, prodDbId, settings } = route.params;
+    const { knownIng, prodObj, prodDbId, settings, products } = route.params;
     const { user } = useContext(UserContext);
     const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
     const [modalVisible, setModalVisible] = useState(false);
@@ -28,7 +26,7 @@ export default function RecipeScreen ({navigation, route}) {
     const [modalBtnsVertical, setModalBtnsVertical] = useState(false);
     const [canSave, setCanSave] = useState(false)
     const [allIngredients, setAllIngredients] = useState(knownIng);
-    const [prodId, setProdId] = useState(prodDbId ? prodDbId : "");
+    const [prodId, setProdId] = useState(prodDbId.length ? prodDbId : "");
     const [name, setName] = useState(prodObj?.title ? prodObj.title : "");
     const [note, setNote] = useState(prodObj?.note ? prodObj.note : "");
     const [hour, setHour] = useState(prodObj?.time ? prodObj.time.hour : 0);
@@ -100,6 +98,7 @@ export default function RecipeScreen ({navigation, route}) {
                         setModalInputs([{
                             label: Strings.English.label.ingPerItem, 
                             default: ingredients[id] ? ingredients[id].toString() : "", 
+                            keyboardType: 'decimal-pad',
                             onChange: text => {
                                 setIngPerItem(Calculate.getNum(text));
                             }
@@ -112,18 +111,18 @@ export default function RecipeScreen ({navigation, route}) {
             }
         }
         setIngTextList(list);
-        if (list.length) {
+        if (list.length && amountPerTime && (hour || minute)) {
             setTotalCost(calculateTotalCost())
         }
     }, [ingredients])
 
     useEffect(() => {
-        let unsubscribe = onValue(ref(database, `users/${user.uid}/ingredients`), (snapshot) => {
-            if (snapshot.exists()) {
-                setAllIngredients(snapshot.val())
-            }
-        })
-        return unsubscribe
+        if (prefLogin === Strings.util.logins[0]) {
+            getIng(setAllIngredients);
+        } else {
+            let unsubscribe = firebaseInit.dbMethods.listen.ing(user.uid, setAllIngredients)
+            return unsubscribe
+        }
     }, [])
 
     useEffect(() => {
@@ -143,13 +142,13 @@ export default function RecipeScreen ({navigation, route}) {
     }, [name, hour, minute, amountPerTime, wage, profitAmount])
 
     useEffect(() => {
-        if ((hour || minute) && amountPerTime && wage) {
+        if ((hour || minute) && amountPerTime && wage && ingTextList.length) {
             setTotalCost(calculateTotalCost())
         }
     }, [hour, minute, amountPerTime, wage])
 
     useEffect(() => {
-        profitPercent && totalCost? setProfitAmount(Calculate.shortenNum(profitPercent/100*totalCost)) : setProfitAmount(0)
+        profitPercent && totalCost ? setProfitAmount(Calculate.shortenNum(profitPercent/100*totalCost)) : setProfitAmount(0)
     }, [totalCost])
 
     const closeModal = () => {
@@ -202,7 +201,14 @@ export default function RecipeScreen ({navigation, route}) {
                 cost: ingCost,
                 inventory: ingInventory
             }
-            firebaseInit.dbMethods.newIngredient(user.uid, ing)
+            if (prefLogin === Strings.util.logins[0]) {
+                let allIngObj = allIngredients;
+                let id = firebaseInit.dbMethods.createId();
+                allIngObj[id] = ing;
+                storeIng(allIngObj).then(getIng(setAllIngredients));
+            } else if (prefLogin !== Strings.util.logins[0]) {
+                firebaseInit.dbMethods.newIngredient(user.uid, ing)
+            }
             closeModal();
         }
     }
@@ -256,20 +262,43 @@ export default function RecipeScreen ({navigation, route}) {
                 ingredients: ingredients,
                 inventory: prodInventory
             }
-            if (prodId) {
-                firebaseInit.dbMethods.updateRecipe(user.uid, prodDbId, recipe);
+            if (prefLogin === Strings.util.logins[0]) {
+                let allIngObj = allIngredients || {};
+                let recId = prodId.length ? prodId : firebaseInit.dbMethods.createId();
+                let allProdObj = {
+                    ...products,
+                    [recId]: recipe
+                };
+                storeRec(allProdObj);
                 for (id in allIngredients) {
                     let inUse = id in ingredients
-                    firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, inUse)
-                } 
-            } else {
-                let newRec = await firebaseInit.dbMethods.newRecipe(user.uid, recipe);
-                for (id in allIngredients) {
-                    let inUse = id in ingredients
-                    firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, newRec, inUse)
-                } 
+                    if (inUse) {
+                        let recs = allIngObj[id]?.recipes || {};
+                        allIngObj[id].recipes = {
+                            ...recs,
+                            [recId]: true
+                        }
+                    } else if (allIngObj[id].recipes) {
+                         delete allIngObj[id].recipes[recId]
+                    }
+                }
+                storeIng(allIngObj).then(getIng(setAllIngredients));
+            } else if (prefLogin !== Strings.util.logins[0]) {
+                if (prodId) {
+                    firebaseInit.dbMethods.updateRecipe(user.uid, prodId, recipe);
+                    for (id in allIngredients) {
+                        let inUse = id in ingredients
+                        firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, inUse)
+                    } 
+                } else {
+                    let newRec = await firebaseInit.dbMethods.newRecipe(user.uid, recipe);
+                    for (id in allIngredients) {
+                        let inUse = id in ingredients
+                        firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, newRec, inUse)
+                    } 
+                }
             }
-            navigation.navigate("Home")
+            navigation.push("Home")
         }
     }
 
@@ -284,11 +313,22 @@ export default function RecipeScreen ({navigation, route}) {
         color: Colors.lightTheme.buttons.delete,
         iconName: Icons.delete,
         onPress: () => {
-            firebaseInit.dbMethods.deleteRecipe(user.uid, prodId);
-            for (id in allIngredients) {
-                firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, false);
+            if (prefLogin === Strings.util.logins[0]) {
+                let allIngObj = allIngredients;
+                let allProdObj = products;
+                delete allProdObj[prodId]
+                storeRec(allProdObj);
+                for (id in allIngredients) {
+                    delete allIngObj[id].recipes[prodId]
+                }
+                storeIng(allIngObj).then(getIng(setAllIngredients));
+            } else if (prefLogin !== Strings.util.logins[0]) {
+                firebaseInit.dbMethods.deleteRecipe(user.uid, prodId);
+                for (id in allIngredients) {
+                    firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, false);
+                }
             }
-            navigation.goBack()
+            navigation.pop()
         }
     }
     let cancelBtn = {
@@ -296,7 +336,7 @@ export default function RecipeScreen ({navigation, route}) {
         color: Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
-            navigation.goBack()
+            navigation.pop()
         }
     }
     let createBtn = {
@@ -391,227 +431,227 @@ export default function RecipeScreen ({navigation, route}) {
 
     let navBtns = prodId ? [ deleteBtn, cancelBtn, duplicateBtn, createBtn ] : [ cancelBtn, createBtn ]
     return <SafeAreaView style={[containers.safeArea, {backgroundColor: Colors.lightTheme.background}]}> 
-         <View style={containers.projArea}>
-         <ScrollView>
-            <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>{Strings.English.label.prodName}</Text>
-            <TextInput
-                accessibilityLabel={Strings.English.label.prodName}
-                accessibilityHint={Strings.English.placeholder.prodName}
-                style={[inputStyles.inputField, inputStyles.longInputs, {marginBottom: 10}, {color: Colors.lightTheme.text}]}
-                placeholder={Strings.English.placeholder.prodName}
-                value={name}
-                autoCapitalize={'words'}
-                onChangeText={(text) => {
-                    if (!text.length) {
-                        setName("")
-                    } else if (text.trim().length > DataLimits.inputs.recNameMax) {
-                        setName(text.trim().slice(0,DataLimits.inputs.recNameMax))
-                    } else {
-                        setName(text)
-                    }
-                }}
-            />
-            <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
-                {Strings.English.label.time}
-            </Text>
-            <View style={rows.row1}>
-                <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
-                    {Strings.English.label.hour}
-                </Text>
+        <View style={containers.projArea}>
+            <View style={containers.topPadding}></View>
+            <ScrollView>
+                <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>{Strings.English.label.prodName}</Text>
                 <TextInput
-                    accessibilityLabel={Strings.English.label.hour}
-                    style={[inputStyles.inputField, {color: Colors.lightTheme.text, marginEnd: 10}]}
-                    value={hour.toString()}
-                    placeholder={'1'}
-                    maxLength={2}
-                    keyboardType={'number-pad'}
-                    onChangeText={text => {
-                        if (text.length === 0) {
-                            setHour(0)
-                        } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
-                            setHour(Calculate.getNum(text))
-                        }
-                    }}
-                />
-                <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
-                    {Strings.English.label.minute}
-                </Text>
-                <TextInput
-                    accessibilityLabel={Strings.English.label.minute}
-                    style={[inputStyles.inputField, {color: Colors.lightTheme.text, marginEnd: 10}]}
-                    value={minute.toString()}
-                    placeholder={'15'}
-                    maxLength={2}
-                    keyboardType={'number-pad'}
-                    onChangeText={text => {
-                        if (text.length === 0) {
-                            setMinute(0)
-                        } else if (Strings.util.regex.numbers.test(text)) {
-                            let num = Calculate.getNum(text);
-                            if (num >= 60) {
-                                setMinute(59)
-                            } else {
-                                setMinute(num)
-                            }
-                        }
-                    }}
-                />
-                <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
-                    {Strings.English.label.amount}
-                </Text>
-                <TextInput
-                    accessibilityLabel={Strings.English.label.amount}
-                    style={[inputStyles.inputField, {color: Colors.lightTheme.text}]}
-                    value={amountPerTime.toString()}
-                    placeholder={'1'}
-                    maxLength={6}
-                    keyboardType={'number-pad'}
-                    onChangeText={text => {
-                        if (text.length === 0) {
-                            setAmountPerTime(0)
-                        } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
-                            setAmountPerTime(Calculate.getNum(text))
-                        }
-                    }}
-                />
-                {/* <Text style={textStyles.hintText}>
-                    {Strings.English.hint.amount}
-                </Text> */}
-            </View>
-            <View style={rows.row1} >
-                <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
-                    {Strings.English.label.wage}
-                </Text>
-                <TextInput
-                    accessibilityLabel={Strings.English.label.wage}
-                    style={[inputStyles.inputField, {color: Colors.lightTheme.text}]}
-                    value={wage.toString()}
-                    placeholder={'15.00'}
-                    keyboardType={'decimal-pad'}
-                    onChangeText={text => {
-                        if (text.length === 0) {
-                            setWage(0)
-                        } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
-                            setWage(Calculate.getNum(text))
-                        }
-                    }}
-                />
-            </View>
-            <View style={rows.row1} >
-                <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
-                    {Strings.English.label.profit}
-                </Text>
-                <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
-                    {Strings.English.label.profAmount}
-                </Text>
-                <TextInput
-                    accessibilityLabel={Strings.English.label.profit}
-                    style={[inputStyles.inputField, {color: Colors.lightTheme.text}]}
-                    defaultValue={profitAmount.toString().slice(0,10)}
-                    placeholder={'0'}
-                    maxLength={10}
-                    keyboardType={'decimal-pad'}
-                    onChangeText={text => {
-                        if (text.length === 0) {
-                            setProfitAmount(0)
-                        } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
-                            setProfitAmount(Calculate.getNum(text))
-                        }
-                    }}
-                    onBlur={() => {
-                        profitAmount && totalCost ? setProfitPercent(Calculate.shortenNum(profitAmount/totalCost*100)) : setProfitPercent(0) 
-                    }}
-                />
-                <Text>
-                    {"  =  "}
-                </Text>
-                <TextInput
-                    accessibilityLabel={Strings.English.label.profPercent}
-                    style={[inputStyles.inputField, {color: Colors.lightTheme.text}]}
-                    value={profitPercent.toString()}
-                    placeholder={'0'}
-                    maxLength={10}
-                    keyboardType={'decimal-pad'}
-                    onChangeText={text => {
-                        if (text.length === 0) {
-                            setProfitPercent(0)
-                        } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
-                            setProfitPercent(Calculate.getNum(text))
-                        }
-                    }}
-                    onBlur={() => {
-                        profitPercent && totalCost? setProfitAmount(Calculate.shortenNum(profitPercent/100*totalCost)) : setProfitAmount(0)
-                    }}
-                />
-                <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
-                    {Strings.English.label.profPercent}
-                </Text>
-            </View>
-            <View style={rows.row1} >
-                <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
-                    {Strings.English.label.inventory}
-                </Text>
-                <TextInput
-                    accessibilityLabel={Strings.English.label.inventory}
-                    style={[inputStyles.inputField, {color: Colors.lightTheme.text}]}
-                    value={prodInventory.toString()}
-                    placeholder={'0'}
-                    keyboardType={'number-pad'}
-                    onChangeText={text => {
-                        if (text.length === 0) {
-                            setProdInventory(0)
-                        } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
-                            setProdInventory(Calculate.getNum(text))
-                        }
-                    }}
-                />
-            </View>
-            {/* <Text>{totalCost+profitAmount}</Text> */}
-            <View>
-                <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
-                    {Strings.English.label.ingredients}
-                </Text>
-                {ingTextList.length > 0 && ingTextList.map(item => item)}
-                <Pressable 
-                    style={[buttonStyles.basicButton, {backgroundColor: Colors.lightTheme.buttons.addIngredient}]}
-                    onPress={() => {
-                        setModalMessage(Strings.English.messages.ingredients)
-                        setModalPickers( createIngPickers() );
-                        setModalButtons(maxIng ? [modalCancelBtn] : [modalCancelBtn, newIngredientBtn]);
-                        setModalBtnsVertical(true);
-                        setModalVisible(true);
-                    }}
-                >
-                    <Text>
-                        {Strings.English.buttons.addIngredient}
-                    </Text>
-                </Pressable>
-            </View>
-            <KeyboardAvoidingView
-                keyboardVerticalOffset={100}
-                behavior={'padding'}
-                // style={[{backgroundColor: "orange", opacity: 1, zIndex: 40}]}
-            >
-                <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>{Strings.English.label.prodNote}</Text>
-                <TextInput
-                    accessibilityLabel={Strings.English.label.prodNote}
-                    accessibilityHint={Strings.English.placeholder.prodNote}
-                    style={[inputStyles.inputField, inputStyles.longInputs, {marginBottom: 10}, {color: Colors.lightTheme.text}]}
-                    placeholder={Strings.English.placeholder.prodNote}
-                    value={note}
-                    autoCapitalize={'sentences'}
-                    multiline={true}
+                    accessibilityLabel={Strings.English.label.prodName}
+                    accessibilityHint={Strings.English.placeholder.prodName}
+                    style={[inputStyles.inputField, inputStyles.longInputs, {marginBottom: 10}, {color: Colors.lightTheme.text}, , {borderColor: Colors.lightTheme.inputBorder}]}
+                    placeholder={Strings.English.placeholder.prodName}
+                    value={name}
+                    autoCapitalize={'words'}
                     onChangeText={(text) => {
                         if (!text.length) {
-                            setNote("")
-                        } else if (text.trim().length > DataLimits.inputs.recNoteMax) {
-                            setNote(text.trim().slice(0,DataLimits.inputs.recNoteMax))
+                            setName("")
+                        } else if (text.trim().length > DataLimits.inputs.recNameMax) {
+                            setName(text.trim().slice(0,DataLimits.inputs.recNameMax))
                         } else {
-                            setNote(text)
+                            setName(text)
                         }
                     }}
                 />
-            </KeyboardAvoidingView>
+                <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
+                    {Strings.English.label.time}
+                </Text>
+                <View style={rows.row1}>
+                    <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
+                        {Strings.English.label.hour}
+                    </Text>
+                    <TextInput
+                        accessibilityLabel={Strings.English.label.hour}
+                        style={[inputStyles.inputField, {color: Colors.lightTheme.text, marginEnd: 10}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        value={hour.toString()}
+                        placeholder={'1'}
+                        maxLength={2}
+                        keyboardType={'number-pad'}
+                        onChangeText={text => {
+                            if (text.length === 0) {
+                                setHour(0)
+                            } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
+                                setHour(Calculate.getNum(text))
+                            }
+                        }}
+                    />
+                    <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
+                        {Strings.English.label.minute}
+                    </Text>
+                    <TextInput
+                        accessibilityLabel={Strings.English.label.minute}
+                        style={[inputStyles.inputField, {color: Colors.lightTheme.text, marginEnd: 10}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        value={minute.toString()}
+                        placeholder={'15'}
+                        maxLength={2}
+                        keyboardType={'number-pad'}
+                        onChangeText={text => {
+                            if (text.length === 0) {
+                                setMinute(0)
+                            } else if (Strings.util.regex.numbers.test(text)) {
+                                let num = Calculate.getNum(text);
+                                if (num >= 60) {
+                                    setMinute(59)
+                                } else {
+                                    setMinute(num)
+                                }
+                            }
+                        }}
+                    />
+                    <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
+                        {Strings.English.label.amount}
+                    </Text>
+                    <TextInput
+                        accessibilityLabel={Strings.English.label.amount}
+                        style={[inputStyles.inputField, {color: Colors.lightTheme.text}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        value={amountPerTime.toString()}
+                        placeholder={'1'}
+                        maxLength={6}
+                        keyboardType={'number-pad'}
+                        onChangeText={text => {
+                            if (text.length === 0) {
+                                setAmountPerTime(0)
+                            } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
+                                setAmountPerTime(Calculate.getNum(text))
+                            }
+                        }}
+                    />
+                    {/* <Text style={textStyles.hintText}>
+                        {Strings.English.hint.amount}
+                    </Text> */}
+                </View>
+                <View style={rows.row1} >
+                    <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
+                        {Strings.English.label.wage}
+                    </Text>
+                    <TextInput
+                        accessibilityLabel={Strings.English.label.wage}
+                        style={[inputStyles.inputField, {color: Colors.lightTheme.text}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        value={wage.toString()}
+                        placeholder={'15.00'}
+                        keyboardType={'decimal-pad'}
+                        onChangeText={text => {
+                            if (text.length === 0) {
+                                setWage(0)
+                            } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
+                                setWage(Calculate.getNum(text))
+                            }
+                        }}
+                    />
+                </View>
+                <View style={rows.row1} >
+                    <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
+                        {Strings.English.label.profit}
+                    </Text>
+                    <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
+                        {Strings.English.label.profAmount}
+                    </Text>
+                    <TextInput
+                        accessibilityLabel={Strings.English.label.profit}
+                        style={[inputStyles.inputField, {color: Colors.lightTheme.text}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        defaultValue={profitAmount.toString().slice(0,10)}
+                        placeholder={'0'}
+                        maxLength={10}
+                        keyboardType={'decimal-pad'}
+                        onChangeText={text => {
+                            if (text.length === 0) {
+                                setProfitAmount(0)
+                            } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
+                                setProfitAmount(Calculate.getNum(text))
+                            }
+                        }}
+                        onBlur={() => {
+                            profitAmount && totalCost ? setProfitPercent(Calculate.shortenNum(profitAmount/totalCost*100)) : setProfitPercent(0) 
+                        }}
+                    />
+                    <Text>
+                        {"  =  "}
+                    </Text>
+                    <TextInput
+                        accessibilityLabel={Strings.English.label.profPercent}
+                        style={[inputStyles.inputField, {color: Colors.lightTheme.text}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        value={profitPercent.toString()}
+                        placeholder={'0'}
+                        maxLength={10}
+                        keyboardType={'decimal-pad'}
+                        onChangeText={text => {
+                            if (text.length === 0) {
+                                setProfitPercent(0)
+                            } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
+                                setProfitPercent(Calculate.getNum(text))
+                            }
+                        }}
+                        onBlur={() => {
+                            profitPercent && totalCost? setProfitAmount(Calculate.shortenNum(profitPercent/100*totalCost)) : setProfitAmount(0)
+                        }}
+                    />
+                    <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
+                        {Strings.English.label.profPercent}
+                    </Text>
+                </View>
+                <View style={rows.row1} >
+                    <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
+                        {Strings.English.label.inventory}
+                    </Text>
+                    <TextInput
+                        accessibilityLabel={Strings.English.label.inventory}
+                        style={[inputStyles.inputField, {color: Colors.lightTheme.text}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        value={prodInventory.toString()}
+                        placeholder={'0'}
+                        keyboardType={'number-pad'}
+                        onChangeText={text => {
+                            if (text.length === 0) {
+                                setProdInventory(0)
+                            } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
+                                setProdInventory(Calculate.getNum(text))
+                            }
+                        }}
+                    />
+                </View>
+                {/* <Text>{totalCost+profitAmount}</Text> */}
+                <View>
+                    <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>
+                        {Strings.English.label.ingredients}
+                    </Text>
+                    {ingTextList.length > 0 && ingTextList.map(item => item)}
+                    <Pressable 
+                        style={[buttonStyles.basicButton, {backgroundColor: Colors.lightTheme.buttons.addIngredient}]}
+                        onPress={() => {
+                            setModalMessage(Strings.English.messages.ingredients)
+                            setModalPickers( createIngPickers() );
+                            setModalButtons(maxIng ? [modalCancelBtn] : [modalCancelBtn, newIngredientBtn]);
+                            setModalBtnsVertical(true);
+                            setModalVisible(true);
+                        }}
+                    >
+                        <Text>
+                            {Strings.English.buttons.addIngredient}
+                        </Text>
+                    </Pressable>
+                </View>
+                <KeyboardAvoidingView
+                    keyboardVerticalOffset={100}
+                    behavior={'padding'}
+                >
+                    <Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]}>{Strings.English.label.prodNote}</Text>
+                    <TextInput
+                        accessibilityLabel={Strings.English.label.prodNote}
+                        accessibilityHint={Strings.English.placeholder.prodNote}
+                        style={[inputStyles.inputField, inputStyles.longInputs, {marginBottom: 10}, {color: Colors.lightTheme.text}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        placeholder={Strings.English.placeholder.prodNote}
+                        value={note}
+                        autoCapitalize={'sentences'}
+                        multiline={true}
+                        onChangeText={(text) => {
+                            if (!text.length) {
+                                setNote("")
+                            } else if (text.trim().length > DataLimits.inputs.recNoteMax) {
+                                setNote(text.trim().slice(0,DataLimits.inputs.recNoteMax))
+                            } else {
+                                setNote(text)
+                            }
+                        }}
+                    />
+                </KeyboardAvoidingView>
             </ScrollView>
         </View>
         <Modal 

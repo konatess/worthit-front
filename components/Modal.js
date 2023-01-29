@@ -25,10 +25,10 @@ export default ({visible, message, pickers, inputs, buttons, vertical, darkmode}
 			<View style={containers.centerModal}>
 				<View style={[containers.modalArea, {backgroundColor: Colors.lightTheme.background}]}>
 					{message !== '' && <Text style={[textStyles.modalMsgText, {color: Colors.lightTheme.text}]}>{message}</Text>}
-					{(pickers.length > 0) && <View style={containers.pickerArea}>
+					{(pickers.length > 0) && <View style={[containers.pickerArea, {borderColor: Colors.lightTheme.buttons.emptyBtnBorders}]}>
 						<ScrollView>
 							{pickers.map((item, index) => {
-								return <Pressable key={"picker-" + index} style={buttonStyles.pickerButton} onPress={item.onPress}>
+								return <Pressable key={"picker-" + index} style={[buttonStyles.pickerButton, {borderColor: Colors.lightTheme.buttons.emptyBtnBorders}]} onPress={item.onPress}>
 									<Text style={[textStyles.pickerText, {color: Colors.lightTheme.text}]}>
 										{item.name}
 									</Text>
@@ -43,10 +43,10 @@ export default ({visible, message, pickers, inputs, buttons, vertical, darkmode}
 								accessibilityLabel={unit.label}
 								key={unit.label + '-input'}
 								keyboardType={unit.keyboardType || 'default'}
-								style={[inputStyles.inputField, {color: Colors.lightTheme.text}]}
+								style={[inputStyles.inputField, {color: Colors.lightTheme.text}, {borderColor: Colors.lightTheme.inputBorder}]}
 								placeholder={unit.placeholder}
 								defaultValue={unit.default || ''}
-								// value={unit.default}
+								returnKeyType={'next'}
 								multiline={true}
 								maxLength={unit.maxChar}
 								autoFocus={!index}

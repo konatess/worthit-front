@@ -2,11 +2,11 @@ export default {
     util: {
         languages: ["English", "Español"],
         currencies: ["$", "£"],
-        logins: ["local", "Facebook", "Google", "email"],
+        logins: ["local", "newFirebase", "Facebook", "Google", "email"],
         keys: {
-            settings: "USER_SETTINGS",
-            prodPrefix: "PROD-",
-            ingPrefix: "ING-"
+            allIng: 'ALLINGREDIENTS',
+            allRec: 'ALLRECIPES',
+            settings: 'SETTINGS',
         },
         routes: {
             login: "Login",
@@ -50,6 +50,8 @@ export default {
                 subscriptions: "Manage Subscriptions",
                 deleteRec: "Start Fresh - Delete All Recipes",
                 deleteIng: "Start Fresh - Delete All Ingredients",
+                overwriteLocal: "Overwrite Local Data with Database",
+                overwriteRemote: "Overwrite Database with Local Data",
                 feedback: "Send Us Your Feedback",
                 site: "Visit Our Website",
                 logout: "Log out"
@@ -72,7 +74,7 @@ export default {
             wage: "Wage per Hour: $ ",
             profit: "Profit: ",
             profAmount: "$ ",
-            profPercent: " %",
+            profPercent: " % of Cost",
             ingredients: "Ingredients: ",
             newIngredient: "Create new Ingredient:",
             ingName: "Name: ",
@@ -95,7 +97,12 @@ export default {
             prodNoteBadChar: "Product notes can only contain letters, numbers, spaces, returns, and these symbols: '-_/&:!(),.?",
             prodTime: "Please set a time of at least one minute and less than 100 hours",
             prodAmount: "Please set an amount greater than 0 and less than 1,000,000",
-            ingredientsAmounts: "Please set amounts for ingredients, or remove them from the list"
+            ingredientsAmounts: "Please set amounts for ingredients, or remove them from the list",
+            deleteAllIng: "Are you sure you want to delete all your ingredients? This cannot be undone.",
+            deleteAllRec: "Are you sure you want to delete all your recipes? This cannot be undone.",
+            overwriteLocal: "Are you sure you want to overwrite your local data with your database data? This cannot be undone.",
+            overwriteRemote: "Are you sure you want to overwrite your database data with your local data? This cannot be undone.",
+            overwriteInProgress: "Saving overwrite..."
         },
         hint: {
             amount: "If it takes more than one hour to produce one, we recommend setting amount to 1"

@@ -1,5 +1,6 @@
-import { useState, useContext, useEffect } from "react";
-import { Text, SafeAreaView, FlatList, ke } from "react-native";
+import { useState, useContext, useEffect, useCallback } from "react";
+import { Text, SafeAreaView, FlatList } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 import ButtonBar from '../components/ButtonBar';
 import { containers, textStyles } from '../constants/Styles';
@@ -10,15 +11,13 @@ import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import * as WebBrowser from 'expo-web-browser';
 import { UserContext } from "../constants/UserContext";
-import firebaseInit, { app } from "../storage/firebaseInit";
-import { getDatabase, ref, onValue } from 'firebase/database';
+import firebaseInit from "../storage/firebaseInit";
 import ProdButton from "../components/ProdButton";
 import DataLimits from "../constants/DataLimits";
 import Calculate from "../constants/Calculate";
+import { storeIng, getIng, getRec } from "../storage/localAsync";
 
 WebBrowser.maybeCompleteAuthSession();
-
-const database = getDatabase(app, "https://worth-888-default-rtdb.firebaseio.com/");
 
 
 export default function HomeScreen ({ route, navigation }) {
@@ -28,7 +27,7 @@ export default function HomeScreen ({ route, navigation }) {
     const [viewIng, setViewIng] = useState(false);
     const [allIngredients, setAllIngredients] = useState({});
     const [ingButtons, setIngButtons] = useState([]);
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState({});
     const [prodButtons, setProdButtons] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
@@ -40,18 +39,17 @@ export default function HomeScreen ({ route, navigation }) {
     const [ingName, setIngName] = useState("");
     const [ingUnit, setIngUnit] = useState("");
     const [ingCost, setIngCost] = useState(0);
+    const [ingInventory, setIngInventory] = useState(0);
     const [maxRec, setMaxRec] = useState(false);
     const [maxIng, setMaxIng] = useState(false);
-    const [ingInventory, setIngInventory] = useState(0);
-    // const [prodInventory, setProdInventory] = useState(0);
 
     useEffect(() => {
-        let unsubscribe = onValue(ref(database, `users/${user.uid}/ingredients`), (snapshot) => {
-            if (snapshot.exists()) {
-                setAllIngredients(snapshot.val());
-            }
-        })
-        return unsubscribe
+        if (prefLogin === Strings.util.logins[0]) {
+            getIng(setAllIngredients)
+        } else {
+            let unsubscribe = firebaseInit.dbMethods.listen.ing(user.uid, setAllIngredients)
+            return unsubscribe
+        }
     }, [])
 
     useEffect(() => {
@@ -59,12 +57,12 @@ export default function HomeScreen ({ route, navigation }) {
     }, [allIngredients])
 
     useEffect(() => {
-        let unsubscribe = onValue(ref(database, `users/${user.uid}/recipes`), (snapshot) => {
-            if (snapshot.exists()) {
-                setProducts(snapshot.val());
-            }
-        })
-        return unsubscribe
+        if (prefLogin === Strings.util.logins[0]) {
+            getRec(setProducts);
+        } else {
+            let unsubscribe = firebaseInit.dbMethods.listen.rec(user.uid, setProducts)
+            return unsubscribe
+        }
     }, [])
     
     useEffect(() => {
@@ -92,11 +90,21 @@ export default function HomeScreen ({ route, navigation }) {
         if (ingName && ingCost && ingUnit) {
             modalBtns.push(modalSaveIngBtn)
         }
-        if (ingId && !(allIngredients[ingId].recipes)) {
+        if (ingId && !(allIngredients[ingId]?.recipes)) {
             modalBtns.unshift(modalDeleteIngBtn)
         }
         setModalButtons(modalBtns);
-    }, [ingId, ingName, ingCost, ingUnit])
+    }, [ingId, ingName, ingCost, ingUnit, ingInventory])
+
+    useFocusEffect(
+        useCallback( () => {
+            if (prefLogin === Strings.util.logins[0]) {
+                getRec(setProducts);
+                getIng(setAllIngredients);
+            }
+        }, []
+        )
+    )
 
     const closeModal = () => {
         setModalVisible(false);
@@ -112,10 +120,10 @@ export default function HomeScreen ({ route, navigation }) {
         for (const id in allIngredients) {
             let button = {
                     id: id,
-                    name: allIngredients[id].name,
-                    cost: allIngredients[id].cost,
-                    unit: allIngredients[id].unit,
-                    inventory: allIngredients[id].inventory
+                    name: allIngredients[id]?.name,
+                    cost: allIngredients[id]?.cost,
+                    unit: allIngredients[id]?.unit,
+                    inventory: allIngredients[id]?.inventory
                 }
             buttons.push(button)
         }
@@ -125,15 +133,15 @@ export default function HomeScreen ({ route, navigation }) {
     const createProdButtons = () => {
         let buttons = [];
         for (const id in products) {
-            let wage = Calculate.wagePerItem(products[id].wage, products[id].time.hour, products[id].time.minute, products[id].time.amount);
-            let ing = Calculate.ingredientCost(products[id].ingredients, allIngredients)
+            let wage = Calculate.wagePerItem(products[id]?.wage, products[id]?.time?.hour, products[id]?.time?.minute, products[id]?.time?.amount);
+            let ing = Calculate.ingredientCost(products[id]?.ingredients, allIngredients)
             let totalCost = Calculate.totalCost(wage, ing);
             let button = {
                     id: id,
-                    title: products[id].title,
-                    profitAmount: Calculate.limitDec(products[id].profitAmount, settings.decimalLength),
-                    price: Calculate.limitDec(Calculate.priceByAmount(totalCost, products[id].profitAmount), settings.decimalLength),
-                    inventory: products[id].inventory
+                    title: products[id]?.title,
+                    profitAmount: Calculate.limitDec(products[id]?.profitAmount, settings.decimalLength),
+                    price: Calculate.limitDec(Calculate.priceByAmount(totalCost, products[id]?.profitAmount), settings.decimalLength),
+                    inventory: products[id]?.inventory
                 }
             buttons.push(button)
         }
@@ -155,11 +163,12 @@ export default function HomeScreen ({ route, navigation }) {
             ingredients: {},
             inventory: 0
         }
-        navigation.navigate(Strings.util.routes.recipe, {
+        navigation.push(Strings.util.routes.recipe, {
             prodDbId: id,
             prodObj: product, 
             knownIng: allIngredients,
-            settings: settings
+            settings: settings,
+            products: products
         })
     };
 
@@ -182,10 +191,10 @@ export default function HomeScreen ({ route, navigation }) {
             {label: Strings.English.label.ingName, default: ingObj.name || "", maxChar: DataLimits.inputs.ingNameMax, onChange: (text) => {setIngName(text)}},
             {label: Strings.English.label.ingUnit, default: ingObj.unit || "", maxChar: DataLimits.inputs.ingUnitMax, onChange: (text) => {setIngUnit(text)}},
             {label: Strings.English.label.ingCost, default: ingObj ? ingObj.cost.toString() : "", maxChar: DataLimits.inputs.ingCostMax, onChange: text => {
-                setIngCost(getNum(text));
+                setIngCost(Calculate.getNum(text));
             }, keyboardType: "decimal-pad"},
             {label: Strings.English.label.inventory, default: ingObj ? ingObj.inventory.toString() : "0", maxChar: DataLimits.inputs.ingInventoryMax, onChange: text => {
-                setIngInventory(getNum(text));
+                setIngInventory(Calculate.getNum(text));
             }, keyboardType: "decimal-pad"}
         ])
         setModalButtons([modalCancelBtn])
@@ -215,22 +224,38 @@ export default function HomeScreen ({ route, navigation }) {
                 cost: newCost,
                 inventory: newInventory
             }
-            if (ingId) {
-                if (allIngredients[ingId]?.recipes) {
-                    ing.recipes = allIngredients[ingId].recipes
+            if (ingId && allIngredients[ingId]?.recipes) {
+                ing.recipes = allIngredients[ingId].recipes
+            }
+            if (prefLogin === Strings.util.logins[0]) {
+                let allIngObj = allIngredients;
+                if (ingId) {
+                    allIngObj[ingId] = ing;
+                } else {
+                    let id = firebaseInit.dbMethods.createId();
+                    allIngObj[id] = ing;
                 }
-                firebaseInit.dbMethods.updateIngredient(user.uid, ingId, ing);
-            } else {
-                firebaseInit.dbMethods.newIngredient(user.uid, ing);
+                storeIng(allIngObj).then(getIng(setAllIngredients));
+            } else if (prefLogin !== Strings.util.logins[0]) {
+                if (ingId) {
+                    firebaseInit.dbMethods.updateIngredient(user.uid, ingId, ing);
+                } else {
+                    firebaseInit.dbMethods.newIngredient(user.uid, ing);
+                }
             }
             closeModal();
         }
     }
 
     const deleteIngredient = (id) => {
-        firebaseInit.dbMethods.deleteIngredient(user.uid, id);
+        if (prefLogin === Strings.util.logins[0]) {
+            let allIngObj = allIngredients;
+            delete allIngObj[id];
+            storeIng(allIngObj).then(getIng(setAllIngredients));
+        } else if (prefLogin !== Strings.util.logins[0]) {
+            firebaseInit.dbMethods.deleteIngredient(user.uid, id);
+        }
         setIngId("");
-        setViewIng(false);
     }
 
     let modalCancelBtn = {
@@ -267,7 +292,7 @@ export default function HomeScreen ({ route, navigation }) {
         color: Colors.lightTheme.buttons.settings,
         iconName: Icons.settings,
         onPress: () => {
-            navigation.navigate(Strings.util.routes.settings, {settings: settings})
+            navigation.push(Strings.util.routes.settings, {settings: settings, recLength: prodButtons.length})
         }
     }
     let createbtn = {

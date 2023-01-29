@@ -13,7 +13,7 @@ const limitDecimal = (num, decimalLength) => {
 const calculateIngredientsCost = (ingredients, allIngredients) => {
     let cost = 0;
     for (const id in ingredients) {
-        cost += ingredients[id] * allIngredients[id].cost
+        cost += ingredients[id] * allIngredients[id]?.cost
     }
     return cost
 };
