@@ -37,6 +37,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
+      "versionCode": 2,
       "permissions": [
         "android.permission.INTERNET"
       ],
