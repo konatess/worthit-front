@@ -52,9 +52,9 @@ export default {
                 deleteIng: "Start Fresh - Delete All Ingredients",
                 overwriteLocal: "Overwrite Local Data with Database",
                 overwriteRemote: "Overwrite Database with Local Data",
+                logout: "Log out",
                 feedback: "Send Us Your Feedback",
-                site: "Visit Our Website",
-                logout: "Log out"
+                site: "Visit Our Website"
             }
         },
         headers: {
