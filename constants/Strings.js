@@ -1,7 +1,7 @@
 export default {
     util: {
         languages: ["English", "Español"],
-        currencies: ["$", "£"],
+        currencies: ["$", "£", "€"],
         logins: ["local", "newFirebase", "Facebook", "Google", "email"],
         keys: {
             allIng: 'ALLINGREDIENTS',

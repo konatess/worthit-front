@@ -15,14 +15,14 @@ const darkGray = '#294C60';
 const lightGrey = '#ADB6C4';
 const offWhite ='#FFFAEF';  
 const offBlack = '#001B2E';
+const darkBrown = '#A78162';
+const lightBrown = '#FFDDA1';
 const darkGreen = '#5F956E';
 const lightGreen = '#B4CFBC';
 const darkOrange = '#F55600';
 const lightOrange = '#FFAC70';
 const darkTurquoise = '#1AC7C7';
-const lightTurquoise = '#69F2F2'
-const darkBrown = '#A78162';
-const lightBrown = '#FFDDA1';
+const lightTurquoise = '#69F2F2';
 
 export default {
     lightTheme: {
