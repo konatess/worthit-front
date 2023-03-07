@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { Text, SafeAreaView, View, TextInput, Keyboard, Pressable, KeyboardAvoidingView, ScrollView } from "react-native";
+import { Text, SafeAreaView, View, TextInput, Keyboard, Pressable, KeyboardAvoidingView, ScrollView, StatusBar } from "react-native";
 
 import ButtonBar from '../components/ButtonBar';
 import { containers, textStyles, inputStyles, rows, buttonStyles } from '../constants/Styles';
@@ -438,8 +438,8 @@ export default function RecipeScreen ({navigation, route}) {
 
     let navBtns = prodId ? [ deleteBtn, cancelBtn, duplicateBtn, createBtn ] : [ cancelBtn, createBtn ]
     return <SafeAreaView style={[containers.safeArea, {backgroundColor: settings.darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
+        {Platform.OS === 'android' && <View style={{height: StatusBar.currentHeight}} />}
         <View style={containers.projArea}>
-            <View style={containers.topPadding}></View>
             <ScrollView>
                 <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{Strings.English.label.prodName}</Text>
                 <TextInput

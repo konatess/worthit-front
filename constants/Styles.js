@@ -10,6 +10,7 @@ const containers = StyleSheet.create({
     // safe area view
     safeArea: {
 		flex: 1,
+        paddingVertical: 5
     },
     logins: {
         flexDirection: 'column',
@@ -191,7 +192,8 @@ const textStyles = StyleSheet.create({
     }, 
     headerText: {
         fontSize: 25 * sizer,
-        marginTop: 30,
+        // marginTop: 30,
+        marginTop: 5,
         textAlign: 'center',
     },
     buttonText: {

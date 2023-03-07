@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect, useCallback } from "react";
-import { Text, SafeAreaView, FlatList } from "react-native";
+import { Text, SafeAreaView, FlatList, Platform, View, StatusBar } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
 import ButtonBar from '../components/ButtonBar';
@@ -316,6 +316,10 @@ export default function HomeScreen ({ route, navigation }) {
         darkMode: settings.darkMode
     }
     return (<SafeAreaView style={[containers.safeArea, {backgroundColor: settings.darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
+        <StatusBar 
+            barStyle={settings.darkMode ? 'light-content' : 'dark-content'}
+        />
+        {Platform.OS === 'android' && <View style={{height: StatusBar.currentHeight}} />}
         <Text style={[textStyles.headerText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{viewIng ? Strings.English.headers.ingredients : Strings.English.headers.recipes}</Text>
         {ingButtons.length > 0 && viewIng && <FlatList 
             style={[ containers.projArea ]}

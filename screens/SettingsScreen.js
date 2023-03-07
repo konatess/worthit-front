@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { SafeAreaView, View } from "react-native";
+import { SafeAreaView, View, StatusBar } from "react-native";
 import * as Linking from "expo-linking";
 import { getAuth, signOut } from 'firebase/auth';
 import firebaseInit, { app } from "../storage/firebaseInit"
@@ -207,6 +207,10 @@ export default function SettingsScreen ({ route, navigation }) {
     }
 
     return <SafeAreaView style={[containers.safeArea, {backgroundColor: darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
+        <StatusBar 
+            barStyle={darkMode ? 'light-content' : 'dark-content'}
+        />
+        {Platform.OS === 'android' && <View style={{height: StatusBar.currentHeight}} />}
         <View style={containers.topPadding}></View>
         <View style={containers.settingsBtnList}>
             {settingsBtns.map( button => button )}
