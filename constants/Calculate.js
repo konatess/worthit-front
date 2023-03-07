@@ -4,7 +4,7 @@ const getNumber = (text) => {
     return isNaN(num) ? 0 : num
 };
 const shortenNumber = (num) => {
-    return parseFloat(num.toFixed(10))
+    return parseFloat(num.toFixed(5))
 };
 const limitDecimal = (num, decimalLength) => {
     let limiter = decimalLength > 0 ? Math.pow(10, decimalLength) : 0

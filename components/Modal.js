@@ -12,7 +12,7 @@ import { containers, rows, buttonStyles, textStyles, inputStyles, iconSizes } fr
 import ButtonIcon from "./ButtonIcon";
 import Colors from "../constants/Colors";
 
-export default ({visible, message, pickers, inputs, buttons, vertical, darkmode}) => {
+export default ({visible, message, pickers, inputs, buttons, vertical, darkMode}) => {
 	return <Modal
 		animationType="slide"
 		transparent={true}
@@ -23,13 +23,13 @@ export default ({visible, message, pickers, inputs, buttons, vertical, darkmode}
 			style={{flex: 1}}
 		>
 			<View style={containers.centerModal}>
-				<View style={[containers.modalArea, {backgroundColor: Colors.lightTheme.background}]}>
-					{message !== '' && <Text style={[textStyles.modalMsgText, {color: Colors.lightTheme.text}]}>{message}</Text>}
+				<View style={[containers.modalArea, {backgroundColor: darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}>
+					{message !== '' && <Text style={[textStyles.modalMsgText, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{message}</Text>}
 					{(pickers.length > 0) && <View style={[containers.pickerArea, {borderColor: Colors.lightTheme.buttons.emptyBtnBorders}]}>
 						<ScrollView>
 							{pickers.map((item, index) => {
 								return <Pressable key={"picker-" + index} style={[buttonStyles.pickerButton, {borderColor: Colors.lightTheme.buttons.emptyBtnBorders}]} onPress={item.onPress}>
-									<Text style={[textStyles.pickerText, {color: Colors.lightTheme.text}]}>
+									<Text style={[textStyles.pickerText, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
 										{item.name}
 									</Text>
 								</Pressable>
@@ -38,12 +38,12 @@ export default ({visible, message, pickers, inputs, buttons, vertical, darkmode}
 					</View>}
 					{(inputs.length > 0) && inputs.map((unit, index) => {
 						return ( <View style={rows.rowModal} key={"input" + index}>
-							<Text style={[textStyles.labelText, {color: Colors.lightTheme.text}]} key={unit.label}>{unit.label}</Text>
+							<Text style={[textStyles.labelText, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]} key={unit.label}>{unit.label}</Text>
 							<TextInput
 								accessibilityLabel={unit.label}
 								key={unit.label + '-input'}
 								keyboardType={unit.keyboardType || 'default'}
-								style={[inputStyles.inputField, {color: Colors.lightTheme.text}, {borderColor: Colors.lightTheme.inputBorder}]}
+								style={[inputStyles.inputField, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: Colors.lightTheme.inputBorder}]}
 								placeholder={unit.placeholder}
 								defaultValue={unit.default || ''}
 								returnKeyType={'next'}
@@ -62,11 +62,11 @@ export default ({visible, message, pickers, inputs, buttons, vertical, darkmode}
 										style={[buttonStyles.modalButton, {backgroundColor: unit.color}]}
 										onPress={unit.onPress}
 									>
-										<Text style={textStyles.modalBtnText}>
+										<Text style={[textStyles.modalBtnText, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
 											{unit.iconName && <ButtonIcon 
 												name={unit.iconName} 
 												size={iconSizes.modalIconSize} 
-												color={Colors.lightTheme.text}
+												color={darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}
 											/>}
 											{"  " + unit.title}
 										</Text>

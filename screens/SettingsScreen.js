@@ -38,15 +38,16 @@ export default function SettingsScreen ({ route, navigation }) {
     
     let cancelBtn = {
         title: "Cancel",
-        color: Colors.lightTheme.buttons.cancel,
+        color: darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
             navigation.pop()
-        }
+        },
+        darkMode: darkMode
     }
     let saveBtn = {
         title: "Save",
-        color: Colors.lightTheme.buttons.save,
+        color: darkMode ? Colors.darkTheme.buttons.save : Colors.lightTheme.buttons.save,
         iconName: Icons.save,
         onPress: () => {
             let obj = {
@@ -57,8 +58,9 @@ export default function SettingsScreen ({ route, navigation }) {
                 decimalLength: decimalLength
             }
             storeSettings(obj);
-            navigation.push(Strings.util.routes.home)
-        }
+            navigation.push(Strings.util.routes.home, {settings: obj})
+        },
+        darkMode: darkMode
     }
 
     let modalCancelBtn = {
@@ -191,6 +193,7 @@ export default function SettingsScreen ({ route, navigation }) {
             title={Strings.English.buttons.allSettings[property]}
             iconName={Icons[property]}
             onPress={settingsPress[property]}
+            darkMode={darkMode}
         />
         if (property === "deleteIng" && recLength) {
             // console.log("skip")
@@ -215,7 +218,7 @@ export default function SettingsScreen ({ route, navigation }) {
             inputs={modalInputs}
             buttons={modalButtons} 
             vertical={modalBtnsVertical}
-            darkmode={false}
+            darkMode={darkMode}
         />
         <ButtonBar buttons={[cancelBtn, saveBtn]} />
     </SafeAreaView>

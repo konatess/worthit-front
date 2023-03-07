@@ -4,7 +4,7 @@
 // const darkGreen = '#5F956E';
 // const darkBrown = '#A78162';
 // const darkOrange = '#F55600';
-// const lightGrey = '#ADB6C4';
+// const lightGray = '#ADB6C4';
 // const lightGreen = '#B4CFBC';
 // const lightBrown = '#FFAC70';
 // const lightTurquoise = '#69F2F2'  // '#5DEAEA';
@@ -12,7 +12,7 @@
 
 
 const darkGray = '#294C60';
-const lightGrey = '#ADB6C4';
+const lightGray = '#ADB6C4';
 const offWhite ='#FFFAEF';  
 const offBlack = '#001B2E';
 const darkBrown = '#A78162';
@@ -32,23 +32,38 @@ export default {
             settings: lightBrown,
             save: lightGreen,
             create: lightGreen,
-            cancel: lightGrey,
+            cancel: lightGray,
             delete: lightOrange,
             filter: lightTurquoise,
             duplicate: lightBrown,
             newIngredient: lightGreen,
             addIngredient: lightGreen,
-            navButtonText: offWhite,
-            navButtonIcon: offWhite,
         },
         inputBorder: darkGray,
         text:  offBlack, // darkGray,
+        placeholderText: darkGray,
         disabledText: darkGray,
         inputErrorText: darkOrange,
     },
     darkTheme: {
         background: offBlack,
-        text: offWhite
+        buttons:{
+            emptyBtnBorders: lightBrown,
+            settings: darkBrown,
+            save: darkGreen,
+            create: darkGreen,
+            cancel: darkGray,
+            delete: darkOrange,
+            filter: darkTurquoise,
+            duplicate: darkBrown,
+            newIngredient: darkGreen,
+            addIngredient: darkGreen,
+        },
+        inputBorder: darkGray,
+        text: offWhite,
+        placeholderText: lightGray,
+        disabledText: lightGray,
+        inputErrorText: darkOrange,
     },
     transparent: '#0000',
     // toggle: {

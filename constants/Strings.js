@@ -43,7 +43,7 @@ export default {
             addIngredient: "Add Ingredients",
             newIngredient: "New Ingredient",
             allSettings: {
-                // darkMode: "Dark Mode On/Off",
+                darkMode: "Dark Mode On/Off",
                 // currency: "Currency"
                 // language: "Language",
                 // profitPrioritizeAmount: "Prioritize profit amount over percent: ",

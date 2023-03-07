@@ -102,8 +102,7 @@ export default function HomeScreen ({ route, navigation }) {
                 getRec(setProducts);
                 getIng(setAllIngredients);
             }
-        }, []
-        )
+        }, [] )
     )
 
     const closeModal = () => {
@@ -260,58 +259,64 @@ export default function HomeScreen ({ route, navigation }) {
 
     let modalCancelBtn = {
         title: Strings.English.buttons.cancel,
-        color: Colors.lightTheme.buttons.cancel,
+        color: settings.darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
             closeModal();
             setIngId("");
-        }
+        },
+        darkMode: settings.darkMode
     }
 
     let modalDeleteIngBtn = {
         title: Strings.English.buttons.delete,
-        color: Colors.lightTheme.buttons.delete,
+        color: settings.darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
         iconName: Icons.delete,
         onPress: () => {
             deleteIngredient(ingId)
             closeModal();
-        }
+        },
+        darkMode: settings.darkMode
     }
 
     let modalSaveIngBtn = {
         title: Strings.English.buttons.save,
-        color: Colors.lightTheme.buttons.create,
+        color: settings.darkMode ? Colors.darkTheme.buttons.create : Colors.lightTheme.buttons.create,
         iconName: Icons.create,
         onPress: () => {
             saveIngredient();
-        }
+        },
+        darkMode: settings.darkMode
     }
 
     let settingsbtn = {
         title: Strings.English.buttons.settings,
-        color: Colors.lightTheme.buttons.settings,
+        color: settings.darkMode ? Colors.darkTheme.buttons.settings : Colors.lightTheme.buttons.settings,
         iconName: Icons.settings,
         onPress: () => {
             navigation.push(Strings.util.routes.settings, {settings: settings, recLength: prodButtons.length})
-        }
+        },
+        darkMode: settings.darkMode
     }
     let createbtn = {
         title: Strings.English.buttons.create,
-        color: Colors.lightTheme.buttons.create,
+        color: settings.darkMode ? Colors.darkTheme.buttons.create : Colors.lightTheme.buttons.create,
         iconName: Icons.create,
         onPress: viewIng ? () => callIngModal(false) : () => navToRecipe(""),
-        disabled: viewIng ? maxIng : maxRec
+        disabled: viewIng ? maxIng : maxRec,
+        darkMode: settings.darkMode
     }
     let ingBtn = {
         title: viewIng ? Strings.English.buttons.products : Strings.English.buttons.ingredients,
-        color: Colors.lightTheme.buttons.filter,
+        color: settings.darkMode ? Colors.darkTheme.buttons.filter : Colors.lightTheme.buttons.filter,
         iconName: viewIng ? Icons.product : Icons.ingredient,
         onPress: () => {
             setViewIng(!viewIng)
-        }
+        },
+        darkMode: settings.darkMode
     }
-    return (<SafeAreaView style={[containers.safeArea, {backgroundColor: Colors.lightTheme.background}]}> 
-        <Text style={[textStyles.headerText]}>{viewIng ? Strings.English.headers.ingredients : Strings.English.headers.recipes}</Text>
+    return (<SafeAreaView style={[containers.safeArea, {backgroundColor: settings.darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
+        <Text style={[textStyles.headerText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{viewIng ? Strings.English.headers.ingredients : Strings.English.headers.recipes}</Text>
         {ingButtons.length > 0 && viewIng && <FlatList 
             style={[ containers.projArea ]}
             data={ingButtons}
@@ -330,6 +335,7 @@ export default function HomeScreen ({ route, navigation }) {
                         inventory: item.inventory
                     })
                 }}
+                darkMode={settings.darkMode}
             />}
         />}
         {prodButtons.length > 0 && !viewIng && <FlatList 
@@ -344,6 +350,7 @@ export default function HomeScreen ({ route, navigation }) {
                 onPress={() => {
                     navToRecipe(item.id);
                 }}
+                darkMode={settings.darkMode}
             />}
         />}
         <Modal 
@@ -353,7 +360,7 @@ export default function HomeScreen ({ route, navigation }) {
             inputs={modalInputs}
             buttons={modalButtons} 
             vertical={modalBtnsVertical}
-            darkmode={false}
+            darkMode={settings.darkMode}
         />
         <ButtonBar buttons={[settingsbtn, ingBtn, createbtn]} />
     </SafeAreaView>)

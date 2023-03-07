@@ -13,6 +13,7 @@ export default function ButtonBar({buttons}) {
                         iconName={unit.iconName} 
                         onPress={unit.onPress} 
                         disabled={unit.disabled || false}
+                        darkMode={unit.darkMode}
                     />
                 )
             })}
