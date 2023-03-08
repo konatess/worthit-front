@@ -13,7 +13,7 @@
 
 const darkGray = '#294C60';
 const lightGray = '#ADB6C4';
-const offWhite ='#FFFAEF';  
+const offWhite = '#FFFAEF';  
 const offBlack = '#001B2E';
 const darkBrown = '#A78162';
 const lightBrown = '#FFDDA1';
