@@ -12,7 +12,8 @@ import { containers, rows, buttonStyles, textStyles, inputStyles, iconSizes } fr
 import ButtonIcon from "./ButtonIcon";
 import Colors from "../constants/Colors";
 
-export default ({visible, message, pickers, inputs, buttons, vertical, darkMode}) => {
+export default ({visible, message, pickers, inputs, buttons, vertical, tableArr, darkMode}) => {
+	// let tableArr = [{ing: "Name: ", need: "Need:", inv: "Have:" }, {ing: "yellow yarn", need: "5", inv: "10" }, {ing: "red yarn", need: "5", inv: "10" }]
 	return <Modal
 		animationType="slide"
 		transparent={true}
@@ -54,6 +55,17 @@ export default ({visible, message, pickers, inputs, buttons, vertical, darkMode}
 								onChangeText={unit.onChange}
 							/>
 						</View>	)})}
+						{!!tableArr && tableArr.length > 0 && <ScrollView style={[containers.tableArea]}>
+							{tableArr.map((item, index) => {
+								return (
+									<View key={index} style={[rows.rowModalTable, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text, borderColor: Colors.lightTheme.inputBorder}]}>
+										<Text style={[textStyles.tableItem, {width: 130, textAlign: 'left'}]}>{item.ing}</Text>
+										<Text style={[textStyles.tableItem, {width: 50}]}>{item.need}</Text>
+										<Text style={[textStyles.tableItem, {width: 50}]}>{item.inv}</Text>
+									</View>
+								)}
+							)}
+						</ScrollView>}
 						<View style={[vertical ? rows.vertical : rows.rowModal, {marginTop: 10}]}>
 							{buttons.map((unit, index) => {
 								return (

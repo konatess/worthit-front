@@ -13,11 +13,11 @@ import { storeIng, getIng, storeRec } from "../storage/localAsync";
 import IngAmount from "../components/IngAmount";
 import DataLimits from "../constants/DataLimits";
 import Calculate from "../constants/Calculate";
+import { async } from "@firebase/util";
 
 export default function RecipeScreen ({navigation, route}) {
     const { knownIng, prodObj, prodDbId, settings, products } = route.params;
     const { user } = useContext(UserContext);
-    const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
     const [modalButtons, setModalButtons] = useState([]);
@@ -47,6 +47,12 @@ export default function RecipeScreen ({navigation, route}) {
     const [keyboardOut, setKeyboardOut] = useState(false);
     const [ingInventory, setIngInventory] = useState(0);
     const [prodInventory, setProdInventory] = useState(prodObj?.inventory ? prodObj.inventory : 0);
+    const [numProducts, setNumProducts] = useState(1);
+    const [tableIng, setTableIng] = useState([]);
+    const [updateIngPref, setUpdateIngPref] = useState(false);
+    const [updateSelected, setUpdateSelected] = useState(false);
+    
+    const prefLogin = settings.login || Strings.util.logins[0];
 
     Platform.OS === 'android' &&  useEffect(() => {
         const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -158,7 +164,8 @@ export default function RecipeScreen ({navigation, route}) {
         setModalPickers([]);
         setModalInputs([]);
         setModalButtons([]);
-        setModalBtnsVertical(true)
+        setModalBtnsVertical(true);
+        setTableIng([]);
     }
 
     const createIngPickers = () => {
@@ -223,7 +230,7 @@ export default function RecipeScreen ({navigation, route}) {
         setIngId("");
     }
 
-    const saveRecipe = async () => {
+    const checkRecipe = () => {
         let title = name.trim()
         if (!title.length) {
             setModalMessage(Strings.English.messages.prodNameShort)
@@ -240,73 +247,107 @@ export default function RecipeScreen ({navigation, route}) {
             setModalButtons([modalOkayBtn])
             setModalVisible(true)
             return
+        } else if (prodId && !updateSelected && prodObj.inventory < prodInventory) {
+            setModalMessage(Strings.English.messages.updateIng)
+            setModalButtons([modalNoBtn, modalYesBtn])
+            setModalBtnsVertical(false)
+            setModalVisible(true)
         } else {
-            for (id in ingredients) {
-                if (ingredients[id] === 0) {
-                    setModalMessage(Strings.English.messages.ingredientsAmounts)
-                    setModalButtons([modalOkayBtn])
-                    setModalVisible(true)
-                    return
+            saveRecipe();
+        }
+    }
+
+    const saveRecipe = async () => {
+        for (id in ingredients) {
+            if (ingredients[id] === 0) {
+                setModalMessage(Strings.English.messages.ingredientsAmounts)
+                setModalButtons([modalOkayBtn])
+                setModalVisible(true)
+                return
+            }
+        }
+        let recipe = {
+            title: name.trim(),
+            note: note,
+            time: {
+                hour: hour,
+                minute: minute,
+                amount: amountPerTime
+            },
+            wage: wage,
+            profitPercent: profitPercent,
+            profitAmount: profitAmount,
+            ingredients: ingredients,
+            inventory: prodInventory
+        }
+        if (prefLogin === Strings.util.logins[0]) {
+            let allIngObj = allIngredients || {};
+            let recId = prodId.length ? prodId : firebaseInit.dbMethods.createId();
+            let allProdObj = {
+                ...products,
+                [recId]: recipe
+            };
+            storeRec(allProdObj);
+            for (id in allIngredients) {
+                let inUse = id in ingredients
+                if (inUse) {
+                    let recs = allIngObj[id]?.recipes || {};
+                    allIngObj[id].recipes = {
+                        ...recs,
+                        [recId]: true
+                    }
+                } else if (allIngObj[id].recipes) {
+                        delete allIngObj[id].recipes[recId]
                 }
             }
-            let recipe = {
-                title: title,
-                note: note,
-                time: {
-                    hour: hour,
-                    minute: minute,
-                    amount: amountPerTime
-                },
-                wage: wage,
-                profitPercent: profitPercent,
-                profitAmount: profitAmount,
-                ingredients: ingredients,
-                inventory: prodInventory
-            }
-            if (prefLogin === Strings.util.logins[0]) {
-                let allIngObj = allIngredients || {};
-                let recId = prodId.length ? prodId : firebaseInit.dbMethods.createId();
-                let allProdObj = {
-                    ...products,
-                    [recId]: recipe
-                };
-                storeRec(allProdObj);
+            storeIng(allIngObj).then(getIng(setAllIngredients));
+        } else if (prefLogin !== Strings.util.logins[0]) {
+            if (prodId) {
+                firebaseInit.dbMethods.updateRecipe(user.uid, prodId, recipe);
                 for (id in allIngredients) {
                     let inUse = id in ingredients
-                    if (inUse) {
-                        let recs = allIngObj[id]?.recipes || {};
-                        allIngObj[id].recipes = {
-                            ...recs,
-                            [recId]: true
-                        }
-                    } else if (allIngObj[id].recipes) {
-                         delete allIngObj[id].recipes[recId]
-                    }
-                }
-                storeIng(allIngObj).then(getIng(setAllIngredients));
-            } else if (prefLogin !== Strings.util.logins[0]) {
-                if (prodId) {
-                    firebaseInit.dbMethods.updateRecipe(user.uid, prodId, recipe);
-                    for (id in allIngredients) {
-                        let inUse = id in ingredients
-                        firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, inUse)
-                    } 
-                } else {
-                    let newRec = await firebaseInit.dbMethods.newRecipe(user.uid, recipe);
-                    for (id in allIngredients) {
-                        let inUse = id in ingredients
-                        firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, newRec, inUse)
-                    } 
-                }
+                    firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, inUse)
+                } 
+            } else {
+                let newRec = await firebaseInit.dbMethods.newRecipe(user.uid, recipe);
+                for (id in allIngredients) {
+                    let inUse = id in ingredients
+                    firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, newRec, inUse)
+                } 
             }
-            navigation.push(Strings.util.routes.home, {settings: settings})
         }
+        navigation.push(Strings.util.routes.home, {settings: settings})
+    }
+
+    const updateIngInventory = () => {
+        let newAllIng = allIngredients;
+        for (let id in ingredients) {
+            newAllIng[id].inventory -= ingredients[id]
+        }
+        setAllIngredients(newAllIng)
     }
 
     const calculateTotalCost = () => {
         let ingCost = Calculate.ingredientCost(ingredients, allIngredients);
         let wageCost = Calculate.wagePerItem(wage, hour, minute, amountPerTime);
         return Calculate.totalCost(wageCost, ingCost)
+    }
+
+    const createTable = (numP) => {
+        let arr = [{
+            ing: Strings.English.label.ingName, 
+            need: Strings.English.label.ingTableNeed, 
+            inv: Strings.English.label.ingTableHave
+        }]
+        for (let id in ingredients) {
+            let ing = {
+                ing: allIngredients[id].name,
+                need: ingredients[id]  * numP,
+                inv: allIngredients[id].inventory
+            }
+            arr.push(ing)
+        }
+        return arr
     }
     
     let deleteBtn = {
@@ -349,7 +390,7 @@ export default function RecipeScreen ({navigation, route}) {
         color: settings.darkMode ? Colors.darkTheme.buttons.save : Colors.lightTheme.buttons.save,
         iconName: Icons.save,
         onPress: () => {
-            saveRecipe()
+            checkRecipe()
         },
         disabled: !canSave,
         darkMode: settings.darkMode
@@ -375,6 +416,7 @@ export default function RecipeScreen ({navigation, route}) {
             setIngUnit("");
             setIngCost(0);
             setIngPerItem(0);
+            setNumProducts(1);
         }
     }
     let modalOkayBtn = {
@@ -383,6 +425,26 @@ export default function RecipeScreen ({navigation, route}) {
         iconName: Icons.okay,
         onPress: () => {
             closeModal();
+        }
+    }
+    let modalNoBtn = {
+        title: Strings.English.buttons.no,
+        color: settings.darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
+        iconName: Icons.cancel,
+        onPress: () => {
+            closeModal();
+            saveRecipe();
+        }
+    }
+    let modalYesBtn = {
+        title: Strings.English.buttons.yes,
+        color: settings.darkMode ? Colors.darkTheme.buttons.save : Colors.lightTheme.buttons.save,
+        iconName: Icons.okay,
+        onPress: () => {
+            updateIngInventory();
+            closeModal();
+            setUpdateIngPref(true);
+            saveRecipe();
         }
     }
     let newIngredientBtn = {
@@ -629,7 +691,7 @@ export default function RecipeScreen ({navigation, route}) {
                     </Text>
                     {ingTextList.length > 0 && ingTextList.map(item => item)}
                     <Pressable 
-                        style={[buttonStyles.basicButton, {backgroundColor: settings.darkMode ? Colors.darkTheme.buttons.addIngredient : Colors.lightTheme.buttons.addIngredient}]}
+                        style={[buttonStyles.basicButton, buttonStyles.recipeManageIngBtn, {backgroundColor: settings.darkMode ? Colors.darkTheme.buttons.addIngredient : Colors.lightTheme.buttons.addIngredient}]}
                         onPress={() => {
                             setModalMessage(Strings.English.messages.ingredients)
                             setModalPickers( createIngPickers() );
@@ -638,8 +700,32 @@ export default function RecipeScreen ({navigation, route}) {
                             setModalVisible(true);
                         }}
                     >
-                        <Text>
+                        <Text style={[textStyles.recipeManageIngBtn]}>
                             {Strings.English.buttons.addIngredient}
+                        </Text>
+                    </Pressable>
+                </View>
+                <View>
+                    <Pressable 
+                        style={[buttonStyles.basicButton, buttonStyles.recipeManageIngBtn, {backgroundColor: settings.darkMode ? Colors.darkTheme.buttons.duplicate : Colors.lightTheme.buttons.duplicate}]}
+                        onPress={() => {
+                            setModalInputs([{
+                                label: Strings.English.label.numProducts, 
+                                default: numProducts.toString(), 
+                                keyboardType: 'decimal-pad',
+                                onChange: text => {
+                                    let num = Calculate.getNum(text)
+                                    setNumProducts(num);
+                                    setTableIng( createTable(num) );
+                                }
+                            }])
+                            setTableIng( createTable(numProducts) );
+                            setModalButtons([modalCancelBtn]);
+                            setModalVisible(true);
+                        }}
+                    >
+                        <Text style={[textStyles.recipeManageIngBtn]}>
+                            {Strings.English.buttons.calcIngredients}
                         </Text>
                     </Pressable>
                 </View>
@@ -677,6 +763,7 @@ export default function RecipeScreen ({navigation, route}) {
             inputs={modalInputs}
             buttons={modalButtons} 
             vertical={modalBtnsVertical}
+            tableArr={tableIng}
             darkMode={settings.darkMode}
         />
         {Platform.OS === 'ios' && <ButtonBar buttons={navBtns} />}

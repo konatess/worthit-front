@@ -66,6 +66,14 @@ const containers = StyleSheet.create({
     },
     loginInputs: {
         width: 200 * sizer,
+    },
+    tableArea: {
+        width: 250 * sizer,
+        borderWidth: 1,
+        borderRadius: 10,
+        maxHeight: 300 * sizer,
+        margin: 10,
+        paddingHorizontal: 10
     }
 });
 
@@ -83,6 +91,14 @@ const rows = StyleSheet.create({
     },
     vertical: {
         justifyContent: 'flex-start',
+    },
+    rowModalTable: {
+        flexDirection: 'row',
+        // justifyContent: 'space-between',
+        alignContent: 'stretch',
+        width: 230 * sizer,
+        padding: 5,
+        borderBottomWidth: 1,
     },
 });
 
@@ -159,6 +175,10 @@ const buttonStyles = StyleSheet.create({
         backgroundColor: Colors.transparent,
         borderRadius: 50,
     },
+    recipeManageIngBtn: {
+        marginVertical: 5,
+        marginHorizontal: 10
+    }
 });
 
 const inputStyles = StyleSheet.create({
@@ -234,6 +254,15 @@ const textStyles = StyleSheet.create({
     hintText: {
         fontSize: 14 * sizer,
     },
+    tableItem: {
+        fontSize: 16 * sizer,
+        textAlign: 'center'
+    },
+    recipeManageIngBtn: {
+        textAlign: 'center',
+        fontSize: 16,
+        fontWeight: '500'
+    }
 });
 
 const iconSizes = StyleSheet.create({

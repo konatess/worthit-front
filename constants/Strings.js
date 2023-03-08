@@ -42,6 +42,9 @@ export default {
             setToDefault: "Set to Default",
             addIngredient: "Add Ingredients",
             newIngredient: "New Ingredient",
+            calcIngredients: "Calculate Ingredients Needed",
+            yes: "Yes",
+            no: "No",
             allSettings: {
                 darkMode: "Dark Mode On/Off",
                 // currency: "Currency"
@@ -82,7 +85,10 @@ export default {
             ingCost: "Cost: ",
             ingPerItem: "Amount: ",
             inventory: "Inventory: ",
-            price: "Price: "
+            price: "Price: ",
+            numProducts: "For # of Product: ",
+            ingTableNeed: "Need:",
+            ingTableHave: "Have:"
         },
         messages: {
             ingredients: "Choose an ingredient: ",
@@ -102,7 +108,8 @@ export default {
             deleteAllRec: "Are you sure you want to delete all your recipes? This cannot be undone.",
             overwriteLocal: "Are you sure you want to overwrite your local data with your database data? This cannot be undone.",
             overwriteRemote: "Are you sure you want to overwrite your database data with your local data? This cannot be undone.",
-            overwriteInProgress: "Saving overwrite..."
+            overwriteInProgress: "Saving overwrite...",
+            updateIng: "You have increased your product inventory. Would you like to subtract ingredients from your inventory?"
         },
         hint: {
             amount: "If it takes more than one hour to produce one, we recommend setting amount to 1"
