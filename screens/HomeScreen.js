@@ -23,7 +23,6 @@ WebBrowser.maybeCompleteAuthSession();
 export default function HomeScreen ({ route, navigation }) {
 	const { settings } = route.params;
     const { user } = useContext(UserContext);
-    const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
     const [viewIng, setViewIng] = useState(false);
     const [allIngredients, setAllIngredients] = useState({});
     const [ingButtons, setIngButtons] = useState([]);
@@ -44,7 +43,7 @@ export default function HomeScreen ({ route, navigation }) {
     const [maxIng, setMaxIng] = useState(false);
 
     useEffect(() => {
-        if (prefLogin === Strings.util.logins[0]) {
+        if (settings.login === Strings.util.logins[0]) {
             getIng(setAllIngredients)
         } else {
             let unsubscribe = firebaseInit.dbMethods.listen.ing(user.uid, setAllIngredients)
@@ -57,7 +56,7 @@ export default function HomeScreen ({ route, navigation }) {
     }, [allIngredients])
 
     useEffect(() => {
-        if (prefLogin === Strings.util.logins[0]) {
+        if (settings.login === Strings.util.logins[0]) {
             getRec(setProducts);
         } else {
             let unsubscribe = firebaseInit.dbMethods.listen.rec(user.uid, setProducts)
@@ -98,7 +97,7 @@ export default function HomeScreen ({ route, navigation }) {
 
     useFocusEffect(
         useCallback( () => {
-            if (prefLogin === Strings.util.logins[0]) {
+            if (settings.login === Strings.util.logins[0]) {
                 getRec(setProducts);
                 getIng(setAllIngredients);
             }
@@ -226,7 +225,7 @@ export default function HomeScreen ({ route, navigation }) {
             if (ingId && allIngredients[ingId]?.recipes) {
                 ing.recipes = allIngredients[ingId].recipes
             }
-            if (prefLogin === Strings.util.logins[0]) {
+            if (settings.login === Strings.util.logins[0]) {
                 let allIngObj = allIngredients;
                 if (ingId) {
                     allIngObj[ingId] = ing;
@@ -235,7 +234,7 @@ export default function HomeScreen ({ route, navigation }) {
                     allIngObj[id] = ing;
                 }
                 storeIng(allIngObj).then(getIng(setAllIngredients));
-            } else if (prefLogin !== Strings.util.logins[0]) {
+            } else if (settings.login !== Strings.util.logins[0]) {
                 if (ingId) {
                     firebaseInit.dbMethods.updateIngredient(user.uid, ingId, ing);
                 } else {
@@ -247,11 +246,11 @@ export default function HomeScreen ({ route, navigation }) {
     }
 
     const deleteIngredient = (id) => {
-        if (prefLogin === Strings.util.logins[0]) {
+        if (settings.login === Strings.util.logins[0]) {
             let allIngObj = allIngredients;
             delete allIngObj[id];
             storeIng(allIngObj).then(getIng(setAllIngredients));
-        } else if (prefLogin !== Strings.util.logins[0]) {
+        } else if (settings.login !== Strings.util.logins[0]) {
             firebaseInit.dbMethods.deleteIngredient(user.uid, id);
         }
         setIngId("");

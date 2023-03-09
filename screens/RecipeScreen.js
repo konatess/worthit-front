@@ -13,7 +13,6 @@ import { storeIng, getIng, storeRec } from "../storage/localAsync";
 import IngAmount from "../components/IngAmount";
 import DataLimits from "../constants/DataLimits";
 import Calculate from "../constants/Calculate";
-import { async } from "@firebase/util";
 
 export default function RecipeScreen ({navigation, route}) {
     const { knownIng, prodObj, prodDbId, settings, products } = route.params;
@@ -49,8 +48,6 @@ export default function RecipeScreen ({navigation, route}) {
     const [prodInventory, setProdInventory] = useState(prodObj?.inventory ? prodObj.inventory : 0);
     const [numProducts, setNumProducts] = useState(1);
     const [tableIng, setTableIng] = useState([]);
-    const [updateIngPref, setUpdateIngPref] = useState(false);
-    const [updateSelected, setUpdateSelected] = useState(false);
     
     const prefLogin = settings.login || Strings.util.logins[0];
 
@@ -247,7 +244,7 @@ export default function RecipeScreen ({navigation, route}) {
             setModalButtons([modalOkayBtn])
             setModalVisible(true)
             return
-        } else if (prodId && !updateSelected && prodObj.inventory < prodInventory) {
+        } else if (prodId && prodObj.inventory < prodInventory) {
             setModalMessage(Strings.English.messages.updateIng)
             setModalButtons([modalNoBtn, modalYesBtn])
             setModalBtnsVertical(false)
@@ -443,7 +440,6 @@ export default function RecipeScreen ({navigation, route}) {
         onPress: () => {
             updateIngInventory();
             closeModal();
-            setUpdateIngPref(true);
             saveRecipe();
         }
     }
