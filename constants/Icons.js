@@ -25,5 +25,7 @@ export default {
     google: 'logo-google',
     subscriptions: 'cart', //analytics-sharp, apps, bookmarks, albums
     overwriteLocal: 'arrow-down-circle-outline',
-    overwriteRemote: 'arrow-up-circle-outline'
+    overwriteRemote: 'arrow-up-circle-outline',
+    info: 'information-circle-outline',
+    // info: 'information-circle'
 }

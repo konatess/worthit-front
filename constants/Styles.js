@@ -178,6 +178,9 @@ const buttonStyles = StyleSheet.create({
     recipeManageIngBtn: {
         marginVertical: 5,
         marginHorizontal: 10
+    },
+    infoBtn: {
+        marginLeft: 10
     }
 });
 
@@ -270,7 +273,8 @@ const iconSizes = StyleSheet.create({
     settingsIconSize: 22 * sizer,
     fabIconSize: 50 * sizer,
     modalIconSize: 18 * sizer,
-    loginIconSize: 50 * sizer
+    loginIconSize: 50 * sizer,
+    infoIconSize: 24 * sizer
 });
 
 export {containers, rows, buttonStyles, inputStyles, textStyles, iconSizes};

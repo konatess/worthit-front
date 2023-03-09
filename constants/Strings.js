@@ -109,10 +109,12 @@ export default {
             overwriteLocal: "Are you sure you want to overwrite your local data with your database data? This cannot be undone.",
             overwriteRemote: "Are you sure you want to overwrite your database data with your local data? This cannot be undone.",
             overwriteInProgress: "Saving overwrite...",
-            updateIng: "You have increased your product inventory. Would you like to subtract ingredients from your inventory?"
-        },
-        hint: {
-            amount: "If it takes more than one hour to produce one, we recommend setting amount to 1"
+            updateIng: "You have increased your product inventory. Would you like to subtract ingredients from your inventory?",
+            amount: "The time and amount determine how much of your hourly wage to add to the price. It's better to round up the time than to round it down.",
+            wage: "You deserve to be paid a living wage. If you make this product yourself, the wage is what you should pay yourself for time spent making this specific product. If you pay an employee to make this product, put their wage here.",
+            profit: "Your business needs profit that is separate from the hourly wage above. This number should be high enough to cover:\n• expected expenses tied to each product such as fees from credit card purchases or sales platforms\n• expected general expenses such as subscription fees which are spread over all your sales\n• and still have some left over for unexpected expenses.\nIf all of that feels too overwhelming or unpredictable, just calculate the expected expenses tied to this product and double that amount. You can always update this later",
+            inventory: "This is the number of this product you have in inventory now, created but not sold. This number can be 0. Use the 'Calculate Ingredients Needed' button below to see how much of your ingredients you would need to make # more of this product, and how much of each ingredient you already have.",
+            ingInfo: "Use the 'Add Ingredients' button to choose ingredients needed for this recipe, then touch each ingredient to update the quantity."
         },
         placeholder:  {
             email: "email@example.com",

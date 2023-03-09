@@ -4,6 +4,7 @@ import { Text, SafeAreaView, View, TextInput, Keyboard, Pressable, KeyboardAvoid
 import ButtonBar from '../components/ButtonBar';
 import { containers, textStyles, inputStyles, rows, buttonStyles } from '../constants/Styles';
 import Icons from "../constants/Icons";
+import InfoBtn from "../components/InfoBtn";
 import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import Modal from "../components/Modal";
@@ -584,9 +585,14 @@ export default function RecipeScreen ({navigation, route}) {
                             }
                         }}
                     />
-                    {/* <Text style={textStyles.hintText}>
-                        {Strings.English.hint.amount}
-                    </Text> */}
+                    <InfoBtn 
+                        darkMode={settings.darkMode}
+                        onPress={ () => {
+                            setModalMessage(Strings.English.messages.amount)
+                            setModalButtons([modalOkayBtn])
+                            setModalVisible(true)
+                        }}
+                    />
                 </View>
                 <View style={rows.row1} >
                     <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
@@ -605,6 +611,14 @@ export default function RecipeScreen ({navigation, route}) {
                             } else if (text.length > 0 && Strings.util.regex.numbers.test(text)) {
                                 setWage(Calculate.getNum(text))
                             }
+                        }}
+                    />
+                    <InfoBtn 
+                        darkMode={settings.darkMode}
+                        onPress={ () => {
+                            setModalMessage(Strings.English.messages.wage)
+                            setModalButtons([modalOkayBtn])
+                            setModalVisible(true)
                         }}
                     />
                 </View>
@@ -659,6 +673,14 @@ export default function RecipeScreen ({navigation, route}) {
                     <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                         {Strings.English.label.profPercent}
                     </Text>
+                    <InfoBtn 
+                        darkMode={settings.darkMode}
+                        onPress={ () => {
+                            setModalMessage(Strings.English.messages.profit)
+                            setModalButtons([modalOkayBtn])
+                            setModalVisible(true)
+                        }}
+                    />
                 </View>
                 <View style={rows.row1} >
                     <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
@@ -679,12 +701,29 @@ export default function RecipeScreen ({navigation, route}) {
                             }
                         }}
                     />
+                    <InfoBtn 
+                        darkMode={settings.darkMode}
+                        onPress={ () => {
+                            setModalMessage(Strings.English.messages.inventory)
+                            setModalButtons([modalOkayBtn])
+                            setModalVisible(true)
+                        }}
+                    />
                 </View>
-                {/* <Text>{totalCost+profitAmount}</Text> */}
                 <View>
-                    <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
-                        {Strings.English.label.ingredients}
-                    </Text>
+                    <View style={rows.row1}>
+                        <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
+                            {Strings.English.label.ingredients}
+                        </Text>
+                        <InfoBtn 
+                            darkMode={settings.darkMode}
+                            onPress={ () => {
+                                setModalMessage(Strings.English.messages.ingInfo)
+                                setModalButtons([modalOkayBtn])
+                                setModalVisible(true)
+                            }}
+                        />
+                    </View>
                     {ingTextList.length > 0 && ingTextList.map(item => item)}
                     <Pressable 
                         style={[buttonStyles.basicButton, buttonStyles.recipeManageIngBtn, {backgroundColor: settings.darkMode ? Colors.darkTheme.buttons.addIngredient : Colors.lightTheme.buttons.addIngredient}]}
