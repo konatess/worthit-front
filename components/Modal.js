@@ -24,7 +24,7 @@ export default ({visible, message, pickers, inputs, buttons, vertical, tableArr,
 			style={{flex: 1}}
 		>
 			<View style={containers.centerModal}>
-				<View style={[containers.modalArea, {backgroundColor: darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}>
+				<View style={[containers.modalArea, {backgroundColor: darkMode ? Colors.darkTheme.background : Colors.lightTheme.background, shadowColor: darkMode ? Colors.darkTheme.modalShadow : Colors.lightTheme.modalShadow}]}>
 					{message !== '' && <Text style={[textStyles.modalMsgText, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{message}</Text>}
 					{(pickers.length > 0) && <View style={[containers.pickerArea, {borderColor: Colors.lightTheme.buttons.emptyBtnBorders}]}>
 						<ScrollView>

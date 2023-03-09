@@ -48,7 +48,6 @@ const containers = StyleSheet.create({
         borderRadius: 20,
         padding: 30,
         alignItems: "center",
-        shadowColor: "#000",
         shadowOffset: {
             width: 0,
             height: 2
@@ -215,7 +214,6 @@ const textStyles = StyleSheet.create({
     }, 
     headerText: {
         fontSize: 25 * sizer,
-        // marginTop: 30,
         marginTop: 5,
         textAlign: 'center',
     },

@@ -45,6 +45,7 @@ export default {
         placeholderText: darkGray,
         disabledText: darkGray,
         inputErrorText: darkOrange,
+        modalShadow: offBlack,
     },
     darkTheme: {
         background: offBlack,
@@ -66,6 +67,7 @@ export default {
         placeholderText: lightGray,
         disabledText: lightGray,
         inputErrorText: darkOrange,
+        modalShadow: lightGray,
     },
     transparent: '#0000',
     // toggle: {
