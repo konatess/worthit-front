@@ -62,7 +62,7 @@ export default {
             addIngredient: darkGreen,
             info: lightTurquoise,
         },
-        inputBorder: darkGray,
+        inputBorder: lightGray,
         text: offWhite,
         placeholderText: lightGray,
         disabledText: lightGray,

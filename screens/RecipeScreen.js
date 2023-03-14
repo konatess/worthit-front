@@ -504,7 +504,7 @@ export default function RecipeScreen ({navigation, route}) {
                 <TextInput
                     accessibilityLabel={Strings.English.label.prodName}
                     accessibilityHint={Strings.English.placeholder.prodName}
-                    style={[inputStyles.inputField, inputStyles.longInputs, {marginBottom: 10}, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, , {borderColor: Colors.lightTheme.inputBorder}]}
+                    style={[inputStyles.inputField, inputStyles.longInputs, {marginBottom: 10}, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, , {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                     placeholder={Strings.English.placeholder.prodName}
                     placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
                     value={name}
@@ -528,7 +528,7 @@ export default function RecipeScreen ({navigation, route}) {
                     </Text>
                     <TextInput
                         accessibilityLabel={Strings.English.label.hour}
-                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text, marginEnd: 10}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text, marginEnd: 10}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         value={hour.toString()}
                         placeholder={'1'}
                         placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
@@ -547,7 +547,7 @@ export default function RecipeScreen ({navigation, route}) {
                     </Text>
                     <TextInput
                         accessibilityLabel={Strings.English.label.minute}
-                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text, marginEnd: 10}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text, marginEnd: 10}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         value={minute.toString()}
                         placeholder={'15'}
                         placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
@@ -571,7 +571,7 @@ export default function RecipeScreen ({navigation, route}) {
                     </Text>
                     <TextInput
                         accessibilityLabel={Strings.English.label.amount}
-                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         value={amountPerTime.toString()}
                         placeholder={'1'}
                         placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
@@ -600,7 +600,7 @@ export default function RecipeScreen ({navigation, route}) {
                     </Text>
                     <TextInput
                         accessibilityLabel={Strings.English.label.wage}
-                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         value={wage.toString()}
                         placeholder={'15.00'}
                         placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
@@ -631,7 +631,7 @@ export default function RecipeScreen ({navigation, route}) {
                     </Text>
                     <TextInput
                         accessibilityLabel={Strings.English.label.profit}
-                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         defaultValue={profitAmount.toString().slice(0,10)}
                         placeholder={'0'}
                         placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
@@ -653,7 +653,7 @@ export default function RecipeScreen ({navigation, route}) {
                     </Text>
                     <TextInput
                         accessibilityLabel={Strings.English.label.profPercent}
-                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         value={profitPercent.toString()}
                         placeholder={'0'}
                         placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
@@ -688,7 +688,7 @@ export default function RecipeScreen ({navigation, route}) {
                     </Text>
                     <TextInput
                         accessibilityLabel={Strings.English.label.inventory}
-                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         value={prodInventory.toString()}
                         placeholder={'0'}
                         placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
@@ -735,7 +735,7 @@ export default function RecipeScreen ({navigation, route}) {
                             setModalVisible(true);
                         }}
                     >
-                        <Text style={[textStyles.recipeManageIngBtn]}>
+                        <Text style={[textStyles.recipeManageIngBtn, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                             {Strings.English.buttons.addIngredient}
                         </Text>
                     </Pressable>
@@ -755,11 +755,11 @@ export default function RecipeScreen ({navigation, route}) {
                                 }
                             }])
                             setTableIng( createTable(numProducts) );
-                            setModalButtons([modalCancelBtn]);
+                            setModalButtons([modalOkayBtn]);
                             setModalVisible(true);
                         }}
                     >
-                        <Text style={[textStyles.recipeManageIngBtn]}>
+                        <Text style={[textStyles.recipeManageIngBtn, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                             {Strings.English.buttons.calcIngredients}
                         </Text>
                     </Pressable>
@@ -772,7 +772,7 @@ export default function RecipeScreen ({navigation, route}) {
                     <TextInput
                         accessibilityLabel={Strings.English.label.prodNote}
                         accessibilityHint={Strings.English.placeholder.prodNote}
-                        style={[inputStyles.inputField, inputStyles.longInputs, {marginBottom: 10}, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, inputStyles.longInputs, {marginBottom: 10}, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         placeholder={Strings.English.placeholder.prodNote}
                         placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
                         value={note}

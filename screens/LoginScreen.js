@@ -11,6 +11,7 @@ import { containers, textStyles, inputStyles, buttonStyles } from "../constants/
 import Strings from "../constants/Strings";
 import { UserContext } from "../constants/UserContext";
 import Icons from "../constants/Icons";
+import Colors from "../constants/Colors";
 
 const auth = getAuth(app)
 
@@ -114,8 +115,8 @@ export default function LoginScreen ({ navigation, route }) {
                     secureTextEntry={true}
                     onChange={text => setPassword(text)}
                 />
-                <Pressable style={[buttonStyles.loginButton, buttonStyles.loginWithEmail]} onPress={() => emailSignin()}>
-                    <Text style={textStyles.buttonText}>{Strings.English.buttons.loginWithEmail}</Text>
+                <Pressable style={[buttonStyles.loginButton, buttonStyles.loginWithEmail, {backgroundColor: settings.darkMode ? Colors.darkTheme.buttons.save : Colors.lightTheme.buttons.save}]} onPress={() => emailSignin()}>
+                    <Text style={[textStyles.buttonText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{Strings.English.buttons.loginWithEmail}</Text>
                 </Pressable>
             </KeyboardAvoidingView>}
             {prefLogin !== Strings.util.logins[4] && <>

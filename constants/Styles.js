@@ -116,7 +116,6 @@ const buttonStyles = StyleSheet.create({
     },
     loginWithEmail: {
         marginTop: 10,
-        backgroundColor: Colors.lightTheme.buttons.save
     },
     modalButton: {
         borderRadius: 20,
@@ -218,14 +217,9 @@ const textStyles = StyleSheet.create({
         textAlign: 'center',
     },
     buttonText: {
-        color: Colors.lightTheme.buttons.navButtonText,
         fontWeight: "bold",
         textAlign: "center",
         fontSize: 14 * sizer,
-    },
-    navBtnText: {
-        color: Colors.lightTheme.buttons.navButtonText,
-        fontSize: 18 * sizer,
     },
     modalMsgText: {
         marginBottom: 5,
@@ -233,7 +227,6 @@ const textStyles = StyleSheet.create({
         fontSize: 18 * sizer,
     },
     modalBtnText: {
-        color: Colors.lightTheme.buttons.navButtonText,
         fontWeight: "bold",
         textAlign: "center",
         fontSize: 18 * sizer,
