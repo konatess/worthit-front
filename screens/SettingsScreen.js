@@ -1,8 +1,9 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SafeAreaView, View, StatusBar } from "react-native";
 import * as Linking from "expo-linking";
 import { getAuth, signOut } from 'firebase/auth';
-import firebaseInit, { app } from "../storage/firebaseInit"
+import firebaseInit, { app } from "../storage/firebaseInit";
+import Purchases, { LOG_LEVEL } from "react-native-purchases";
 import ButtonBar from '../components/ButtonBar';
 import SettingButton from "../components/SettingButton";
 import { containers } from '../constants/Styles';
@@ -29,6 +30,21 @@ export default function SettingsScreen ({ route, navigation }) {
 	const [modalPickers, setModalPickers] = useState([]);
     const [modalInputs, setModalInputs] = useState([]);
     const [modalBtnsVertical, setModalBtnsVertical] = useState(false);
+
+    useEffect(() => {
+        const getsubs = async () => {
+            Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+            Purchases.configure({
+                // apiKey: "appl_NIMzKbuELZwYrRadlznGbomLWLN",
+                apiKey: "goog_vCtRNkrJEMHsuLzlXyAtVaRsWjq",
+            })
+            // const subscriptions = Purchases.getProducts(["wi_10x_storage", "wi_10x_storage_annual"]);
+            const subscriptions = Purchases.getProducts(["wi_fb_10x:wi-fb-10x-monthly"]);
+            console.log(subscriptions);
+        }
+        
+        getsubs();
+    }, [])
 
     const closeModal = () => {
         setModalVisible(false);
