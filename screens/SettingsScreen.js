@@ -30,6 +30,7 @@ export default function SettingsScreen ({ route, navigation }) {
 	const [modalPickers, setModalPickers] = useState([]);
     const [modalInputs, setModalInputs] = useState([]);
     const [modalBtnsVertical, setModalBtnsVertical] = useState(false);
+    const [subs, setSubs] = useState(["placeholder"])
 
     useEffect(() => {
         const getsubs = async () => {
@@ -40,7 +41,7 @@ export default function SettingsScreen ({ route, navigation }) {
             })
             // const subscriptions = Purchases.getProducts(["wi_10x_storage", "wi_10x_storage_annual"]);
             const subscriptions = Purchases.getProducts(["wi_fb_10x:wi-fb-10x-monthly"]);
-            console.log(subscriptions);
+            setSubs(subscriptions);
         }
         
         getsubs();
@@ -230,6 +231,9 @@ export default function SettingsScreen ({ route, navigation }) {
         <View style={containers.topPadding}></View>
         <View style={containers.settingsBtnList}>
             {settingsBtns.map( button => button )}
+        </View>
+        <View>
+            <Text>{subs}</Text>
         </View>
         <Modal 
             visible={modalVisible} 
