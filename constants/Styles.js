@@ -166,6 +166,14 @@ const buttonStyles = StyleSheet.create({
     settingslastBtn: {
         borderBottomWidth: StyleSheet.hairlineWidth,
     },
+    purchaseBtnArea: {
+        // flexDirection: "row",
+        paddingHorizontal: 15,
+        paddingVertical: 15,
+        alignItems: 'center',
+        borderWidth: StyleSheet.hairlineWidth,
+        borderBottomWidth: 0,
+    },
     fab: {
         position: 'absolute',
         right: 15,
@@ -240,7 +248,10 @@ const textStyles = StyleSheet.create({
         fontSize: 21 * sizer,
     },
     productPriceText: {
-        fontSize: 17 * sizer,
+        fontSize: 19 * sizer,
+    },
+    productDescText: {
+        fontSize: 16 * sizer,
     },
     settingsBtnText: {
         fontSize: 16 * sizer,

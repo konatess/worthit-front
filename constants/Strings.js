@@ -12,7 +12,8 @@ export default {
             login: "Login",
             home: "Home",
             settings: "Settings",
-            recipe: "Recipe"
+            recipe: "Recipe",
+            purchase: "Purchase"
         },
         mailto: "mailto:<admin@buddingapps.com>?subject=Worth%20It%20App",
         website: "https://www.buddingapps.com/projects/divide-%26-de-stress",

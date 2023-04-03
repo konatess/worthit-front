@@ -10,6 +10,7 @@ import { UserContext } from './constants/UserContext';
 import HomeScreen from './screens/HomeScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import RecipeScreen from './screens/RecipeScreen';
+import PurchaseScreen from './screens/PurchaseScreen';
 import LoginScreen from './screens/LoginScreen';
 import Notify from './components/Notify';
 import Strings from './constants/Strings';
@@ -58,6 +59,7 @@ export default function App() {
 						<Stack.Screen name={Strings.util.routes.home} component={HomeScreen} initialParams={{settings: settingsObj}}/>
 						<Stack.Screen name={Strings.util.routes.settings} component={SettingsScreen} initialParams={{settings: settingsObj}}/>
 						<Stack.Screen name={Strings.util.routes.recipe} component={RecipeScreen} />
+						<Stack.Screen name={Strings.util.routes.purchase} component={PurchaseScreen} />
 					</> 
 					: 
 					<>

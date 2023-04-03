@@ -1,9 +1,8 @@
 import { useContext, useEffect, useState } from "react";
-import { SafeAreaView, View, StatusBar } from "react-native";
+import { SafeAreaView, View, StatusBar, FlatList } from "react-native";
 import * as Linking from "expo-linking";
 import { getAuth, signOut } from 'firebase/auth';
 import firebaseInit, { app } from "../storage/firebaseInit";
-import Purchases, { LOG_LEVEL } from "react-native-purchases";
 import ButtonBar from '../components/ButtonBar';
 import SettingButton from "../components/SettingButton";
 import { containers } from '../constants/Styles';
@@ -30,22 +29,6 @@ export default function SettingsScreen ({ route, navigation }) {
 	const [modalPickers, setModalPickers] = useState([]);
     const [modalInputs, setModalInputs] = useState([]);
     const [modalBtnsVertical, setModalBtnsVertical] = useState(false);
-    const [subs, setSubs] = useState(["placeholder"])
-
-    useEffect(() => {
-        const getsubs = async () => {
-            Purchases.setLogLevel(LOG_LEVEL.DEBUG);
-            Purchases.configure({
-                // apiKey: "appl_NIMzKbuELZwYrRadlznGbomLWLN",
-                apiKey: "goog_vCtRNkrJEMHsuLzlXyAtVaRsWjq",
-            })
-            // const subscriptions = Purchases.getProducts(["wi_10x_storage", "wi_10x_storage_annual"]);
-            const subscriptions = Purchases.getProducts(["wi_fb_10x:wi-fb-10x-monthly"]);
-            setSubs(subscriptions);
-        }
-        
-        getsubs();
-    }, [])
 
     const closeModal = () => {
         setModalVisible(false);
@@ -54,7 +37,7 @@ export default function SettingsScreen ({ route, navigation }) {
     }
     
     let cancelBtn = {
-        title: "Cancel",
+        title: Strings.English.buttons.cancel,
         color: darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
@@ -63,7 +46,7 @@ export default function SettingsScreen ({ route, navigation }) {
         darkMode: darkMode
     }
     let saveBtn = {
-        title: "Save",
+        title: Strings.English.buttons.save,
         color: darkMode ? Colors.darkTheme.buttons.save : Colors.lightTheme.buttons.save,
         iconName: Icons.save,
         onPress: () => {
@@ -178,7 +161,8 @@ export default function SettingsScreen ({ route, navigation }) {
             setModalVisible(true);
         },
         subscriptions: () => {
-            Notify.showError("English", Strings.English.buttons.allSettings.subscriptions)
+            // Notify.showError("English", Strings.English.buttons.allSettings.subscriptions)
+            navigation.push(Strings.util.routes.purchase, {settings: settings})
         },
         feedback: async () => {
             let supported = await Linking.canOpenURL(Strings.util.mailto);
@@ -231,9 +215,6 @@ export default function SettingsScreen ({ route, navigation }) {
         <View style={containers.topPadding}></View>
         <View style={containers.settingsBtnList}>
             {settingsBtns.map( button => button )}
-        </View>
-        <View>
-            <Text>{subs}</Text>
         </View>
         <Modal 
             visible={modalVisible} 
