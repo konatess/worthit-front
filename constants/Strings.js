@@ -33,6 +33,7 @@ export default {
             settings: "Settings",
             loginWithEmail: "Log In With Email",
             signInGoogle: "Sign In With Google",
+            restoreP: "Restore Purchases",
             products: "Products", 
             ingredients: "Ingredients",
             save: "Save",

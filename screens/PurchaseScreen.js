@@ -27,21 +27,20 @@ export default function PurchaseScreen ({ route, navigation }) {
         Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
         const getPackages = async () => {
             if (Platform.OS === 'ios') {
-                await Purchases.configure({apiKey: "appl_NIMzKbuELZwYrRadlznGbomLWLN"});
+                Purchases.configure({apiKey: "appl_NIMzKbuELZwYrRadlznGbomLWLN"});
             } else if (Platform.OS === 'android') {
-                await Purchases.configure({apiKey: "goog_vCtRNkrJEMHsuLzlXyAtVaRsWjq"});
+                Purchases.configure({apiKey: "goog_vCtRNkrJEMHsuLzlXyAtVaRsWjq"});
             }
             try {
                 const offerings = await Purchases.getOfferings();
-                offerings !== undefined ? console.log(offerings) : console.log("Offerings are undefined")
+                // offerings !== undefined ? console.log(offerings) : console.log("Offerings are undefined")
                 if (offerings.current !== null && offerings.current.availablePackages.length !== 0) {
-                    console.log("Available Packages: ")
-                    console.log(offerings.current.availablePackages)
+                    // console.log("Available Packages: ")
+                    // console.log(offerings.current.availablePackages)
                     setPackages(offerings.current.availablePackages);
                 }
             } catch (e) {
-            //   Alert.alert('Error getting offers', e.message);
-              Notify.showError('English', e.message)
+                Notify.showError(settings.language, e.message)
             }
           };
       
@@ -60,6 +59,16 @@ export default function PurchaseScreen ({ route, navigation }) {
         // Get user details when component first mounts
         getUserDetails();
     }, []);
+
+    useEffect(() => {
+        if (subscriptionActive && isAnonymous) {
+            let obj = {...settings}
+            if (obj.login === Strings.util.logins[0]) {
+                obj.login = Strings.util.logins[1]
+            }
+            navigation.push(Strings.util.routes.login, {settings: obj})
+        }
+    }, [subscriptionActive]);
     
     useEffect(() => {
         // Subscribe to purchaser updates
@@ -75,6 +84,20 @@ export default function PurchaseScreen ({ route, navigation }) {
         iconName: Icons.cancel,
         onPress: () => {
             navigation.pop()
+        },
+        darkMode: settings.darkMode
+    }
+
+    let restoreBtn = {
+        title: Strings.English.buttons.restoreP,
+        color: settings.darkMode ? Colors.darkTheme.buttons.restoreP : Colors.lightTheme.buttons.restoreP,
+        iconName: Icons.restore,
+        onPress: async () => {
+            try {
+                await Purchases.restorePurchases();
+            } catch (e) {
+                Notify.showError(settings.language, e.message);
+            }
         },
         darkMode: settings.darkMode
     }
@@ -104,7 +127,7 @@ export default function PurchaseScreen ({ route, navigation }) {
             <Text>{subscriptionActive ? 'Active' : 'Not Active'}</Text>
             <Text>{isAnonymous ? 'Anonymous' : 'Identified'}</Text>
         </View>
-        <ButtonBar buttons={[cancelBtn]} />
+        <ButtonBar buttons={[cancelBtn, restoreBtn]} />
     </SafeAreaView>
 }
 

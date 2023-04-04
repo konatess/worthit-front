@@ -12,6 +12,7 @@ import Strings from "../constants/Strings";
 import { UserContext } from "../constants/UserContext";
 import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
+import Purchases from "react-native-purchases";
 
 const auth = getAuth(app)
 
@@ -61,6 +62,9 @@ export default function LoginScreen ({ navigation, route }) {
         })
     }, [])
 
+    useEffect(() => {
+        user.uid ? Purchases.logIn(user.uid) : Purchases.logOut();
+    }, [user.uid])
     
     const [gRequest, gResponse, gPromptAsync] = Google.useIdTokenAuthRequest(
         {

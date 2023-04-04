@@ -27,5 +27,6 @@ export default {
     overwriteLocal: 'arrow-down-circle-outline',
     overwriteRemote: 'arrow-up-circle-outline',
     info: 'information-circle-outline',
+    restore: 'refresh'
     // info: 'information-circle'
 }
