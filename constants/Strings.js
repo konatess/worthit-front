@@ -24,6 +24,9 @@ export default {
             units: /[^A-Za-zÀ-ÖØ-öø-ÿ ]/,
             numbers: /^([0-9\.]+)$/,
         },
+        entitlements: {
+            storage1: "10x_storage"
+        },
     },
     English: {
         buttons: {

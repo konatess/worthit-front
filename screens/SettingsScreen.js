@@ -212,7 +212,6 @@ export default function SettingsScreen ({ route, navigation }) {
             barStyle={darkMode ? 'light-content' : 'dark-content'}
         />
         {Platform.OS === 'android' && <View style={{height: StatusBar.currentHeight}} />}
-        <View style={containers.topPadding}></View>
         <View style={containers.settingsBtnList}>
             {settingsBtns.map( button => button )}
         </View>

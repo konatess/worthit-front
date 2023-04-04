@@ -3,7 +3,7 @@ import Notify from './Notify';
 import Purchases from 'react-native-purchases';
 import { textStyles, buttonStyles } from '../constants/Styles';
 
-export default function PackageItem ({ purchasePackage, setIsPurchasing, language, toLogin }) {
+export default function PackageItem ({ purchasePackage, setIsPurchasing, language, toLogin, isLast }) {
     const {
         product: { title, description, priceString },
     } = purchasePackage;
@@ -28,7 +28,7 @@ export default function PackageItem ({ purchasePackage, setIsPurchasing, languag
     };
     
     return (
-        <Pressable onPress={onSelection} style={buttonStyles.purchaseBtnArea}>
+        <Pressable onPress={onSelection} style={[buttonStyles.purchaseBtnArea, isLast && buttonStyles.settingslastBtn]}>
             <View>
                 <Text style={textStyles.productTitleText}>{title}</Text>
                 <Text style={textStyles.productDescText}>{description}</Text>
