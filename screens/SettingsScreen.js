@@ -81,7 +81,7 @@ export default function SettingsScreen ({ route, navigation }) {
             if (prefLogin === Strings.util.logins[0]) {
                 deleteIng();
             } else if (prefLogin === !Strings.util.logins[0]) {
-                firebaseInit.dbMethods.deleteAllIngredients(user.uid, );
+                firebaseInit.dbMethods.deleteAllIngredients(user.uid);
             }
             navigation.pop();
         }

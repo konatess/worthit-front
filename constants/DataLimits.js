@@ -1,9 +1,11 @@
 export default {
     recipes: {
-        level1: 5
+        level0: 5,
+        level1: 50,
     },
     ingredients: {
-        level1: 20
+        level0: 20,
+        level1: 200,
     },
     inputs: {
         ingNameMax: 50,

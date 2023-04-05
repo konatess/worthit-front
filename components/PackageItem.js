@@ -1,9 +1,14 @@
+import { useContext } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import Notify from './Notify';
 import Purchases from 'react-native-purchases';
 import { textStyles, buttonStyles } from '../constants/Styles';
+import Strings from '../constants/Strings';
+import { Entitlements } from "../constants/Entitlements";
 
-export default function PackageItem ({ purchasePackage, setIsPurchasing, language, toLogin, isLast }) {
+export default function PackageItem ({ purchasePackage, setIsPurchasing, language, toLogin, toHome, isLast, isAnonymous }) {
+    const { entitlements, setEntitlements } = useContext(Entitlements);
+    
     const {
         product: { title, description, priceString },
     } = purchasePackage;
@@ -14,12 +19,14 @@ export default function PackageItem ({ purchasePackage, setIsPurchasing, languag
         try {
             const { purchaserInfo } = await Purchases.purchasePackage(purchasePackage);
         
-            if (typeof purchaserInfo.entitlements.active['10x_storage'] !== 'undefined') {
-                toLogin();
+            if (typeof purchaserInfo.entitlements.active[Strings.util.entitlements.storage1] !== 'undefined') {
+                let ent = { ...entitlements}
+                ent.storage1 = true
+                setEntitlements(ent);
+                isAnonymous ? toLogin() : toHome();
             }
         } catch (e) {
             if (!e.userCancelled) {
-                // Alert.alert('Error purchasing package', e.message);
                 Notify.showError(language, e.message);
             }
         } finally {

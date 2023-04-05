@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { SafeAreaView, View, StatusBar, FlatList, Text } from "react-native";
 import Purchases, { LOG_LEVEL } from "react-native-purchases";
 import ButtonBar from '../components/ButtonBar';
@@ -6,7 +6,6 @@ import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import Notify from "../components/Notify";
-import { UserContext } from "../constants/UserContext";
 import PackageItem from "../components/PackageItem";
 import { containers } from "../constants/Styles";
 
@@ -19,11 +18,6 @@ export default function PurchaseScreen ({ route, navigation }) {
     const [subscriptionActive, setSubscriptionActive] = useState(false);
 
     useEffect(() => {
-        // Purchases.setLogLevel(LOG_LEVEL.DEBUG);
-        // Purchases.configure({
-        //     // apiKey: "appl_NIMzKbuELZwYrRadlznGbomLWLN",
-        //     apiKey: "goog_vCtRNkrJEMHsuLzlXyAtVaRsWjq",
-        // })
         Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
         const getPackages = async () => {
             if (Platform.OS === 'ios') {
@@ -108,7 +102,6 @@ export default function PurchaseScreen ({ route, navigation }) {
         />
         {Platform.OS === 'android' && <View style={{height: StatusBar.currentHeight}} />}
         <View>
-            {/* <Text>{JSON.stringify(packages[0].product)}</Text> */}
             {packages.length > 0 && <FlatList 
                 style={containers.settingsBtnList}
                 data={packages}
@@ -119,7 +112,11 @@ export default function PurchaseScreen ({ route, navigation }) {
                     toLogin={ () => {
                         navigation.push(Strings.util.routes.login, {settings: settings})
                     }}
+                    toHome={ () => {
+                        navigation.push(Strings.util.routes.home, {settings: settings})
+                    }}
                     isLast={index === packages.length -1}
+                    isAnonymous={isAnonymous}
                 />}
                 keyExtractor={(item) => item.identifier}
             />}

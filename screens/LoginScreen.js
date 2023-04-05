@@ -13,6 +13,7 @@ import { UserContext } from "../constants/UserContext";
 import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
 import Purchases from "react-native-purchases";
+import { storeSettings } from "../storage/localAsync";
 
 const auth = getAuth(app)
 
@@ -126,11 +127,21 @@ export default function LoginScreen ({ navigation, route }) {
             {prefLogin !== Strings.util.logins[4] && <>
             {(prefLogin === Strings.util.logins[1] || prefLogin === Strings.util.logins[2]) && <LoginButton 
                 iconName={Icons.facebook}
-                onPress={() => { fPromptAsync() }}
+                onPress={() => { 
+                    let obj = {...settings}
+                    obj.login = Strings.util.logins[2]
+                    storeSettings(obj);
+                    fPromptAsync();
+                }}
             />}
             {(prefLogin === Strings.util.logins[1] || prefLogin === Strings.util.logins[3]) && <LoginButton 
                 iconName={Icons.google}
-                onPress={() => { gPromptAsync() }}
+                onPress={() => { 
+                    let obj = {...settings}
+                    obj.login = Strings.util.logins[3]
+                    storeSettings(obj);
+                    gPromptAsync();
+                }}
             />}
             </>}
             {/* <LoginButton 
