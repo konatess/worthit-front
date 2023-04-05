@@ -4,7 +4,7 @@ import Notify from './Notify';
 import Purchases from 'react-native-purchases';
 import { textStyles, buttonStyles } from '../constants/Styles';
 import Strings from '../constants/Strings';
-import { Entitlements } from "../constants/Entitlements";
+import { Entitlements } from "../constants/EntitlementsContext";
 
 export default function PackageItem ({ purchasePackage, setIsPurchasing, language, toLogin, toHome, isLast, isAnonymous }) {
     const { entitlements, setEntitlements } = useContext(Entitlements);

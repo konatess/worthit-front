@@ -11,7 +11,7 @@ import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import * as WebBrowser from 'expo-web-browser';
 import { UserContext } from "../constants/UserContext";
-import { Entitlements } from "../constants/Entitlements";
+import { Entitlements } from "../constants/EntitlementsContext";
 import firebaseInit from "../storage/firebaseInit";
 import ProdButton from "../components/ProdButton";
 import DataLimits from "../constants/DataLimits";
@@ -44,10 +44,6 @@ export default function HomeScreen ({ route, navigation }) {
     const [maxRec, setMaxRec] = useState(false);
     const [maxIng, setMaxIng] = useState(false);
 
-    const ingLimit = !entitlements?.storage1 ? DataLimits.ingredients.level0 : DataLimits.ingredients.level1;
-    const recLimit = !entitlements?.storage1 ? DataLimits.recipes.level0 : DataLimits.recipes.level1;
-    // console.log(entitlements)
-
     useEffect(() => {
         if (settings.login === Strings.util.logins[0]) {
             getIng(setAllIngredients)
@@ -75,9 +71,8 @@ export default function HomeScreen ({ route, navigation }) {
     }, [products])
 
     useEffect(() => {
-        console.log(entitlements?.storage1)
-        console.log(user)
-        if (ingButtons.length < DataLimits.ingredients.level1) {
+        const ingLimit = !entitlements.storage1 ? DataLimits.ingredients.level0 : DataLimits.ingredients.level1;
+        if (ingButtons.length < ingLimit) {
             setMaxIng(false);
         } else {
             setMaxIng(true);
@@ -85,7 +80,8 @@ export default function HomeScreen ({ route, navigation }) {
     }, [ingButtons])
 
     useEffect(() => {
-        if (prodButtons.length < DataLimits.recipes.level1) {
+        const recLimit = !entitlements.storage1 ? DataLimits.recipes.level0 : DataLimits.recipes.level1;
+        if (prodButtons.length < recLimit) {
             setMaxRec(false);
         } else {
             setMaxRec(true);

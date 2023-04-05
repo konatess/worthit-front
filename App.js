@@ -15,6 +15,7 @@ import LoginScreen from './screens/LoginScreen';
 import Notify from './components/Notify';
 import Strings from './constants/Strings';
 import { getSettings } from './storage/localAsync';
+import { Entitlements } from './constants/EntitlementsContext';
 
 
 
@@ -24,6 +25,7 @@ export default function App() {
 	const [isLoadingComplete, setLoadingComplete] = useState(false);
 	const [user, setUser] = useState({uid: ""});
 	const [settingsObj, setSettingsObj] = useState({});
+	const [entitlements, setEntitlements] = useState({ storage1: false })
 	
 
 
@@ -53,6 +55,7 @@ export default function App() {
 			<NavigationContainer>
 				<StatusBar style="auto" />
 				<UserContext.Provider value={{user, setUser}}>
+				<Entitlements.Provider value={{entitlements, setEntitlements}}>
 					<Stack.Navigator initialRouteName={ (settingsObj.login === Strings.util.logins[0]) || user.uid ? Strings.util.routes.home : Strings.util.routes.login}  screenOptions={{headerShown:false}} >
 					{(settingsObj.login === Strings.util.logins[0]) || user.uid ? 
 					<>
@@ -69,6 +72,7 @@ export default function App() {
 						{/* <Stack.Screen name="Signup" component={SignUpScreen}/> */}
 					</>}
 					</Stack.Navigator>
+				</Entitlements.Provider>
 				</UserContext.Provider>
 			</NavigationContainer>
 		);
