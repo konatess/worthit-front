@@ -14,10 +14,12 @@ import { storeIng, getIng, storeRec } from "../storage/localAsync";
 import IngAmount from "../components/IngAmount";
 import DataLimits from "../constants/DataLimits";
 import Calculate from "../constants/Calculate";
+import { SettingsContext } from "../constants/SettingsContext";
 
 export default function RecipeScreen ({navigation, route}) {
-    const { knownIng, prodObj, prodDbId, settings, products } = route.params;
+    const { knownIng, prodObj, prodDbId,products } = route.params;
     const { user } = useContext(UserContext);
+    const { settingsObj } = useContext(SettingsContext);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
     const [modalButtons, setModalButtons] = useState([]);
@@ -50,7 +52,7 @@ export default function RecipeScreen ({navigation, route}) {
     const [numProducts, setNumProducts] = useState(1);
     const [tableIng, setTableIng] = useState([]);
     
-    const prefLogin = settings.login || Strings.util.logins[0];
+    const prefLogin = settingsObj.login || Strings.util.logins[0];
 
     Platform.OS === 'android' &&  useEffect(() => {
         const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -111,7 +113,7 @@ export default function RecipeScreen ({navigation, route}) {
                         setModalButtons([modalCancelBtn])
                         setModalVisible(true);
                     }}
-                    darkMode={settings.darkMode}
+                    darkMode={settingsObj.darkMode}
                 />)
             }
         }
@@ -314,7 +316,7 @@ export default function RecipeScreen ({navigation, route}) {
                 } 
             }
         }
-        navigation.push(Strings.util.routes.home, {settings: settings})
+        navigation.push(Strings.util.routes.home)
     }
 
     const updateIngInventory = () => {
@@ -350,7 +352,7 @@ export default function RecipeScreen ({navigation, route}) {
     
     let deleteBtn = {
         title: Strings.English.buttons.delete,
-        color: settings.darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
         iconName: Icons.delete,
         onPress: () => {
             if (prefLogin === Strings.util.logins[0]) {
@@ -372,40 +374,40 @@ export default function RecipeScreen ({navigation, route}) {
             }
             navigation.pop()
         },
-        darkMode: settings.darkMode
+        darkMode: settingsObj.darkMode
     }
     let cancelBtn = {
         title: Strings.English.buttons.cancel,
-        color: settings.darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
             navigation.pop()
         },
-        darkMode: settings.darkMode
+        darkMode: settingsObj.darkMode
     }
     let createBtn = {
         title: Strings.English.buttons.save,
-        color: settings.darkMode ? Colors.darkTheme.buttons.save : Colors.lightTheme.buttons.save,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.save : Colors.lightTheme.buttons.save,
         iconName: Icons.save,
         onPress: () => {
             checkRecipe()
         },
         disabled: !canSave,
-        darkMode: settings.darkMode
+        darkMode: settingsObj.darkMode
     }
     let duplicateBtn = {
         title: Strings.English.buttons.duplicate,
-        color: settings.darkMode ? Colors.darkTheme.buttons.duplicate : Colors.lightTheme.buttons.duplicate,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.duplicate : Colors.lightTheme.buttons.duplicate,
         iconName: Icons.duplicate,
         onPress: () => {
             setProdId("")
             setName(name + Strings.English.placeholder.duplicate)
         },
-        darkMode: settings.darkMode
+        darkMode: settingsObj.darkMode
     }
     let modalCancelBtn = {
         title: Strings.English.buttons.cancel,
-        color: settings.darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
             closeModal();
@@ -419,7 +421,7 @@ export default function RecipeScreen ({navigation, route}) {
     }
     let modalOkayBtn = {
         title: Strings.English.buttons.okay,
-        color: settings.darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
         iconName: Icons.okay,
         onPress: () => {
             closeModal();
@@ -427,7 +429,7 @@ export default function RecipeScreen ({navigation, route}) {
     }
     let modalNoBtn = {
         title: Strings.English.buttons.no,
-        color: settings.darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
             closeModal();
@@ -436,7 +438,7 @@ export default function RecipeScreen ({navigation, route}) {
     }
     let modalYesBtn = {
         title: Strings.English.buttons.yes,
-        color: settings.darkMode ? Colors.darkTheme.buttons.save : Colors.lightTheme.buttons.save,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.save : Colors.lightTheme.buttons.save,
         iconName: Icons.okay,
         onPress: () => {
             updateIngInventory();
@@ -446,7 +448,7 @@ export default function RecipeScreen ({navigation, route}) {
     }
     let newIngredientBtn = {
         title: Strings.English.buttons.newIngredient,
-        color: settings.darkMode ? Colors.darkTheme.buttons.newIngredient : Colors.lightTheme.buttons.newIngredient,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.newIngredient : Colors.lightTheme.buttons.newIngredient,
         iconName: Icons.create,
         onPress: () => {
             setModalMessage(Strings.English.label.newIngredient);
@@ -466,7 +468,7 @@ export default function RecipeScreen ({navigation, route}) {
     }
     let removeIngredientBtn = {
         title: Strings.English.buttons.remove,
-        color: settings.darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
         iconName: Icons.delete,
         onPress: () => {
             let copy = {...ingredients}
@@ -478,7 +480,7 @@ export default function RecipeScreen ({navigation, route}) {
     }
     let modalSaveIngBtn = {
         title: Strings.English.buttons.save,
-        color: settings.darkMode ? Colors.darkTheme.buttons.create : Colors.lightTheme.buttons.create,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.create : Colors.lightTheme.buttons.create,
         iconName: Icons.create,
         onPress: () => {
             saveIngredient(); 
@@ -487,7 +489,7 @@ export default function RecipeScreen ({navigation, route}) {
 
     let modalSaveAmountBtn = {
         title: Strings.English.buttons.save,
-        color: settings.darkMode ? Colors.darkTheme.buttons.create : Colors.lightTheme.buttons.create,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.create : Colors.lightTheme.buttons.create,
         iconName: Icons.create,
         onPress: () => {
             saveAmount();
@@ -496,17 +498,17 @@ export default function RecipeScreen ({navigation, route}) {
     }
 
     let navBtns = prodId ? [ deleteBtn, cancelBtn, duplicateBtn, createBtn ] : [ cancelBtn, createBtn ]
-    return <SafeAreaView style={[containers.safeArea, {backgroundColor: settings.darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
+    return <SafeAreaView style={[containers.safeArea, {backgroundColor: settingsObj.darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
         {Platform.OS === 'android' && <View style={{height: StatusBar.currentHeight}} />}
         <View style={containers.projArea}>
             <ScrollView>
-                <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{Strings.English.label.prodName}</Text>
+                <Text style={[textStyles.labelText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{Strings.English.label.prodName}</Text>
                 <TextInput
                     accessibilityLabel={Strings.English.label.prodName}
                     accessibilityHint={Strings.English.placeholder.prodName}
-                    style={[inputStyles.inputField, inputStyles.longInputs, {marginBottom: 10}, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, , {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
+                    style={[inputStyles.inputField, inputStyles.longInputs, {marginBottom: 10}, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, , {borderColor: settingsObj.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                     placeholder={Strings.English.placeholder.prodName}
-                    placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
+                    placeholderTextColor={settingsObj.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
                     value={name}
                     autoCapitalize={'words'}
                     onChangeText={(text) => {
@@ -519,19 +521,19 @@ export default function RecipeScreen ({navigation, route}) {
                         }
                     }}
                 />
-                <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
+                <Text style={[textStyles.labelText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                     {Strings.English.label.time}
                 </Text>
                 <View style={rows.row1}>
-                    <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
+                    <Text style={[textStyles.labelText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                         {Strings.English.label.hour}
                     </Text>
                     <TextInput
                         accessibilityLabel={Strings.English.label.hour}
-                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text, marginEnd: 10}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text, marginEnd: 10}, {borderColor: settingsObj.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         value={hour.toString()}
                         placeholder={'1'}
-                        placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
+                        placeholderTextColor={settingsObj.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
                         maxLength={2}
                         keyboardType={'number-pad'}
                         onChangeText={text => {
@@ -542,15 +544,15 @@ export default function RecipeScreen ({navigation, route}) {
                             }
                         }}
                     />
-                    <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
+                    <Text style={[textStyles.labelText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                         {Strings.English.label.minute}
                     </Text>
                     <TextInput
                         accessibilityLabel={Strings.English.label.minute}
-                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text, marginEnd: 10}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text, marginEnd: 10}, {borderColor: settingsObj.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         value={minute.toString()}
                         placeholder={'15'}
-                        placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
+                        placeholderTextColor={settingsObj.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
                         maxLength={2}
                         keyboardType={'number-pad'}
                         onChangeText={text => {
@@ -566,15 +568,15 @@ export default function RecipeScreen ({navigation, route}) {
                             }
                         }}
                     />
-                    <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
+                    <Text style={[textStyles.labelText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                         {Strings.English.label.amount}
                     </Text>
                     <TextInput
                         accessibilityLabel={Strings.English.label.amount}
-                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settingsObj.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         value={amountPerTime.toString()}
                         placeholder={'1'}
-                        placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
+                        placeholderTextColor={settingsObj.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
                         maxLength={6}
                         keyboardType={'number-pad'}
                         onChangeText={text => {
@@ -586,7 +588,7 @@ export default function RecipeScreen ({navigation, route}) {
                         }}
                     />
                     <InfoBtn 
-                        darkMode={settings.darkMode}
+                        darkMode={settingsObj.darkMode}
                         onPress={ () => {
                             setModalMessage(Strings.English.messages.amount)
                             setModalButtons([modalOkayBtn])
@@ -595,15 +597,15 @@ export default function RecipeScreen ({navigation, route}) {
                     />
                 </View>
                 <View style={rows.row1} >
-                    <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
+                    <Text style={[textStyles.labelText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                         {Strings.English.label.wage}
                     </Text>
                     <TextInput
                         accessibilityLabel={Strings.English.label.wage}
-                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settingsObj.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         value={wage.toString()}
                         placeholder={'15.00'}
-                        placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
+                        placeholderTextColor={settingsObj.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
                         keyboardType={'decimal-pad'}
                         onChangeText={text => {
                             if (text.length === 0) {
@@ -614,7 +616,7 @@ export default function RecipeScreen ({navigation, route}) {
                         }}
                     />
                     <InfoBtn 
-                        darkMode={settings.darkMode}
+                        darkMode={settingsObj.darkMode}
                         onPress={ () => {
                             setModalMessage(Strings.English.messages.wage)
                             setModalButtons([modalOkayBtn])
@@ -623,18 +625,18 @@ export default function RecipeScreen ({navigation, route}) {
                     />
                 </View>
                 <View style={rows.row1} >
-                    <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
+                    <Text style={[textStyles.labelText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                         {Strings.English.label.profit}
                     </Text>
-                    <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
+                    <Text style={[textStyles.labelText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                         {Strings.English.label.profAmount}
                     </Text>
                     <TextInput
                         accessibilityLabel={Strings.English.label.profit}
-                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settingsObj.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         defaultValue={profitAmount.toString().slice(0,10)}
                         placeholder={'0'}
-                        placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
+                        placeholderTextColor={settingsObj.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
                         maxLength={10}
                         keyboardType={'decimal-pad'}
                         onChangeText={text => {
@@ -648,15 +650,15 @@ export default function RecipeScreen ({navigation, route}) {
                             profitAmount && totalCost ? setProfitPercent(Calculate.shortenNum(profitAmount/totalCost*100)) : setProfitPercent(0) 
                         }}
                     />
-                    <Text style={{color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}}>
+                    <Text style={{color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}}>
                         {"  =  "}
                     </Text>
                     <TextInput
                         accessibilityLabel={Strings.English.label.profPercent}
-                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settingsObj.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         value={profitPercent.toString()}
                         placeholder={'0'}
-                        placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
+                        placeholderTextColor={settingsObj.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
                         maxLength={10}
                         keyboardType={'decimal-pad'}
                         onChangeText={text => {
@@ -670,11 +672,11 @@ export default function RecipeScreen ({navigation, route}) {
                             profitPercent && totalCost? setProfitAmount(Calculate.shortenNum(profitPercent/100*totalCost)) : setProfitAmount(0)
                         }}
                     />
-                    <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
+                    <Text style={[textStyles.labelText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                         {Strings.English.label.profPercent}
                     </Text>
                     <InfoBtn 
-                        darkMode={settings.darkMode}
+                        darkMode={settingsObj.darkMode}
                         onPress={ () => {
                             setModalMessage(Strings.English.messages.profit)
                             setModalButtons([modalOkayBtn])
@@ -683,15 +685,15 @@ export default function RecipeScreen ({navigation, route}) {
                     />
                 </View>
                 <View style={rows.row1} >
-                    <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
+                    <Text style={[textStyles.labelText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                         {Strings.English.label.inventory}
                     </Text>
                     <TextInput
                         accessibilityLabel={Strings.English.label.inventory}
-                        style={[inputStyles.inputField, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settingsObj.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         value={prodInventory.toString()}
                         placeholder={'0'}
-                        placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
+                        placeholderTextColor={settingsObj.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
                         keyboardType={'number-pad'}
                         onChangeText={text => {
                             if (text.length === 0) {
@@ -702,7 +704,7 @@ export default function RecipeScreen ({navigation, route}) {
                         }}
                     />
                     <InfoBtn 
-                        darkMode={settings.darkMode}
+                        darkMode={settingsObj.darkMode}
                         onPress={ () => {
                             setModalMessage(Strings.English.messages.inventory)
                             setModalButtons([modalOkayBtn])
@@ -712,11 +714,11 @@ export default function RecipeScreen ({navigation, route}) {
                 </View>
                 <View>
                     <View style={rows.row1}>
-                        <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
+                        <Text style={[textStyles.labelText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                             {Strings.English.label.ingredients}
                         </Text>
                         <InfoBtn 
-                            darkMode={settings.darkMode}
+                            darkMode={settingsObj.darkMode}
                             onPress={ () => {
                                 setModalMessage(Strings.English.messages.ingInfo)
                                 setModalButtons([modalOkayBtn])
@@ -726,7 +728,7 @@ export default function RecipeScreen ({navigation, route}) {
                     </View>
                     {ingTextList.length > 0 && ingTextList.map(item => item)}
                     <Pressable 
-                        style={[buttonStyles.basicButton, buttonStyles.recipeManageIngBtn, {backgroundColor: settings.darkMode ? Colors.darkTheme.buttons.addIngredient : Colors.lightTheme.buttons.addIngredient}]}
+                        style={[buttonStyles.basicButton, buttonStyles.recipeManageIngBtn, {backgroundColor: settingsObj.darkMode ? Colors.darkTheme.buttons.addIngredient : Colors.lightTheme.buttons.addIngredient}]}
                         onPress={() => {
                             setModalMessage(Strings.English.messages.ingredients)
                             setModalPickers( createIngPickers() );
@@ -735,14 +737,14 @@ export default function RecipeScreen ({navigation, route}) {
                             setModalVisible(true);
                         }}
                     >
-                        <Text style={[textStyles.recipeManageIngBtn, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
+                        <Text style={[textStyles.recipeManageIngBtn, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                             {Strings.English.buttons.addIngredient}
                         </Text>
                     </Pressable>
                 </View>
                 <View>
                     <Pressable 
-                        style={[buttonStyles.basicButton, buttonStyles.recipeManageIngBtn, {backgroundColor: settings.darkMode ? Colors.darkTheme.buttons.duplicate : Colors.lightTheme.buttons.duplicate}]}
+                        style={[buttonStyles.basicButton, buttonStyles.recipeManageIngBtn, {backgroundColor: settingsObj.darkMode ? Colors.darkTheme.buttons.duplicate : Colors.lightTheme.buttons.duplicate}]}
                         onPress={() => {
                             setModalInputs([{
                                 label: Strings.English.label.numProducts, 
@@ -759,7 +761,7 @@ export default function RecipeScreen ({navigation, route}) {
                             setModalVisible(true);
                         }}
                     >
-                        <Text style={[textStyles.recipeManageIngBtn, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
+                        <Text style={[textStyles.recipeManageIngBtn, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                             {Strings.English.buttons.calcIngredients}
                         </Text>
                     </Pressable>
@@ -768,13 +770,13 @@ export default function RecipeScreen ({navigation, route}) {
                     keyboardVerticalOffset={100}
                     behavior={'padding'}
                 >
-                    <Text style={[textStyles.labelText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{Strings.English.label.prodNote}</Text>
+                    <Text style={[textStyles.labelText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{Strings.English.label.prodNote}</Text>
                     <TextInput
                         accessibilityLabel={Strings.English.label.prodNote}
                         accessibilityHint={Strings.English.placeholder.prodNote}
-                        style={[inputStyles.inputField, inputStyles.longInputs, {marginBottom: 10}, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settings.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
+                        style={[inputStyles.inputField, inputStyles.longInputs, {marginBottom: 10}, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}, {borderColor: settingsObj.darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}
                         placeholder={Strings.English.placeholder.prodNote}
-                        placeholderTextColor={settings.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
+                        placeholderTextColor={settingsObj.darkMode ? Colors.darkTheme.placeholderText : Colors.lightTheme.placeholderText}
                         value={note}
                         autoCapitalize={'sentences'}
                         multiline={true}
@@ -799,7 +801,7 @@ export default function RecipeScreen ({navigation, route}) {
             buttons={modalButtons} 
             vertical={modalBtnsVertical}
             tableArr={tableIng}
-            darkMode={settings.darkMode}
+            darkMode={settingsObj.darkMode}
         />
         {Platform.OS === 'ios' && <ButtonBar buttons={navBtns} />}
         {Platform.OS === 'android' && !keyboardOut && <ButtonBar buttons={navBtns} />}

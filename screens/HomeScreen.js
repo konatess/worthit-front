@@ -12,6 +12,7 @@ import Strings from "../constants/Strings";
 import * as WebBrowser from 'expo-web-browser';
 import { UserContext } from "../constants/UserContext";
 import { Entitlements } from "../constants/EntitlementsContext";
+import { SettingsContext } from "../constants/SettingsContext";
 import firebaseInit from "../storage/firebaseInit";
 import ProdButton from "../components/ProdButton";
 import DataLimits from "../constants/DataLimits";
@@ -22,7 +23,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 
 export default function HomeScreen ({ route, navigation }) {
-	const { settings } = route.params;
+	const { settingsObj } = useContext(SettingsContext)
     const { user } = useContext(UserContext);
     const { entitlements } = useContext(Entitlements);
     const [viewIng, setViewIng] = useState(false);
@@ -45,7 +46,7 @@ export default function HomeScreen ({ route, navigation }) {
     const [maxIng, setMaxIng] = useState(false);
 
     useEffect(() => {
-        if (settings.login === Strings.util.logins[0]) {
+        if (settingsObj.login === Strings.util.logins[0]) {
             getIng(setAllIngredients)
         } else {
             let unsubscribe = firebaseInit.dbMethods.listen.ing(user.uid, setAllIngredients)
@@ -58,7 +59,7 @@ export default function HomeScreen ({ route, navigation }) {
     }, [allIngredients])
 
     useEffect(() => {
-        if (settings.login === Strings.util.logins[0]) {
+        if (settingsObj.login === Strings.util.logins[0]) {
             getRec(setProducts);
         } else {
             let unsubscribe = firebaseInit.dbMethods.listen.rec(user.uid, setProducts)
@@ -101,7 +102,7 @@ export default function HomeScreen ({ route, navigation }) {
 
     useFocusEffect(
         useCallback( () => {
-            if (settings.login === Strings.util.logins[0]) {
+            if (settingsObj.login === Strings.util.logins[0]) {
                 getRec(setProducts);
                 getIng(setAllIngredients);
             }
@@ -141,8 +142,8 @@ export default function HomeScreen ({ route, navigation }) {
             let button = {
                     id: id,
                     title: products[id]?.title,
-                    profitAmount: Calculate.limitDec(products[id]?.profitAmount, settings.decimalLength),
-                    price: Calculate.limitDec(Calculate.priceByAmount(totalCost, products[id]?.profitAmount), settings.decimalLength),
+                    profitAmount: Calculate.limitDec(products[id]?.profitAmount, settingsObj.decimalLength),
+                    price: Calculate.limitDec(Calculate.priceByAmount(totalCost, products[id]?.profitAmount), settingsObj.decimalLength),
                     inventory: products[id]?.inventory
                 }
             buttons.push(button)
@@ -169,7 +170,6 @@ export default function HomeScreen ({ route, navigation }) {
             prodDbId: id,
             prodObj: product, 
             knownIng: allIngredients,
-            settings: settings,
             products: products
         })
     };
@@ -229,7 +229,7 @@ export default function HomeScreen ({ route, navigation }) {
             if (ingId && allIngredients[ingId]?.recipes) {
                 ing.recipes = allIngredients[ingId].recipes
             }
-            if (settings.login === Strings.util.logins[0]) {
+            if (settingsObj.login === Strings.util.logins[0]) {
                 let allIngObj = allIngredients;
                 if (ingId) {
                     allIngObj[ingId] = ing;
@@ -238,7 +238,7 @@ export default function HomeScreen ({ route, navigation }) {
                     allIngObj[id] = ing;
                 }
                 storeIng(allIngObj).then(getIng(setAllIngredients));
-            } else if (settings.login !== Strings.util.logins[0]) {
+            } else if (settingsObj.login !== Strings.util.logins[0]) {
                 if (ingId) {
                     firebaseInit.dbMethods.updateIngredient(user.uid, ingId, ing);
                 } else {
@@ -250,11 +250,11 @@ export default function HomeScreen ({ route, navigation }) {
     }
 
     const deleteIngredient = (id) => {
-        if (settings.login === Strings.util.logins[0]) {
+        if (settingsObj.login === Strings.util.logins[0]) {
             let allIngObj = allIngredients;
             delete allIngObj[id];
             storeIng(allIngObj).then(getIng(setAllIngredients));
-        } else if (settings.login !== Strings.util.logins[0]) {
+        } else if (settingsObj.login !== Strings.util.logins[0]) {
             firebaseInit.dbMethods.deleteIngredient(user.uid, id);
         }
         setIngId("");
@@ -262,68 +262,68 @@ export default function HomeScreen ({ route, navigation }) {
 
     let modalCancelBtn = {
         title: Strings.English.buttons.cancel,
-        color: settings.darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
             closeModal();
             setIngId("");
         },
-        darkMode: settings.darkMode
+        darkMode: settingsObj.darkMode
     }
 
     let modalDeleteIngBtn = {
         title: Strings.English.buttons.delete,
-        color: settings.darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
         iconName: Icons.delete,
         onPress: () => {
             deleteIngredient(ingId)
             closeModal();
         },
-        darkMode: settings.darkMode
+        darkMode: settingsObj.darkMode
     }
 
     let modalSaveIngBtn = {
         title: Strings.English.buttons.save,
-        color: settings.darkMode ? Colors.darkTheme.buttons.create : Colors.lightTheme.buttons.create,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.create : Colors.lightTheme.buttons.create,
         iconName: Icons.create,
         onPress: () => {
             saveIngredient();
         },
-        darkMode: settings.darkMode
+        darkMode: settingsObj.darkMode
     }
 
     let settingsbtn = {
         title: Strings.English.buttons.settings,
-        color: settings.darkMode ? Colors.darkTheme.buttons.settings : Colors.lightTheme.buttons.settings,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.settings : Colors.lightTheme.buttons.settings,
         iconName: Icons.settings,
         onPress: () => {
-            navigation.push(Strings.util.routes.settings, {settings: settings, recLength: prodButtons.length})
+            navigation.push(Strings.util.routes.settings, {recLength: prodButtons.length})
         },
-        darkMode: settings.darkMode
+        darkMode: settingsObj.darkMode
     }
     let createbtn = {
         title: Strings.English.buttons.create,
-        color: settings.darkMode ? Colors.darkTheme.buttons.create : Colors.lightTheme.buttons.create,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.create : Colors.lightTheme.buttons.create,
         iconName: Icons.create,
         onPress: viewIng ? () => callIngModal(false) : () => navToRecipe(""),
         disabled: viewIng ? maxIng : maxRec,
-        darkMode: settings.darkMode
+        darkMode: settingsObj.darkMode
     }
     let ingBtn = {
         title: viewIng ? Strings.English.buttons.products : Strings.English.buttons.ingredients,
-        color: settings.darkMode ? Colors.darkTheme.buttons.filter : Colors.lightTheme.buttons.filter,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.filter : Colors.lightTheme.buttons.filter,
         iconName: viewIng ? Icons.product : Icons.ingredient,
         onPress: () => {
             setViewIng(!viewIng)
         },
-        darkMode: settings.darkMode
+        darkMode: settingsObj.darkMode
     }
-    return (<SafeAreaView style={[containers.safeArea, {backgroundColor: settings.darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
+    return (<SafeAreaView style={[containers.safeArea, {backgroundColor: settingsObj.darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
         <StatusBar 
-            barStyle={settings.darkMode ? 'light-content' : 'dark-content'}
+            barStyle={settingsObj.darkMode ? 'light-content' : 'dark-content'}
         />
         {Platform.OS === 'android' && <View style={{height: StatusBar.currentHeight}} />}
-        <Text style={[textStyles.headerText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{viewIng ? Strings.English.headers.ingredients : Strings.English.headers.recipes}</Text>
+        <Text style={[textStyles.headerText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{viewIng ? Strings.English.headers.ingredients : Strings.English.headers.recipes}</Text>
         {ingButtons.length > 0 && viewIng && <FlatList 
             style={[ containers.projArea ]}
             data={ingButtons}
@@ -342,7 +342,7 @@ export default function HomeScreen ({ route, navigation }) {
                         inventory: item.inventory
                     })
                 }}
-                darkMode={settings.darkMode}
+                darkMode={settingsObj.darkMode}
             />}
         />}
         {prodButtons.length > 0 && !viewIng && <FlatList 
@@ -357,7 +357,7 @@ export default function HomeScreen ({ route, navigation }) {
                 onPress={() => {
                     navToRecipe(item.id);
                 }}
-                darkMode={settings.darkMode}
+                darkMode={settingsObj.darkMode}
             />}
         />}
         <Modal 
@@ -367,7 +367,7 @@ export default function HomeScreen ({ route, navigation }) {
             inputs={modalInputs}
             buttons={modalButtons} 
             vertical={modalBtnsVertical}
-            darkMode={settings.darkMode}
+            darkMode={settingsObj.darkMode}
         />
         <ButtonBar buttons={[settingsbtn, ingBtn, createbtn]} />
     </SafeAreaView>)

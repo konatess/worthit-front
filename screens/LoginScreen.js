@@ -10,6 +10,7 @@ import LoginButton from "../components/LoginBtn";
 import { containers, textStyles, inputStyles, buttonStyles } from "../constants/Styles";
 import Strings from "../constants/Strings";
 import { UserContext } from "../constants/UserContext";
+import { SettingsContext } from "../constants/SettingsContext";
 import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
 import Purchases from "react-native-purchases";
@@ -18,9 +19,9 @@ import { storeSettings } from "../storage/localAsync";
 const auth = getAuth(app)
 
 export default function LoginScreen ({ navigation, route }) { 
-	const { settings } = route.params;
+	const { settingsObj, setSettingsObj } = useContext(SettingsContext)
     const { user, setUser } = useContext(UserContext);
-    const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
+    const [prefLogin, setPrefLogin] = useState(settingsObj.login || Strings.util.logins[0]);
     // const [email, setEmail] = useState("");
     // const [password, setPassword] = useState("");
     
@@ -120,26 +121,28 @@ export default function LoginScreen ({ navigation, route }) {
                     secureTextEntry={true}
                     onChange={text => setPassword(text)}
                 />
-                <Pressable style={[buttonStyles.loginButton, buttonStyles.loginWithEmail, {backgroundColor: settings.darkMode ? Colors.darkTheme.buttons.save : Colors.lightTheme.buttons.save}]} onPress={() => emailSignin()}>
-                    <Text style={[textStyles.buttonText, {color: settings.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{Strings.English.buttons.loginWithEmail}</Text>
+                <Pressable style={[buttonStyles.loginButton, buttonStyles.loginWithEmail, {backgroundColor: settingsObj.darkMode ? Colors.darkTheme.buttons.save : Colors.lightTheme.buttons.save}]} onPress={() => emailSignin()}>
+                    <Text style={[textStyles.buttonText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{Strings.English.buttons.loginWithEmail}</Text>
                 </Pressable>
             </KeyboardAvoidingView>}
             {prefLogin !== Strings.util.logins[4] && <>
             {(prefLogin === Strings.util.logins[1] || prefLogin === Strings.util.logins[2]) && <LoginButton 
                 iconName={Icons.facebook}
                 onPress={() => { 
-                    let obj = {...settings}
+                    let obj = {...settingsObj}
                     obj.login = Strings.util.logins[2]
                     storeSettings(obj);
+                    setSettingsObj(obj);
                     fPromptAsync();
                 }}
             />}
             {(prefLogin === Strings.util.logins[1] || prefLogin === Strings.util.logins[3]) && <LoginButton 
                 iconName={Icons.google}
                 onPress={() => { 
-                    let obj = {...settings}
+                    let obj = {...settingsObj}
                     obj.login = Strings.util.logins[3]
                     storeSettings(obj);
+                    setSettingsObj(obj);
                     gPromptAsync();
                 }}
             />}

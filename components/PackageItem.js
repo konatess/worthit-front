@@ -1,12 +1,12 @@
 import { useContext } from 'react';
-import { View, Text, Pressable } from 'react-native';
-import Notify from './Notify';
+import { View, Text, Pressable, Alert } from 'react-native';
 import Purchases from 'react-native-purchases';
 import { textStyles, buttonStyles } from '../constants/Styles';
 import Strings from '../constants/Strings';
 import { Entitlements } from "../constants/EntitlementsContext";
+import Colors from '../constants/Colors';
 
-export default function PackageItem ({ purchasePackage, setIsPurchasing, language, toLogin, toHome, isLast, isAnonymous }) {
+export default function PackageItem ({ purchasePackage, setIsPurchasing, language, toLogin, toHome, isLast, isAnonymous, darkMode }) {
     const { entitlements, setEntitlements } = useContext(Entitlements);
     
     const {
@@ -27,7 +27,7 @@ export default function PackageItem ({ purchasePackage, setIsPurchasing, languag
             }
         } catch (e) {
             if (!e.userCancelled) {
-                Notify.showError(language, e.message);
+                Alert.alert(Strings[language].headers.errorAlert, e.message)
             }
         } finally {
             setIsPurchasing(false);
@@ -35,12 +35,16 @@ export default function PackageItem ({ purchasePackage, setIsPurchasing, languag
     };
     
     return (
-        <Pressable onPress={onSelection} style={[buttonStyles.purchaseBtnArea, isLast && buttonStyles.settingslastBtn]}>
+        <Pressable onPress={onSelection} style={[
+            buttonStyles.purchaseBtnArea, 
+            isLast && buttonStyles.settingslastBtn, 
+            {borderColor: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}
+        ]}>
             <View>
-                <Text style={textStyles.productTitleText}>{title}</Text>
-                <Text style={textStyles.productDescText}>{description}</Text>
+                <Text style={[textStyles.productTitleText, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{title}</Text>
+                <Text style={[textStyles.productDescText, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{description}</Text>
             </View>
-            <Text style={textStyles.productPriceText}>{priceString}</Text>
+            <Text style={[textStyles.productPriceText, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{priceString}</Text>
         </Pressable>
     );
 }

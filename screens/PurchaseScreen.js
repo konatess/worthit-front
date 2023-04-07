@@ -1,20 +1,24 @@
-import { useEffect, useState } from "react";
-import { SafeAreaView, View, StatusBar, FlatList, Text } from "react-native";
+import { useContext, useEffect, useState } from "react";
+import { SafeAreaView, View, StatusBar, FlatList, Alert } from "react-native";
 import Purchases, { LOG_LEVEL } from "react-native-purchases";
 import ButtonBar from '../components/ButtonBar';
 import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
-import Notify from "../components/Notify";
 import PackageItem from "../components/PackageItem";
 import { containers } from "../constants/Styles";
+import { UserContext } from "../constants/UserContext";
+import { Entitlements } from "../constants/EntitlementsContext";
+import { SettingsContext } from "../constants/SettingsContext";
 
 export default function PurchaseScreen ({ route, navigation }) {
-    const { settings } = route.params;
+    const { settingsObj } = useContext(SettingsContext);
+    const { user } = useContext(UserContext);
+    const { entitlements, setEntitlements } = useContext(Entitlements)
     const [packages, setPackages] = useState([])
     const [isPurchsing, setIsPurchasing] = useState(false);
     const [isAnonymous, setIsAnonymous] = useState(true);
-    const [userId, setUserId] = useState(null);
+    const [revCatId, setRevCatId] = useState(null);
     const [subscriptionActive, setSubscriptionActive] = useState(false);
 
     useEffect(() => {
@@ -34,7 +38,7 @@ export default function PurchaseScreen ({ route, navigation }) {
                     setPackages(offerings.current.availablePackages);
                 }
             } catch (e) {
-                Notify.showError(settings.language, e.message)
+                Alert.alert(Strings[settingsObj.language].headers.errorAlert, e.message)
             }
           };
       
@@ -43,7 +47,7 @@ export default function PurchaseScreen ({ route, navigation }) {
 
     const getUserDetails = async () => {
         setIsAnonymous(await Purchases.isAnonymous());
-        setUserId(await Purchases.getAppUserID());
+        setRevCatId(await Purchases.getAppUserID());
     
         const customerInfo = await Purchases.getCustomerInfo();
         setSubscriptionActive(typeof customerInfo.entitlements.active[Strings.util.entitlements.storage1] !== 'undefined');
@@ -55,12 +59,12 @@ export default function PurchaseScreen ({ route, navigation }) {
     }, []);
 
     useEffect(() => {
-        if (subscriptionActive && isAnonymous) {
-            let obj = {...settings}
+        if (subscriptionActive && (isAnonymous || !user.uid)) {
+            let obj = {...settingsObj}
             if (obj.login === Strings.util.logins[0]) {
                 obj.login = Strings.util.logins[1]
             }
-            navigation.push(Strings.util.routes.login, {settings: obj})
+            navigation.push(Strings.util.routes.login)
         }
     }, [subscriptionActive]);
     
@@ -74,31 +78,31 @@ export default function PurchaseScreen ({ route, navigation }) {
 
     let cancelBtn = {
         title: Strings.English.buttons.cancel,
-        color: settings.darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
             navigation.pop()
         },
-        darkMode: settings.darkMode
+        darkMode: settingsObj.darkMode
     }
 
     let restoreBtn = {
         title: Strings.English.buttons.restoreP,
-        color: settings.darkMode ? Colors.darkTheme.buttons.restoreP : Colors.lightTheme.buttons.restoreP,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.restoreP : Colors.lightTheme.buttons.restoreP,
         iconName: Icons.restore,
         onPress: async () => {
             try {
                 await Purchases.restorePurchases();
             } catch (e) {
-                Notify.showError(settings.language, e.message);
+                Alert.alert(Strings[settingsObj.language].headers.errorAlert, e.message);
             }
         },
-        darkMode: settings.darkMode
+        darkMode: settingsObj.darkMode
     }
 
-    return <SafeAreaView style={[containers.safeArea, {backgroundColor: settings.darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
+    return <SafeAreaView style={[containers.safeArea, {backgroundColor: settingsObj.darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
         <StatusBar 
-            barStyle={settings.darkMode ? 'light-content' : 'dark-content'}
+            barStyle={settingsObj.darkMode ? 'light-content' : 'dark-content'}
         />
         {Platform.OS === 'android' && <View style={{height: StatusBar.currentHeight}} />}
         <View>
@@ -108,21 +112,22 @@ export default function PurchaseScreen ({ route, navigation }) {
                 renderItem={({ item, index }) => <PackageItem 
                     purchasePackage={item} 
                     setIsPurchasing={setIsPurchasing} 
-                    language={settings.language || Strings.util.languages[0]}
+                    language={settingsObj.language || Strings.util.languages[0]}
                     toLogin={ () => {
-                        navigation.push(Strings.util.routes.login, {settings: settings})
+                        navigation.push(Strings.util.routes.login)
                     }}
                     toHome={ () => {
-                        navigation.push(Strings.util.routes.home, {settings: settings})
+                        navigation.push(Strings.util.routes.home)
                     }}
                     isLast={index === packages.length -1}
                     isAnonymous={isAnonymous}
+                    darkMode={settingsObj.darkMode}
                 />}
                 keyExtractor={(item) => item.identifier}
             />}
-            <Text>{userId}</Text>
+            {/* <Text>{revCatId}</Text>
             <Text>{subscriptionActive ? 'Active' : 'Not Active'}</Text>
-            <Text>{isAnonymous ? 'Anonymous' : 'Identified'}</Text>
+            <Text>{isAnonymous ? 'Anonymous' : 'Identified'}</Text> */}
         </View>
         <ButtonBar buttons={[cancelBtn, restoreBtn]} />
     </SafeAreaView>

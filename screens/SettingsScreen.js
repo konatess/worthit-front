@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import { SafeAreaView, View, StatusBar, FlatList } from "react-native";
+import { useContext, useState } from "react";
+import { SafeAreaView, View, StatusBar, Alert } from "react-native";
 import * as Linking from "expo-linking";
 import { getAuth, signOut } from 'firebase/auth';
 import firebaseInit, { app } from "../storage/firebaseInit";
@@ -10,19 +10,20 @@ import Modal from "../components/Modal";
 import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
-import Notify from "../components/Notify";
 import { UserContext } from "../constants/UserContext";
+import { SettingsContext } from "../constants/SettingsContext";
 import { storeSettings, storeIng, deleteIng, storeRec, deleteRec, getIngAndRec } from "../storage/localAsync";
 
 
 export default function SettingsScreen ({ route, navigation }) {
-    const { settings, recLength } = route.params;
+    const { recLength } = route.params;
+    const { settingsObj, setSettingsObj} = useContext(SettingsContext);
     const { user, setUser } = useContext(UserContext);
-    const [darkMode, setDarkMode] = useState(settings.darkMode || false);
-    const [currency, setCurrency] = useState(settings.currency || Strings.util.currencies[0]);
-    const [language, setLanguage] = useState(settings.language || Strings.util.languages[0]);
-    const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
-    const [decimalLength, setDecimalLength] = useState(settings.decimalLength || 2)
+    const [darkMode, setDarkMode] = useState(settingsObj.darkMode || false);
+    const [currency, setCurrency] = useState(settingsObj.currency || Strings.util.currencies[0]);
+    const [language, setLanguage] = useState(settingsObj.language || Strings.util.languages[0]);
+    const [prefLogin, setPrefLogin] = useState(settingsObj.login || Strings.util.logins[0]);
+    const [decimalLength, setDecimalLength] = useState(settingsObj.decimalLength || 2)
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
     const [modalButtons, setModalButtons] = useState([]);
@@ -57,8 +58,9 @@ export default function SettingsScreen ({ route, navigation }) {
                 login: prefLogin,
                 decimalLength: decimalLength
             }
+            setSettingsObj(obj);
             storeSettings(obj);
-            navigation.push(Strings.util.routes.home, {settings: obj})
+            navigation.push(Strings.util.routes.home)
         },
         darkMode: darkMode
     }
@@ -161,8 +163,8 @@ export default function SettingsScreen ({ route, navigation }) {
             setModalVisible(true);
         },
         subscriptions: () => {
-            // Notify.showError("English", Strings.English.buttons.allSettings.subscriptions)
-            navigation.push(Strings.util.routes.purchase, {settings: settings})
+            Alert.alert(Strings[language].headers.errorAlert, Strings.English.buttons.allSettings.subscriptions);
+            // navigation.push(Strings.util.routes.purchase)
         },
         feedback: async () => {
             let supported = await Linking.canOpenURL(Strings.util.mailto);
@@ -170,7 +172,7 @@ export default function SettingsScreen ({ route, navigation }) {
                 await Linking.openURL(Strings.util.mailto)
             }
             else {
-                Notify.showError(Strings.util.languages[0], "Error: " + Strings.util.mailto);
+                Alert.alert(Strings[language].headers.errorAlert, Strings.util.mailto)
             }
         },
         site: async () => {
@@ -179,7 +181,7 @@ export default function SettingsScreen ({ route, navigation }) {
                 await Linking.openURL(Strings.util.website)
             }
             else {
-                Notify.showError(Strings.util.languages[0],"Error: " + Strings.util.website)
+                Alert.alert(Strings[language].headers.errorAlert, Strings.util.website);
             }
         },
         logout: () => {
