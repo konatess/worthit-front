@@ -16,7 +16,7 @@ import { storeSettings, storeIng, deleteIng, storeRec, deleteRec, getIngAndRec }
 
 
 export default function SettingsScreen ({ route, navigation }) {
-    const { recLength } = route.params;
+    const { recLength, ingLength } = route.params;
     const { settingsObj, setSettingsObj} = useContext(SettingsContext);
     const { user, setUser } = useContext(UserContext);
     const [darkMode, setDarkMode] = useState(settingsObj.darkMode || false);
@@ -198,7 +198,7 @@ export default function SettingsScreen ({ route, navigation }) {
             onPress={settingsPress[property]}
             darkMode={darkMode}
         />
-        if (property === "deleteIng" && recLength) {
+        if (property === "deleteIng" && (recLength || !ingLength)) {
             // console.log("skip")
         } else if (property === "deleteRec" && !recLength) {
             // console.log("skip")

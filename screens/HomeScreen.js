@@ -297,7 +297,7 @@ export default function HomeScreen ({ route, navigation }) {
         color: settingsObj.darkMode ? Colors.darkTheme.buttons.settings : Colors.lightTheme.buttons.settings,
         iconName: Icons.settings,
         onPress: () => {
-            navigation.push(Strings.util.routes.settings, {recLength: prodButtons.length})
+            navigation.push(Strings.util.routes.settings, {recLength: prodButtons.length, ingLength: ingButtons.length})
         },
         darkMode: settingsObj.darkMode
     }

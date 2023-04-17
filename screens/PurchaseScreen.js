@@ -12,7 +12,7 @@ import { Entitlements } from "../constants/EntitlementsContext";
 import { SettingsContext } from "../constants/SettingsContext";
 
 export default function PurchaseScreen ({ route, navigation }) {
-    const { settingsObj } = useContext(SettingsContext);
+    const { settingsObj, setSettingsObj } = useContext(SettingsContext);
     const { user } = useContext(UserContext);
     const { entitlements, setEntitlements } = useContext(Entitlements)
     const [packages, setPackages] = useState([])
@@ -64,6 +64,7 @@ export default function PurchaseScreen ({ route, navigation }) {
             if (obj.login === Strings.util.logins[0]) {
                 obj.login = Strings.util.logins[1]
             }
+            setSettingsObj(obj);
             navigation.push(Strings.util.routes.login)
         }
     }, [subscriptionActive]);
@@ -121,7 +122,7 @@ export default function PurchaseScreen ({ route, navigation }) {
                     }}
                     isLast={index === packages.length -1}
                     isAnonymous={isAnonymous}
-                    darkMode={settingsObj.darkMode}
+                    // ListFooterComponent={() => {}}
                 />}
                 keyExtractor={(item) => item.identifier}
             />}
