@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect, useCallback } from "react";
-import { Text, SafeAreaView, FlatList, Platform, View, StatusBar } from "react-native";
+import { Text, SafeAreaView, FlatList, Platform, View, StatusBar, Keyboard } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
 import ButtonBar from '../components/ButtonBar';
@@ -44,6 +44,21 @@ export default function HomeScreen ({ route, navigation }) {
     const [ingInventory, setIngInventory] = useState(0);
     const [maxRec, setMaxRec] = useState(false);
     const [maxIng, setMaxIng] = useState(false);
+    const [keyboardOut, setKeyboardOut] = useState(false);
+
+    Platform.OS === 'android' && useEffect(() => {
+        const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+            setKeyboardOut(true);
+        });
+        const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+            setKeyboardOut(false);
+        });
+    
+        return () => {
+            showSubscription.remove();
+            hideSubscription.remove();
+        };
+    }, [])
 
     useEffect(() => {
         if (settingsObj.login === Strings.util.logins[0]) {
@@ -369,6 +384,6 @@ export default function HomeScreen ({ route, navigation }) {
             vertical={modalBtnsVertical}
             darkMode={settingsObj.darkMode}
         />
-        <ButtonBar buttons={[settingsbtn, ingBtn, createbtn]} />
+        {!keyboardOut && <ButtonBar buttons={[settingsbtn, ingBtn, createbtn]} />}
     </SafeAreaView>)
 }

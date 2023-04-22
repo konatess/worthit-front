@@ -59,9 +59,9 @@ export default ({visible, message, pickers, inputs, buttons, vertical, tableArr,
 							{tableArr.map((item, index) => {
 								return (
 									<View key={index} style={[rows.rowModalTable, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text, borderColor: darkMode ? Colors.darkTheme.inputBorder : Colors.lightTheme.inputBorder}]}>
-										<Text style={[textStyles.tableItem, {width: 130, textAlign: 'left', color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{item.ing}</Text>
-										<Text style={[textStyles.tableItem, {width: 50, color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{item.need}</Text>
-										<Text style={[textStyles.tableItem, {width: 50, color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{item.inv}</Text>
+										<Text style={[textStyles.tableItem, textStyles.tableCol1, {textAlign: 'left', color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{item.ing}</Text>
+										<Text style={[textStyles.tableItem, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{item.need}</Text>
+										<Text style={[textStyles.tableItem, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{item.inv}</Text>
 									</View>
 								)}
 							)}

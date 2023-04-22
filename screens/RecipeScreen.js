@@ -803,7 +803,6 @@ export default function RecipeScreen ({navigation, route}) {
             tableArr={tableIng}
             darkMode={settingsObj.darkMode}
         />
-        {Platform.OS === 'ios' && <ButtonBar buttons={navBtns} />}
-        {Platform.OS === 'android' && !keyboardOut && <ButtonBar buttons={navBtns} />}
+        {!keyboardOut && <ButtonBar buttons={navBtns} />}
     </SafeAreaView>
 }

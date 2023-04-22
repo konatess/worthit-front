@@ -261,7 +261,11 @@ const textStyles = StyleSheet.create({
     },
     tableItem: {
         fontSize: 16 * sizer,
-        textAlign: 'center'
+        textAlign: 'center',
+        width: 50 * sizer
+    },
+    tableCol1: {
+        width: 130 * sizer
     },
     recipeManageIngBtn: {
         textAlign: 'center',

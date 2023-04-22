@@ -1,5 +1,5 @@
-import { useContext, useState } from "react";
-import { SafeAreaView, View, StatusBar, Alert } from "react-native";
+import { useContext, useState, useEffect } from "react";
+import { SafeAreaView, View, StatusBar, Alert, Platform, Keyboard } from "react-native";
 import * as Linking from "expo-linking";
 import { getAuth, signOut } from 'firebase/auth';
 import firebaseInit, { app } from "../storage/firebaseInit";
@@ -30,6 +30,21 @@ export default function SettingsScreen ({ route, navigation }) {
 	const [modalPickers, setModalPickers] = useState([]);
     const [modalInputs, setModalInputs] = useState([]);
     const [modalBtnsVertical, setModalBtnsVertical] = useState(false);
+    const [keyboardOut, setKeyboardOut] = useState(false);
+
+    Platform.OS === 'android' && useEffect(() => {
+        const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+            setKeyboardOut(true);
+        });
+        const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+            setKeyboardOut(false);
+        });
+    
+        return () => {
+            showSubscription.remove();
+            hideSubscription.remove();
+        };
+    }, [])
 
     const closeModal = () => {
         setModalVisible(false);
@@ -226,6 +241,6 @@ export default function SettingsScreen ({ route, navigation }) {
             vertical={modalBtnsVertical}
             darkMode={darkMode}
         />
-        <ButtonBar buttons={[cancelBtn, saveBtn]} />
+        {!keyboardOut && <ButtonBar buttons={[cancelBtn, saveBtn]} />}
     </SafeAreaView>
 }
