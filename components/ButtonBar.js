@@ -12,7 +12,6 @@ export default function ButtonBar({buttons}) {
                         color={unit.color} 
                         iconName={unit.iconName} 
                         onPress={unit.onPress} 
-                        disabled={unit.disabled || false}
                         darkMode={unit.darkMode}
                     />
                 )

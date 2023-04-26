@@ -43,6 +43,7 @@ export default {
             cancel: "Cancel",
             done: "Done",
             okay: "Okay",
+            upgrade: "Upgrade",
             duplicate: "Duplicate",
             setToDefault: "Set to Default",
             addIngredient: "Add Ingredients",

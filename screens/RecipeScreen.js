@@ -17,7 +17,7 @@ import Calculate from "../constants/Calculate";
 import { SettingsContext } from "../constants/SettingsContext";
 
 export default function RecipeScreen ({navigation, route}) {
-    const { knownIng, prodObj, prodDbId,products } = route.params;
+    const { knownIng, prodObj, prodDbId, products } = route.params;
     const { user } = useContext(UserContext);
     const { settingsObj } = useContext(SettingsContext);
     const [modalVisible, setModalVisible] = useState(false);
@@ -26,7 +26,6 @@ export default function RecipeScreen ({navigation, route}) {
 	const [modalPickers, setModalPickers] = useState([]);
     const [modalInputs, setModalInputs] = useState([]);
     const [modalBtnsVertical, setModalBtnsVertical] = useState(false);
-    const [canSave, setCanSave] = useState(false)
     const [allIngredients, setAllIngredients] = useState(knownIng);
     const [prodId, setProdId] = useState(prodDbId.length ? prodDbId : "");
     const [name, setName] = useState(prodObj?.title ? prodObj.title : "");
@@ -141,14 +140,6 @@ export default function RecipeScreen ({navigation, route}) {
     }, [allIngredients])
 
     useEffect(() => {
-        if (name && (hour || minute) && amountPerTime && wage && profitAmount) {
-            setCanSave(true);
-        } else {
-            setCanSave(false)
-        }
-    }, [name, hour, minute, amountPerTime, wage, profitAmount])
-
-    useEffect(() => {
         if ((hour || minute) && amountPerTime && wage && ingTextList.length) {
             setTotalCost(calculateTotalCost())
         }
@@ -242,6 +233,14 @@ export default function RecipeScreen ({navigation, route}) {
             setModalButtons([modalOkayBtn])
             setModalVisible(true)
             return
+        } else if (!hour && !minute) {
+            setModalMessage(Strings.English.messages.prodTime)
+            setModalButtons([modalOkayBtn])
+            setModalVisible(true)
+        } else if (!amountPerTime) {
+            setModalMessage(Strings.English.messages.prodAmount)
+            setModalButtons([modalOkayBtn])
+            setModalVisible(true)
         } else if (Strings.util.regex.notes.test(note)) {
             setModalMessage(Strings.English.messages.prodNoteBadChar)
             setModalButtons([modalOkayBtn])
@@ -392,7 +391,6 @@ export default function RecipeScreen ({navigation, route}) {
         onPress: () => {
             checkRecipe()
         },
-        disabled: !canSave,
         darkMode: settingsObj.darkMode
     }
     let duplicateBtn = {

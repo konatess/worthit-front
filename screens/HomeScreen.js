@@ -307,6 +307,16 @@ export default function HomeScreen ({ route, navigation }) {
         darkMode: settingsObj.darkMode
     }
 
+    let modalUpgradeSubBtn = {
+        title: Strings.English.buttons.upgrade,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.upgrade : Colors.lightTheme.buttons.upgrade,
+        iconName: Icons.upgrade,
+        onPress: () => {
+            navigation.push(Strings.util.routes.purchase)
+        },
+        darkMode: settingsObj.darkMode
+    }
+
     let settingsbtn = {
         title: Strings.English.buttons.settings,
         color: settingsObj.darkMode ? Colors.darkTheme.buttons.settings : Colors.lightTheme.buttons.settings,
@@ -320,8 +330,15 @@ export default function HomeScreen ({ route, navigation }) {
         title: Strings.English.buttons.create,
         color: settingsObj.darkMode ? Colors.darkTheme.buttons.create : Colors.lightTheme.buttons.create,
         iconName: Icons.create,
-        onPress: viewIng ? () => callIngModal(false) : () => navToRecipe(""),
-        disabled: viewIng ? maxIng : maxRec,
+        onPress: viewIng ? maxIng ? () => {
+            setModalMessage(Strings.English.messages.dataLimit.ing);
+            setModalButtons([modalCancelBtn, modalUpgradeSubBtn])
+            setModalVisible(true)
+        } : () => callIngModal(false) : maxRec ? () => {
+            setModalMessage(Strings.English.messages.dataLimit.rec);
+            setModalButtons([modalCancelBtn, modalUpgradeSubBtn])
+            setModalVisible(true)
+        } : () => navToRecipe(""),
         darkMode: settingsObj.darkMode
     }
     let ingBtn = {
