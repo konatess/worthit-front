@@ -17,7 +17,7 @@ import Calculate from "../constants/Calculate";
 import { SettingsContext } from "../constants/SettingsContext";
 
 export default function RecipeScreen ({navigation, route}) {
-    const { knownIng, prodObj, prodDbId, products } = route.params;
+    const { knownIng, prodObj, prodDbId, products, maxRec } = route.params;
     const { user } = useContext(UserContext);
     const { settingsObj } = useContext(SettingsContext);
     const [modalVisible, setModalVisible] = useState(false);
@@ -495,7 +495,7 @@ export default function RecipeScreen ({navigation, route}) {
         }
     }
 
-    let navBtns = prodId ? [ deleteBtn, cancelBtn, duplicateBtn, createBtn ] : [ cancelBtn, createBtn ]
+    let navBtns = prodId ? maxRec ? [ deleteBtn, cancelBtn, createBtn ] : [ deleteBtn, cancelBtn, duplicateBtn, createBtn ] : [ cancelBtn, createBtn ]
     return <SafeAreaView style={[containers.safeArea, {backgroundColor: settingsObj.darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
         {Platform.OS === 'android' && <View style={{height: StatusBar.currentHeight}} />}
         <View style={containers.projArea}>

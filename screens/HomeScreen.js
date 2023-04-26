@@ -185,7 +185,8 @@ export default function HomeScreen ({ route, navigation }) {
             prodDbId: id,
             prodObj: product, 
             knownIng: allIngredients,
-            products: products
+            products: products,
+            maxRec: maxRec
         })
     };
 
