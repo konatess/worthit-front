@@ -50,7 +50,13 @@ export default function PurchaseScreen ({ route, navigation }) {
         setRevCatId(await Purchases.getAppUserID());
     
         const customerInfo = await Purchases.getCustomerInfo();
-        setSubscriptionActive(typeof customerInfo.entitlements.active[Strings.util.entitlements.storage1] !== 'undefined');
+        if (typeof customerInfo.entitlements.active[Strings.util.entitlements.storage1] !== 'undefined') {
+            let ent = {...entitlements};
+            ent.storage1 = true;
+            setEntitlements(ent);
+            setSubscriptionActive(true);
+        }
+        // setSubscriptionActive(typeof customerInfo.entitlements.active[Strings.util.entitlements.storage1] !== 'undefined');
     };
     
     useEffect(() => {
