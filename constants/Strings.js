@@ -70,6 +70,8 @@ export default {
             recipes: "Product Recipes",
             ingredients: "All Ingredients",
             errorAlert: "Error: ",
+            settings: "Settings",
+            subs: "Subscriptions",
         },
         label: {
             login: "Log in to Begin",

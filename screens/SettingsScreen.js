@@ -1,11 +1,11 @@
 import { useContext, useState, useEffect } from "react";
-import { SafeAreaView, View, StatusBar, Alert, Platform, Keyboard } from "react-native";
+import { SafeAreaView, View, Text, StatusBar, Alert, Platform, Keyboard } from "react-native";
 import * as Linking from "expo-linking";
 import { getAuth, signOut } from 'firebase/auth';
 import firebaseInit, { app } from "../storage/firebaseInit";
 import ButtonBar from '../components/ButtonBar';
 import SettingButton from "../components/SettingButton";
-import { containers } from '../constants/Styles';
+import { containers, textStyles } from '../constants/Styles';
 import Modal from "../components/Modal";
 import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
@@ -178,8 +178,8 @@ export default function SettingsScreen ({ route, navigation }) {
             setModalVisible(true);
         },
         subscriptions: () => {
-            Alert.alert(Strings[language].headers.errorAlert, Strings.English.buttons.allSettings.subscriptions);
-            // navigation.push(Strings.util.routes.purchase)
+            // Alert.alert(Strings[language].headers.errorAlert, Strings.English.buttons.allSettings.subscriptions);
+            navigation.push(Strings.util.routes.purchase)
         },
         feedback: async () => {
             let supported = await Linking.canOpenURL(Strings.util.mailto);
@@ -229,6 +229,7 @@ export default function SettingsScreen ({ route, navigation }) {
             barStyle={darkMode ? 'light-content' : 'dark-content'}
         />
         {Platform.OS === 'android' && <View style={{height: StatusBar.currentHeight}} />}
+        <Text style={[textStyles.headerText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{Strings.English.headers.settings}</Text>
         <View style={containers.settingsBtnList}>
             {settingsBtns.map( button => button )}
         </View>

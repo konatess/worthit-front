@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { SafeAreaView, View, StatusBar, FlatList, Alert } from "react-native";
+import { SafeAreaView, View, StatusBar, FlatList, Alert, Text } from "react-native";
 import Purchases, { LOG_LEVEL } from "react-native-purchases";
 import ButtonBar from '../components/ButtonBar';
 import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import PackageItem from "../components/PackageItem";
-import { containers } from "../constants/Styles";
+import { containers, textStyles } from "../constants/Styles";
 import { UserContext } from "../constants/UserContext";
 import { Entitlements } from "../constants/EntitlementsContext";
 import { SettingsContext } from "../constants/SettingsContext";
@@ -106,6 +106,7 @@ export default function PurchaseScreen ({ route, navigation }) {
             barStyle={settingsObj.darkMode ? 'light-content' : 'dark-content'}
         />
         {Platform.OS === 'android' && <View style={{height: StatusBar.currentHeight}} />}
+        <Text style={[textStyles.headerText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{Strings.English.headers.subs}</Text>
         <View>
             {packages.length > 0 && <FlatList 
                 style={containers.settingsBtnList}
