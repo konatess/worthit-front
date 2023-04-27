@@ -1,13 +1,12 @@
 import { useContext } from 'react';
 import { View, Text, Pressable, Alert } from 'react-native';
-import Purchases from 'react-native-purchases';
 import { textStyles, buttonStyles } from '../constants/Styles';
 import Strings from '../constants/Strings';
 import { Entitlements } from "../constants/EntitlementsContext";
 import { SettingsContext } from '../constants/SettingsContext';
 import Colors from '../constants/Colors';
 
-export default function PackageItem ({ purchasePackage, setIsPurchasing, language, toLogin, toHome, isLast, isAnonymous }) {
+export default function PackageItem ({ packageItem, purchasePackage, setIsPurchasing, toLogin, toHome, isLast, isAnonymous }) {
     const { entitlements, setEntitlements } = useContext(Entitlements);
     const { settingsObj } = useContext(SettingsContext);
     
@@ -19,7 +18,7 @@ export default function PackageItem ({ purchasePackage, setIsPurchasing, languag
         setIsPurchasing(true);
     
         try {
-            const { purchaserInfo } = await Purchases.purchasePackage(purchasePackage);
+            const { purchaserInfo } = await purchasePackage(packageItem);
         
             if (typeof purchaserInfo.entitlements.active[Strings.util.entitlements.storage1] !== 'undefined') {
                 let ent = { ...entitlements}

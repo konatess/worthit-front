@@ -118,9 +118,9 @@ export default function PurchaseScreen ({ route, navigation }) {
                 style={containers.settingsBtnList}
                 data={packages}
                 renderItem={({ item, index }) => <PackageItem 
-                    purchasePackage={item} 
+                    packageItem={item} 
+                    purchasePackage={Purchases.purchasePackage} 
                     setIsPurchasing={setIsPurchasing} 
-                    language={settingsObj.language || Strings.util.languages[0]}
                     toLogin={ () => {
                         navigation.push(Strings.util.routes.login)
                     }}
