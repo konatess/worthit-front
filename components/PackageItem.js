@@ -12,7 +12,7 @@ export default function PackageItem ({ packageItem, purchasePackage, setIsPurcha
     
     const {
         product: { title, description, priceString },
-    } = purchasePackage;
+    } = packageItem;
 
     const onSelection = async () => {
         setIsPurchasing(true);
