@@ -13,8 +13,6 @@
     "expo": "^48.0.0",
     "expo-auth-session": "~4.0.3",
     "expo-build-properties": "~0.6.0",
-    "expo-cli": "^6.3.2",
-    "expo-dev-client": "~2.2.1",
     "expo-linking": "~4.0.1",
     "expo-random": "~13.1.1",
     "expo-splash-screen": "~0.18.1",
@@ -31,7 +29,8 @@
     "react-native-web": "~0.18.11"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "expo-dev-client": "^2.2.1"
   },
   "private": true
 }

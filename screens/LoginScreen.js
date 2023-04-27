@@ -28,7 +28,7 @@ export default function LoginScreen ({ navigation, route }) {
     const [fRequest, fResponse, fPromptAsync] = Facebook.useAuthRequest({
         responseType: ResponseType.Token,
         clientId: '820229395830871',
-        redirectUri: 'https://auth.expo.io/@buddingapps/worthit'
+        redirectUri: 'https://worth-888.firebaseapp.com/__/auth/handler' // 'https://auth.expo.io/@buddingapps/worthit'
     });
     
     useEffect(() => {
