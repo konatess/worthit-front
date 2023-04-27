@@ -29,7 +29,8 @@ export default function PackageItem ({ purchasePackage, setIsPurchasing, languag
             }
         } catch (e) {
             if (!e.userCancelled) {
-                Alert.alert(Strings[language].headers.errorAlert, e.message)
+                // Alert.alert(Strings[language].headers.errorAlert, e.message)
+                Alert.alert("Purchase Item Error: ", e.message)
             }
         } finally {
             setIsPurchasing(false);

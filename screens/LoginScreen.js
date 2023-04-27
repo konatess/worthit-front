@@ -53,7 +53,7 @@ export default function LoginScreen ({ navigation, route }) {
                         }
                     ])
                 } else {
-                    Alert.alert(error.message)
+                    Alert.alert("Login Error", error.message)
                 }})
         }
     }, [fResponse]);
@@ -78,7 +78,9 @@ export default function LoginScreen ({ navigation, route }) {
       if (gResponse?.type === 'success') {
         const { id_token } = gResponse.params;
         const credential = GoogleAuthProvider.credential(id_token);
-        signInWithCredential(auth, credential);
+        signInWithCredential(auth, credential).catch(async error => {
+            Alert.alert("Google Login Error", error.message)
+        });
       }
     }, [gResponse]);
 
