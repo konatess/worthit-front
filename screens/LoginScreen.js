@@ -53,7 +53,7 @@ export default function LoginScreen ({ navigation, route }) {
                         }
                     ])
                 } else {
-                    Alert.alert("Login Error", error.message)
+                    Alert.alert("FB Login Error", error.message)
                 }})
         }
     }, [fResponse]);
