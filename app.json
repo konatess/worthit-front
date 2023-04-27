@@ -49,7 +49,15 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [],
+    "plugins": [
+      ["expo-build-properties",
+      {
+        "android": {
+          "enableProguardInReleaseBuilds": true,
+          "allowBackup": false
+        }
+      }]
+    ],
     "extra": {
       "eas": {
         "projectId": "fb0c0800-52b5-4a5d-b98a-469ce3d46ec9"
