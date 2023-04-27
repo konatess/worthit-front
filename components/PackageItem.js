@@ -6,35 +6,12 @@ import { Entitlements } from "../constants/EntitlementsContext";
 import { SettingsContext } from '../constants/SettingsContext';
 import Colors from '../constants/Colors';
 
-export default function PackageItem ({ packageItem, purchasePackage, setIsPurchasing, toLogin, toHome, isLast, isAnonymous }) {
+export default function PackageItem ({ packageItem, onSelection, isLast }) {
     const { entitlements, setEntitlements } = useContext(Entitlements);
     const { settingsObj } = useContext(SettingsContext);
-    
     const {
         product: { title, description, priceString },
     } = packageItem;
-
-    const onSelection = async () => {
-        setIsPurchasing(true);
-    
-        try {
-            const { purchaserInfo } = await purchasePackage(packageItem);
-        
-            if (typeof purchaserInfo.entitlements.active[Strings.util.entitlements.storage1] !== 'undefined') {
-                let ent = { ...entitlements}
-                ent.storage1 = true
-                setEntitlements(ent);
-                isAnonymous ? toLogin() : toHome();
-            }
-        } catch (e) {
-            if (!e.userCancelled) {
-                // Alert.alert(Strings[language].headers.errorAlert, e.message)
-                Alert.alert("Purchase Item Error: ", e.message)
-            }
-        } finally {
-            setIsPurchasing(false);
-        }
-    };
     
     return (
         <Pressable onPress={onSelection} style={[

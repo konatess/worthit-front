@@ -65,13 +65,17 @@ export default function PurchaseScreen ({ route, navigation }) {
     }, []);
 
     useEffect(() => {
-        if (subscriptionActive && (isAnonymous || !user.uid)) {
-            let obj = {...settingsObj}
-            if (obj.login === Strings.util.logins[0]) {
-                obj.login = Strings.util.logins[1]
+        if (subscriptionActive) {
+            if (isAnonymous || !user.uid) {
+                let obj = {...settingsObj}
+                if (obj.login === Strings.util.logins[0]) {
+                    obj.login = Strings.util.logins[1]
+                }
+                setSettingsObj(obj);
+                navigation.push(Strings.util.routes.login)
+            } else {
+                navigation.push(Strings.util.routes.home)
             }
-            setSettingsObj(obj);
-            navigation.push(Strings.util.routes.login)
         }
     }, [subscriptionActive]);
     
@@ -119,16 +123,25 @@ export default function PurchaseScreen ({ route, navigation }) {
                 data={packages}
                 renderItem={({ item, index }) => <PackageItem 
                     packageItem={item} 
-                    purchasePackage={Purchases.purchasePackage} 
-                    setIsPurchasing={setIsPurchasing} 
-                    toLogin={ () => {
-                        navigation.push(Strings.util.routes.login)
-                    }}
-                    toHome={ () => {
-                        navigation.push(Strings.util.routes.home)
+                    onSelection={async () => {
+                        setIsPurchasing(true);
+                        try {
+                            const { purchaserInfo } = await Purchases.purchasePackage(item);
+                            if (typeof purchaserInfo.entitlements.active[Strings.util.entitlements.storage1] !== 'undefined') {
+                                let ent = { ...entitlements}
+                                ent.storage1 = true
+                                setEntitlements(ent);
+                            }
+                        } catch (e) {
+                            if (!e.userCancelled) {
+                                // Alert.alert(Strings[language].headers.errorAlert, e.message)
+                                Alert.alert("Purchase Item Error: ", e)
+                            }
+                        } finally {
+                            setIsPurchasing(false);
+                        }
                     }}
                     isLast={index === packages.length -1}
-                    isAnonymous={isAnonymous}
                     // ListFooterComponent={() => {}}
                 />}
                 keyExtractor={(item) => item.identifier}
