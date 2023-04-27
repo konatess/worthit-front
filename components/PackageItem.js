@@ -1,13 +1,10 @@
 import { useContext } from 'react';
-import { View, Text, Pressable, Alert } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { textStyles, buttonStyles } from '../constants/Styles';
-import Strings from '../constants/Strings';
-import { Entitlements } from "../constants/EntitlementsContext";
 import { SettingsContext } from '../constants/SettingsContext';
 import Colors from '../constants/Colors';
 
 export default function PackageItem ({ packageItem, onSelection, isLast }) {
-    const { entitlements, setEntitlements } = useContext(Entitlements);
     const { settingsObj } = useContext(SettingsContext);
     const {
         product: { title, description, priceString },
