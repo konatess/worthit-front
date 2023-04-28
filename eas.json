@@ -22,7 +22,7 @@
   "submit": {
     "production": {
       "android": {
-        "serviceAccountKeyPath": "../../GoogleKeys/worth-it/pc-api-7591304992586825584-233-f7c9499f0cba.json"
+        "serviceAccountKeyPath": "../../GoogleKeys/worth-it/pc-api-7591304992586825584-233-5c6132983d66.json"
       }
     }
   }
