@@ -33,7 +33,8 @@
           }
         ]
       },
-      "bundleIdentifier": "com.buddingapps.worthit"
+      "bundleIdentifier": "com.buddingapps.worthit",
+      "googleServicesFile": "../GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -44,7 +45,8 @@
       "permissions": [
         "android.permission.INTERNET"
       ],
-      "package": "com.buddingapps.worthit"
+      "package": "com.buddingapps.worthit",
+      "googleServicesFile": "../google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
