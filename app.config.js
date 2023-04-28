@@ -3,7 +3,7 @@ export default {
         name: "Worth It",
         slug: "worthit",
         scheme: "worthit",
-        version: "1.0.11",
+        version: "1.0.12",
         orientation: "portrait",
         icon: "./assets/icon.jpg",
         userInterfaceStyle: "light",
@@ -41,7 +41,7 @@ export default {
                 foregroundImage: "./assets/adaptive-icon.png",
                 backgroundColor: "#FFFAEF"
             },
-            versionCode: 12,
+            versionCode: 13,
             permissions: [
                 "android.permission.INTERNET"
             ],
@@ -62,7 +62,7 @@ export default {
         ],
         extra: {
             eas: {
-                projectId: "9f68bef9-2d97-4362-b1a3-3e0d3e16f7cc"
+                projectId: "fb0c0800-52b5-4a5d-b98a-469ce3d46ec9"
             }
         }
     }
