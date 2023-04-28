@@ -33,6 +33,7 @@ export default {
                     }
                 ]
             },
+            buildNumber: 13,
             bundleIdentifier: "com.buddingapps.worthit",
             googleServicesFile: process.env.GOOGLE_SERVICES_PLIST,
         },
