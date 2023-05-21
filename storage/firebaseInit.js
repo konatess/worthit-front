@@ -5,7 +5,7 @@ import Strings from '../constants/Strings';
 
 let firebaseConfig = {
     apiKey: "AIzaSyD5LuF_dEvcv3xcTg3-hIxJ_6Ps_f04YYw",
-    authDomain: "worth-888.firebaseapp.com",
+    authDomain: "https://worth-888.firebaseapp.com",
     databaseURL: "https://worth-888-default-rtdb.firebaseio.com",
     projectId: "worth-888",
     storageBucket: "worth-888.appspot.com",
