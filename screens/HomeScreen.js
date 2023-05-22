@@ -313,7 +313,8 @@ export default function HomeScreen ({ route, navigation }) {
         color: settingsObj.darkMode ? Colors.darkTheme.buttons.upgrade : Colors.lightTheme.buttons.upgrade,
         iconName: Icons.upgrade,
         onPress: () => {
-            navigation.push(Strings.util.routes.purchase)
+            navigation.push(Strings.util.routes.purchase);
+            closeModal();
         },
         darkMode: settingsObj.darkMode
     }
