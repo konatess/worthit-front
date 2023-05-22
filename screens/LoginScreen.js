@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { SafeAreaView, View, Text, TextInput, Pressable, KeyboardAvoidingView, Alert } from "react-native";
 import * as Facebook from 'expo-auth-session/providers/facebook';
 import * as Google from 'expo-auth-session/providers/google';
-import { ResponseType } from 'expo-auth-session';
+import { ResponseType, makeRedirectUri } from 'expo-auth-session';
 import { signInWithEmailAndPassword } from 'firebase/app';
 import { getAuth, FacebookAuthProvider, GoogleAuthProvider, signInWithCredential, onAuthStateChanged } from 'firebase/auth';
 import { app } from '../storage/firebaseInit';
@@ -28,8 +28,11 @@ export default function LoginScreen ({ navigation, route }) {
     const [fRequest, fResponse, fPromptAsync] = Facebook.useAuthRequest({
         responseType: ResponseType.Token,
         clientId: '820229395830871',
-        redirectUri: 'https://worth-888.firebaseapp.com/__/auth/handler' // 'https://auth.expo.io/@buddingapps/worthit'
-    });
+        scopes: ['public_profile', 'email'],
+        redirectUri: makeRedirectUri({ useProxy: true })
+        // redirectUri: 'https://worth-888.firebaseapp.com/__/auth/handler' // 'https://auth.expo.io/@buddingapps/worthit'
+    },
+    {useProxy: true});
     
     useEffect(() => {
         if (fResponse?.type === 'success') {
