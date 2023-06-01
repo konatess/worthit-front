@@ -11,6 +11,7 @@ import { containers, textStyles, inputStyles, buttonStyles } from "../constants/
 import Strings from "../constants/Strings";
 import { UserContext } from "../constants/UserContext";
 import { SettingsContext } from "../constants/SettingsContext";
+import { Entitlements } from "../constants/EntitlementsContext";
 import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
 import Purchases from "react-native-purchases";
@@ -21,6 +22,7 @@ const auth = getAuth(app)
 export default function LoginScreen ({ navigation, route }) { 
 	const { settingsObj, setSettingsObj } = useContext(SettingsContext)
     const { user, setUser } = useContext(UserContext);
+    const { entitlements } = useContext(Entitlements);
     const [prefLogin, setPrefLogin] = useState(settingsObj.login || Strings.util.logins[0]);
     // const [email, setEmail] = useState("");
     // const [password, setPassword] = useState("");
@@ -68,7 +70,11 @@ export default function LoginScreen ({ navigation, route }) {
     }, [])
 
     useEffect(() => {
-        user.uid ? Purchases.logIn(user.uid) : Purchases.logOut();
+        if (user.uid) {
+            Purchases.logIn(user.uid);
+        } else if (!entitlements.isAnon) {
+            Purchases.logOut();
+        }
     }, [user.uid])
     
     const [gRequest, gResponse, gPromptAsync] = Google.useIdTokenAuthRequest(

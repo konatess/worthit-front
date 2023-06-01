@@ -26,10 +26,23 @@ export default function App() {
 	const [isLoadingComplete, setLoadingComplete] = useState(false);
 	const [user, setUser] = useState({uid: ""});
 	const [settingsObj, setSettingsObj] = useState({});
-	const [entitlements, setEntitlements] = useState({ storage1: false });
-    const [isAnonymous, setIsAnonymous] = useState(true); // TODO: set up isAnonymous as context and update logout at signin screen
+	const [entitlements, setEntitlements] = useState({ isAnon: true, storage1: false });
 	
 
+	const getUserDetails = async () => {
+        let isAnonymous = await Purchases.isAnonymous();
+    
+        const customerInfo = await Purchases.getCustomerInfo();
+		let ent = { isAnon: isAnonymous, 
+			storage1: typeof customerInfo.entitlements.active[Strings.util.entitlements.storage1] !== 'undefined' 
+		};
+		if (!ent.storage1) {
+			let sett = {...settingsObj} 
+			sett.login = Strings.util.logins[0]
+			setSettingsObj(sett)
+		}
+		setEntitlements(ent);
+    };
 
 	// Load any resources or data that we need prior to rendering the app
 	useEffect(() => {
@@ -37,7 +50,7 @@ export default function App() {
 			try {
 				SplashScreen.preventAutoHideAsync();
 				await getSettings(setSettingsObj);
-				setIsAnonymous(await Purchases.isAnonymous());
+				getUserDetails();
 			} catch (e) {
 				// We might want to provide this error information to an error reporting service
 				Alert.alert(Strings[Strings.util.languages[0]].headers.errorAlert, e.message)
@@ -56,6 +69,14 @@ export default function App() {
 
 		loadResourcesAndDataAsync();
 	}, []);
+
+	useEffect(() => {
+        // Subscribe to purchaser updates
+        Purchases.addCustomerInfoUpdateListener(getUserDetails);
+        return () => {
+          Purchases.removeCustomerInfoUpdateListener(getUserDetails);
+        };
+    });
 
 	if (!isLoadingComplete) {
 		return null
