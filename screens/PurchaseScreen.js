@@ -22,13 +22,13 @@ export default function PurchaseScreen ({ route, navigation }) {
     const [subscriptionActive, setSubscriptionActive] = useState(false);
 
     useEffect(() => {
-        Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
+        // Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
         const getPackages = async () => {
-            if (Platform.OS === 'ios') {
-                Purchases.configure({apiKey: "appl_NIMzKbuELZwYrRadlznGbomLWLN"});
-            } else if (Platform.OS === 'android') {
-                Purchases.configure({apiKey: "goog_vCtRNkrJEMHsuLzlXyAtVaRsWjq"});
-            }
+            // if (Platform.OS === 'ios') {
+            //     Purchases.configure({apiKey: "appl_NIMzKbuELZwYrRadlznGbomLWLN"});
+            // } else if (Platform.OS === 'android') {
+            //     Purchases.configure({apiKey: "goog_vCtRNkrJEMHsuLzlXyAtVaRsWjq"});
+            // }
             try {
                 const offerings = await Purchases.getOfferings();
                 // offerings !== undefined ? console.log(offerings) : console.log("Offerings are undefined")

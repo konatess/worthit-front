@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Alert } from 'react-native';
+import { StyleSheet, Alert, Platform } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Purchases, { LOG_LEVEL } from "react-native-purchases";
 
 import { UserContext } from './constants/UserContext';
 import { Entitlements } from './constants/EntitlementsContext';
@@ -25,7 +26,8 @@ export default function App() {
 	const [isLoadingComplete, setLoadingComplete] = useState(false);
 	const [user, setUser] = useState({uid: ""});
 	const [settingsObj, setSettingsObj] = useState({});
-	const [entitlements, setEntitlements] = useState({ storage1: false })
+	const [entitlements, setEntitlements] = useState({ storage1: false });
+    const [isAnonymous, setIsAnonymous] = useState(true); // TODO: set up isAnonymous as context and update logout at signin screen
 	
 
 
@@ -35,6 +37,7 @@ export default function App() {
 			try {
 				SplashScreen.preventAutoHideAsync();
 				await getSettings(setSettingsObj);
+				setIsAnonymous(await Purchases.isAnonymous());
 			} catch (e) {
 				// We might want to provide this error information to an error reporting service
 				Alert.alert(Strings[Strings.util.languages[0]].headers.errorAlert, e.message)
@@ -42,6 +45,13 @@ export default function App() {
 				setLoadingComplete(true);
 				SplashScreen.hideAsync();
 			}
+		}
+
+		Purchases.setLogLevel(LOG_LEVEL.VERBOSE)
+		if (Platform.OS === 'ios') {
+			Purchases.configure({apiKey: "appl_NIMzKbuELZwYrRadlznGbomLWLN"});
+		} else if (Platform.OS === 'android') {
+			Purchases.configure({apiKey: "goog_vCtRNkrJEMHsuLzlXyAtVaRsWjq"});
 		}
 
 		loadResourcesAndDataAsync();
