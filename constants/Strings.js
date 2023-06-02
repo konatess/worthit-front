@@ -93,6 +93,7 @@ export default {
             ingCost: "Cost: ",
             ingPerItem: "Amount: ",
             inventory: "Inventory: ",
+            numRecipes: "Recipes: ",
             price: "Price: ",
             numProducts: "For # of Product: ",
             ingTableNeed: "Need:",

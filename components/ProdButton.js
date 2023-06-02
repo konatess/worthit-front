@@ -7,7 +7,7 @@ export default function ProdButton ({ title, onPress, price, profitAmount, inven
     return <Pressable style={ [buttonStyles.prodBtn, {borderColor: Colors.lightTheme.buttons.emptyBtnBorders}]} onPress={onPress}>
         {/* <Text style={[textStyles.productTitleText, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{title}</Text> */}
         <Text style={[textStyles.productTitleText, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{title}</Text>
-        <Text style={[textStyles.productPriceText, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
+        <Text style={[textStyles.productDescText, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
             {`${Strings.English.label.price}$${price}  ${Strings.English.label.profit}$${profitAmount}  ${Strings.English.label.inventory}${inventory}`}
         </Text>
     </Pressable>
