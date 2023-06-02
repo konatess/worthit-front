@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect, useCallback } from "react";
-import { Text, SafeAreaView, FlatList } from "react-native";
+import { Text, SafeAreaView, FlatList, Platform, View, StatusBar, Keyboard } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
 import ButtonBar from '../components/ButtonBar';
@@ -11,6 +11,8 @@ import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import * as WebBrowser from 'expo-web-browser';
 import { UserContext } from "../constants/UserContext";
+import { Entitlements } from "../constants/EntitlementsContext";
+import { SettingsContext } from "../constants/SettingsContext";
 import firebaseInit from "../storage/firebaseInit";
 import ProdButton from "../components/ProdButton";
 import DataLimits from "../constants/DataLimits";
@@ -21,9 +23,9 @@ WebBrowser.maybeCompleteAuthSession();
 
 
 export default function HomeScreen ({ route, navigation }) {
-	const { settings } = route.params;
+	const { settingsObj } = useContext(SettingsContext)
     const { user } = useContext(UserContext);
-    const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
+    const { entitlements } = useContext(Entitlements);
     const [viewIng, setViewIng] = useState(false);
     const [allIngredients, setAllIngredients] = useState({});
     const [ingButtons, setIngButtons] = useState([]);
@@ -42,9 +44,24 @@ export default function HomeScreen ({ route, navigation }) {
     const [ingInventory, setIngInventory] = useState(0);
     const [maxRec, setMaxRec] = useState(false);
     const [maxIng, setMaxIng] = useState(false);
+    const [keyboardOut, setKeyboardOut] = useState(false);
+
+    Platform.OS === 'android' && useEffect(() => {
+        const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+            setKeyboardOut(true);
+        });
+        const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+            setKeyboardOut(false);
+        });
+    
+        return () => {
+            showSubscription.remove();
+            hideSubscription.remove();
+        };
+    }, [])
 
     useEffect(() => {
-        if (prefLogin === Strings.util.logins[0]) {
+        if (settingsObj.login === Strings.util.logins[0]) {
             getIng(setAllIngredients)
         } else {
             let unsubscribe = firebaseInit.dbMethods.listen.ing(user.uid, setAllIngredients)
@@ -57,7 +74,7 @@ export default function HomeScreen ({ route, navigation }) {
     }, [allIngredients])
 
     useEffect(() => {
-        if (prefLogin === Strings.util.logins[0]) {
+        if (settingsObj.login === Strings.util.logins[0]) {
             getRec(setProducts);
         } else {
             let unsubscribe = firebaseInit.dbMethods.listen.rec(user.uid, setProducts)
@@ -70,7 +87,8 @@ export default function HomeScreen ({ route, navigation }) {
     }, [products])
 
     useEffect(() => {
-        if (ingButtons.length < DataLimits.ingredients.level1) {
+        const ingLimit = !entitlements.storage1 ? DataLimits.ingredients.level0 : DataLimits.ingredients.level1;
+        if (ingButtons.length < ingLimit) {
             setMaxIng(false);
         } else {
             setMaxIng(true);
@@ -78,7 +96,8 @@ export default function HomeScreen ({ route, navigation }) {
     }, [ingButtons])
 
     useEffect(() => {
-        if (prodButtons.length < DataLimits.recipes.level1) {
+        const recLimit = !entitlements.storage1 ? DataLimits.recipes.level0 : DataLimits.recipes.level1;
+        if (prodButtons.length < recLimit) {
             setMaxRec(false);
         } else {
             setMaxRec(true);
@@ -98,12 +117,11 @@ export default function HomeScreen ({ route, navigation }) {
 
     useFocusEffect(
         useCallback( () => {
-            if (prefLogin === Strings.util.logins[0]) {
+            if (settingsObj.login === Strings.util.logins[0]) {
                 getRec(setProducts);
                 getIng(setAllIngredients);
             }
-        }, []
-        )
+        }, [] )
     )
 
     const closeModal = () => {
@@ -139,8 +157,8 @@ export default function HomeScreen ({ route, navigation }) {
             let button = {
                     id: id,
                     title: products[id]?.title,
-                    profitAmount: Calculate.limitDec(products[id]?.profitAmount, settings.decimalLength),
-                    price: Calculate.limitDec(Calculate.priceByAmount(totalCost, products[id]?.profitAmount), settings.decimalLength),
+                    profitAmount: Calculate.limitDec(products[id]?.profitAmount, settingsObj.decimalLength),
+                    price: Calculate.limitDec(Calculate.priceByAmount(totalCost, products[id]?.profitAmount), settingsObj.decimalLength),
                     inventory: products[id]?.inventory
                 }
             buttons.push(button)
@@ -167,8 +185,8 @@ export default function HomeScreen ({ route, navigation }) {
             prodDbId: id,
             prodObj: product, 
             knownIng: allIngredients,
-            settings: settings,
-            products: products
+            products: products,
+            maxRec: maxRec
         })
     };
 
@@ -227,7 +245,7 @@ export default function HomeScreen ({ route, navigation }) {
             if (ingId && allIngredients[ingId]?.recipes) {
                 ing.recipes = allIngredients[ingId].recipes
             }
-            if (prefLogin === Strings.util.logins[0]) {
+            if (settingsObj.login === Strings.util.logins[0]) {
                 let allIngObj = allIngredients;
                 if (ingId) {
                     allIngObj[ingId] = ing;
@@ -236,7 +254,7 @@ export default function HomeScreen ({ route, navigation }) {
                     allIngObj[id] = ing;
                 }
                 storeIng(allIngObj).then(getIng(setAllIngredients));
-            } else if (prefLogin !== Strings.util.logins[0]) {
+            } else if (settingsObj.login !== Strings.util.logins[0]) {
                 if (ingId) {
                     firebaseInit.dbMethods.updateIngredient(user.uid, ingId, ing);
                 } else {
@@ -248,11 +266,11 @@ export default function HomeScreen ({ route, navigation }) {
     }
 
     const deleteIngredient = (id) => {
-        if (prefLogin === Strings.util.logins[0]) {
+        if (settingsObj.login === Strings.util.logins[0]) {
             let allIngObj = allIngredients;
             delete allIngObj[id];
             storeIng(allIngObj).then(getIng(setAllIngredients));
-        } else if (prefLogin !== Strings.util.logins[0]) {
+        } else if (settingsObj.login !== Strings.util.logins[0]) {
             firebaseInit.dbMethods.deleteIngredient(user.uid, id);
         }
         setIngId("");
@@ -260,58 +278,86 @@ export default function HomeScreen ({ route, navigation }) {
 
     let modalCancelBtn = {
         title: Strings.English.buttons.cancel,
-        color: Colors.lightTheme.buttons.cancel,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
             closeModal();
             setIngId("");
-        }
+        },
+        darkMode: settingsObj.darkMode
     }
 
     let modalDeleteIngBtn = {
         title: Strings.English.buttons.delete,
-        color: Colors.lightTheme.buttons.delete,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
         iconName: Icons.delete,
         onPress: () => {
             deleteIngredient(ingId)
             closeModal();
-        }
+        },
+        darkMode: settingsObj.darkMode
     }
 
     let modalSaveIngBtn = {
         title: Strings.English.buttons.save,
-        color: Colors.lightTheme.buttons.create,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.create : Colors.lightTheme.buttons.create,
         iconName: Icons.create,
         onPress: () => {
             saveIngredient();
-        }
+        },
+        darkMode: settingsObj.darkMode
+    }
+
+    let modalUpgradeSubBtn = {
+        title: Strings.English.buttons.upgrade,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.upgrade : Colors.lightTheme.buttons.upgrade,
+        iconName: Icons.upgrade,
+        onPress: () => {
+            navigation.push(Strings.util.routes.purchase);
+            closeModal();
+        },
+        darkMode: settingsObj.darkMode
     }
 
     let settingsbtn = {
         title: Strings.English.buttons.settings,
-        color: Colors.lightTheme.buttons.settings,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.settings : Colors.lightTheme.buttons.settings,
         iconName: Icons.settings,
         onPress: () => {
-            navigation.push(Strings.util.routes.settings, {settings: settings, recLength: prodButtons.length})
-        }
+            navigation.push(Strings.util.routes.settings, {recLength: prodButtons.length, ingLength: ingButtons.length})
+        },
+        darkMode: settingsObj.darkMode
     }
     let createbtn = {
         title: Strings.English.buttons.create,
-        color: Colors.lightTheme.buttons.create,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.create : Colors.lightTheme.buttons.create,
         iconName: Icons.create,
-        onPress: viewIng ? () => callIngModal(false) : () => navToRecipe(""),
-        disabled: viewIng ? maxIng : maxRec
+        onPress: viewIng ? maxIng ? () => {
+            setModalMessage(Strings.English.messages.dataLimit.ing);
+            setModalButtons([modalCancelBtn, modalUpgradeSubBtn])
+            setModalVisible(true)
+        } : () => callIngModal(false) : maxRec ? () => {
+            setModalMessage(Strings.English.messages.dataLimit.rec);
+            setModalButtons([modalCancelBtn, modalUpgradeSubBtn])
+            setModalVisible(true)
+        } : () => navToRecipe(""),
+        darkMode: settingsObj.darkMode
     }
     let ingBtn = {
         title: viewIng ? Strings.English.buttons.products : Strings.English.buttons.ingredients,
-        color: Colors.lightTheme.buttons.filter,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.filter : Colors.lightTheme.buttons.filter,
         iconName: viewIng ? Icons.product : Icons.ingredient,
         onPress: () => {
             setViewIng(!viewIng)
-        }
+        },
+        darkMode: settingsObj.darkMode
     }
-    return (<SafeAreaView style={[containers.safeArea, {backgroundColor: Colors.lightTheme.background}]}> 
-        <Text style={[textStyles.headerText]}>{viewIng ? Strings.English.headers.ingredients : Strings.English.headers.recipes}</Text>
+    return (<SafeAreaView style={[containers.safeArea, {backgroundColor: settingsObj.darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
+        <StatusBar 
+            barStyle={settingsObj.darkMode ? 'light-content' : 'dark-content'}
+        />
+        {Platform.OS === 'android' && <View style={{height: StatusBar.currentHeight}} />}
+        <Text style={[textStyles.headerText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{viewIng ? Strings.English.headers.ingredients : Strings.English.headers.recipes}</Text>
         {ingButtons.length > 0 && viewIng && <FlatList 
             style={[ containers.projArea ]}
             data={ingButtons}
@@ -330,6 +376,7 @@ export default function HomeScreen ({ route, navigation }) {
                         inventory: item.inventory
                     })
                 }}
+                darkMode={settingsObj.darkMode}
             />}
         />}
         {prodButtons.length > 0 && !viewIng && <FlatList 
@@ -344,6 +391,7 @@ export default function HomeScreen ({ route, navigation }) {
                 onPress={() => {
                     navToRecipe(item.id);
                 }}
+                darkMode={settingsObj.darkMode}
             />}
         />}
         <Modal 
@@ -353,8 +401,8 @@ export default function HomeScreen ({ route, navigation }) {
             inputs={modalInputs}
             buttons={modalButtons} 
             vertical={modalBtnsVertical}
-            darkmode={false}
+            darkMode={settingsObj.darkMode}
         />
-        <ButtonBar buttons={[settingsbtn, ingBtn, createbtn]} />
+        {!keyboardOut && <ButtonBar buttons={[settingsbtn, ingBtn, createbtn]} />}
     </SafeAreaView>)
 }

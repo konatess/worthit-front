@@ -1,34 +1,50 @@
-import { useContext, useState } from "react";
-import { SafeAreaView, View } from "react-native";
+import { useContext, useState, useEffect } from "react";
+import { SafeAreaView, View, Text, StatusBar, Alert, Platform, Keyboard } from "react-native";
 import * as Linking from "expo-linking";
 import { getAuth, signOut } from 'firebase/auth';
-import firebaseInit, { app } from "../storage/firebaseInit"
+import firebaseInit, { app } from "../storage/firebaseInit";
 import ButtonBar from '../components/ButtonBar';
 import SettingButton from "../components/SettingButton";
-import { containers } from '../constants/Styles';
+import { containers, textStyles } from '../constants/Styles';
 import Modal from "../components/Modal";
 import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
-import Notify from "../components/Notify";
 import { UserContext } from "../constants/UserContext";
+import { SettingsContext } from "../constants/SettingsContext";
 import { storeSettings, storeIng, deleteIng, storeRec, deleteRec, getIngAndRec } from "../storage/localAsync";
 
 
 export default function SettingsScreen ({ route, navigation }) {
-    const { settings, recLength } = route.params;
+    const { recLength, ingLength } = route.params;
+    const { settingsObj, setSettingsObj} = useContext(SettingsContext);
     const { user, setUser } = useContext(UserContext);
-    const [darkMode, setDarkMode] = useState(settings.darkMode || false);
-    const [currency, setCurrency] = useState(settings.currency || Strings.util.currencies[0]);
-    const [language, setLanguage] = useState(settings.language || Strings.util.languages[0]);
-    const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
-    const [decimalLength, setDecimalLength] = useState(settings.decimalLength || 2)
+    const [darkMode, setDarkMode] = useState(settingsObj.darkMode || false);
+    const [currency, setCurrency] = useState(settingsObj.currency || Strings.util.currencies[0]);
+    const [language, setLanguage] = useState(settingsObj.language || Strings.util.languages[0]);
+    const [prefLogin, setPrefLogin] = useState(settingsObj.login || Strings.util.logins[0]);
+    const [decimalLength, setDecimalLength] = useState(settingsObj.decimalLength || 2)
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
     const [modalButtons, setModalButtons] = useState([]);
 	const [modalPickers, setModalPickers] = useState([]);
     const [modalInputs, setModalInputs] = useState([]);
     const [modalBtnsVertical, setModalBtnsVertical] = useState(false);
+    const [keyboardOut, setKeyboardOut] = useState(false);
+
+    Platform.OS === 'android' && useEffect(() => {
+        const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+            setKeyboardOut(true);
+        });
+        const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+            setKeyboardOut(false);
+        });
+    
+        return () => {
+            showSubscription.remove();
+            hideSubscription.remove();
+        };
+    }, [])
 
     const closeModal = () => {
         setModalVisible(false);
@@ -37,16 +53,17 @@ export default function SettingsScreen ({ route, navigation }) {
     }
     
     let cancelBtn = {
-        title: "Cancel",
-        color: Colors.lightTheme.buttons.cancel,
+        title: Strings.English.buttons.cancel,
+        color: darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
             navigation.pop()
-        }
+        },
+        darkMode: darkMode
     }
     let saveBtn = {
-        title: "Save",
-        color: Colors.lightTheme.buttons.save,
+        title: Strings.English.buttons.save,
+        color: darkMode ? Colors.darkTheme.buttons.save : Colors.lightTheme.buttons.save,
         iconName: Icons.save,
         onPress: () => {
             let obj = {
@@ -56,9 +73,11 @@ export default function SettingsScreen ({ route, navigation }) {
                 login: prefLogin,
                 decimalLength: decimalLength
             }
+            setSettingsObj(obj);
             storeSettings(obj);
             navigation.push(Strings.util.routes.home)
-        }
+        },
+        darkMode: darkMode
     }
 
     let modalCancelBtn = {
@@ -79,7 +98,7 @@ export default function SettingsScreen ({ route, navigation }) {
             if (prefLogin === Strings.util.logins[0]) {
                 deleteIng();
             } else if (prefLogin === !Strings.util.logins[0]) {
-                firebaseInit.dbMethods.deleteAllIngredients(user.uid, );
+                firebaseInit.dbMethods.deleteAllIngredients(user.uid);
             }
             navigation.pop();
         }
@@ -159,7 +178,8 @@ export default function SettingsScreen ({ route, navigation }) {
             setModalVisible(true);
         },
         subscriptions: () => {
-            Notify.showError("English", Strings.English.buttons.allSettings.subscriptions)
+            // Alert.alert(Strings[language].headers.errorAlert, Strings.English.buttons.allSettings.subscriptions);
+            navigation.push(Strings.util.routes.purchase)
         },
         feedback: async () => {
             let supported = await Linking.canOpenURL(Strings.util.mailto);
@@ -167,7 +187,7 @@ export default function SettingsScreen ({ route, navigation }) {
                 await Linking.openURL(Strings.util.mailto)
             }
             else {
-                Notify.showError(Strings.util.languages[0], "Error: " + Strings.util.mailto);
+                Alert.alert(Strings[language].headers.errorAlert, Strings.util.mailto)
             }
         },
         site: async () => {
@@ -176,7 +196,7 @@ export default function SettingsScreen ({ route, navigation }) {
                 await Linking.openURL(Strings.util.website)
             }
             else {
-                Notify.showError(Strings.util.languages[0],"Error: " + Strings.util.website)
+                Alert.alert(Strings[language].headers.errorAlert, Strings.util.website);
             }
         },
         logout: () => {
@@ -191,12 +211,13 @@ export default function SettingsScreen ({ route, navigation }) {
             title={Strings.English.buttons.allSettings[property]}
             iconName={Icons[property]}
             onPress={settingsPress[property]}
+            darkMode={darkMode}
         />
-        if (property === "deleteIng" && recLength) {
+        if (property === "deleteIng" && (recLength || !ingLength)) {
             // console.log("skip")
         } else if (property === "deleteRec" && !recLength) {
             // console.log("skip")
-        } else if ((property === "overwriteLocal" || property === "overwriteRemote") && prefLogin === Strings.util.logins[0]) {
+        } else if ((property === "overwriteLocal" || property === "overwriteRemote" || property === "logout") && prefLogin === Strings.util.logins[0]) {
             // console.log("skip")
         } else {
             settingsBtns.push(button)
@@ -204,7 +225,11 @@ export default function SettingsScreen ({ route, navigation }) {
     }
 
     return <SafeAreaView style={[containers.safeArea, {backgroundColor: darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
-        <View style={containers.topPadding}></View>
+        <StatusBar 
+            barStyle={darkMode ? 'light-content' : 'dark-content'}
+        />
+        {Platform.OS === 'android' && <View style={{height: StatusBar.currentHeight}} />}
+        <Text style={[textStyles.headerText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{Strings.English.headers.settings}</Text>
         <View style={containers.settingsBtnList}>
             {settingsBtns.map( button => button )}
         </View>
@@ -215,8 +240,8 @@ export default function SettingsScreen ({ route, navigation }) {
             inputs={modalInputs}
             buttons={modalButtons} 
             vertical={modalBtnsVertical}
-            darkmode={false}
+            darkMode={darkMode}
         />
-        <ButtonBar buttons={[cancelBtn, saveBtn]} />
+        {!keyboardOut && <ButtonBar buttons={[cancelBtn, saveBtn]} />}
     </SafeAreaView>
 }

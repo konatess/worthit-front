@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { SafeAreaView, View, Text, TextInput, Pressable, KeyboardAvoidingView, Alert } from "react-native";
 import * as Facebook from 'expo-auth-session/providers/facebook';
 import * as Google from 'expo-auth-session/providers/google';
-import { ResponseType } from 'expo-auth-session';
+import { ResponseType, makeRedirectUri } from 'expo-auth-session';
 import { signInWithEmailAndPassword } from 'firebase/app';
 import { getAuth, FacebookAuthProvider, GoogleAuthProvider, signInWithCredential, onAuthStateChanged } from 'firebase/auth';
 import { app } from '../storage/firebaseInit';
@@ -10,22 +10,31 @@ import LoginButton from "../components/LoginBtn";
 import { containers, textStyles, inputStyles, buttonStyles } from "../constants/Styles";
 import Strings from "../constants/Strings";
 import { UserContext } from "../constants/UserContext";
+import { SettingsContext } from "../constants/SettingsContext";
+import { Entitlements } from "../constants/EntitlementsContext";
 import Icons from "../constants/Icons";
+import Colors from "../constants/Colors";
+import Purchases from "react-native-purchases";
+import { storeSettings } from "../storage/localAsync";
 
 const auth = getAuth(app)
 
 export default function LoginScreen ({ navigation, route }) { 
-	const { settings } = route.params;
+	const { settingsObj, setSettingsObj } = useContext(SettingsContext)
     const { user, setUser } = useContext(UserContext);
-    const [prefLogin, setPrefLogin] = useState(settings.login || Strings.util.logins[0]);
+    const { entitlements } = useContext(Entitlements);
+    const [prefLogin, setPrefLogin] = useState(settingsObj.login || Strings.util.logins[0]);
     // const [email, setEmail] = useState("");
     // const [password, setPassword] = useState("");
     
     const [fRequest, fResponse, fPromptAsync] = Facebook.useAuthRequest({
         responseType: ResponseType.Token,
         clientId: '820229395830871',
-        redirectUri: 'https://auth.expo.io/@buddingapps/worthit'
-    });
+        scopes: ['public_profile', 'email'],
+        redirectUri: makeRedirectUri({ useProxy: true })
+        // redirectUri: 'https://worth-888.firebaseapp.com/__/auth/handler' // 'https://auth.expo.io/@buddingapps/worthit'
+    },
+    {useProxy: true});
     
     useEffect(() => {
         if (fResponse?.type === 'success') {
@@ -49,7 +58,7 @@ export default function LoginScreen ({ navigation, route }) {
                         }
                     ])
                 } else {
-                    Alert.alert(error.message)
+                    Alert.alert("FB Login Error", error.message)
                 }})
         }
     }, [fResponse]);
@@ -60,6 +69,13 @@ export default function LoginScreen ({ navigation, route }) {
         })
     }, [])
 
+    useEffect(() => {
+        if (user.uid) {
+            Purchases.logIn(user.uid);
+        } else if (!entitlements.isAnon) {
+            Purchases.logOut();
+        }
+    }, [user.uid])
     
     const [gRequest, gResponse, gPromptAsync] = Google.useIdTokenAuthRequest(
         {
@@ -71,7 +87,9 @@ export default function LoginScreen ({ navigation, route }) {
       if (gResponse?.type === 'success') {
         const { id_token } = gResponse.params;
         const credential = GoogleAuthProvider.credential(id_token);
-        signInWithCredential(auth, credential);
+        signInWithCredential(auth, credential).catch(async error => {
+            Alert.alert("Google Login Error", error.message)
+        });
       }
     }, [gResponse]);
 
@@ -114,18 +132,30 @@ export default function LoginScreen ({ navigation, route }) {
                     secureTextEntry={true}
                     onChange={text => setPassword(text)}
                 />
-                <Pressable style={[buttonStyles.loginButton, buttonStyles.loginWithEmail]} onPress={() => emailSignin()}>
-                    <Text style={textStyles.buttonText}>{Strings.English.buttons.loginWithEmail}</Text>
+                <Pressable style={[buttonStyles.loginButton, buttonStyles.loginWithEmail, {backgroundColor: settingsObj.darkMode ? Colors.darkTheme.buttons.save : Colors.lightTheme.buttons.save}]} onPress={() => emailSignin()}>
+                    <Text style={[textStyles.buttonText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{Strings.English.buttons.loginWithEmail}</Text>
                 </Pressable>
             </KeyboardAvoidingView>}
             {prefLogin !== Strings.util.logins[4] && <>
             {(prefLogin === Strings.util.logins[1] || prefLogin === Strings.util.logins[2]) && <LoginButton 
                 iconName={Icons.facebook}
-                onPress={() => { fPromptAsync() }}
+                onPress={() => { 
+                    let obj = {...settingsObj}
+                    obj.login = Strings.util.logins[2]
+                    storeSettings(obj);
+                    setSettingsObj(obj);
+                    fPromptAsync();
+                }}
             />}
             {(prefLogin === Strings.util.logins[1] || prefLogin === Strings.util.logins[3]) && <LoginButton 
                 iconName={Icons.google}
-                onPress={() => { gPromptAsync() }}
+                onPress={() => { 
+                    let obj = {...settingsObj}
+                    obj.login = Strings.util.logins[3]
+                    storeSettings(obj);
+                    setSettingsObj(obj);
+                    gPromptAsync();
+                }}
             />}
             </>}
             {/* <LoginButton 

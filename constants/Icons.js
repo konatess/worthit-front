@@ -24,6 +24,11 @@ export default {
     facebook: 'logo-facebook',
     google: 'logo-google',
     subscriptions: 'cart', //analytics-sharp, apps, bookmarks, albums
-    overwriteLocal: 'arrow-down-circle-outline',
-    overwriteRemote: 'arrow-up-circle-outline'
+    overwriteLocal: 'cloud-download-outline', // 'arrow-down-circle-outline',
+    overwriteRemote: 'cloud-upload-outline', //'arrow-up-circle-outline'
+    info: 'information-circle-outline',
+    // info: 'information-circle'
+    restore: 'refresh',
+    upgrade: 'cart' // 'chevron-up-circle',
+    // upgrade: 'chevron-up-circle-outline', // 'caret-up',  'arrow-up', 
 }

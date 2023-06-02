@@ -10,6 +10,7 @@ const containers = StyleSheet.create({
     // safe area view
     safeArea: {
 		flex: 1,
+        paddingVertical: 5
     },
     logins: {
         flexDirection: 'column',
@@ -47,7 +48,6 @@ const containers = StyleSheet.create({
         borderRadius: 20,
         padding: 30,
         alignItems: "center",
-        shadowColor: "#000",
         shadowOffset: {
             width: 0,
             height: 2
@@ -65,6 +65,14 @@ const containers = StyleSheet.create({
     },
     loginInputs: {
         width: 200 * sizer,
+    },
+    tableArea: {
+        width: 250 * sizer,
+        borderWidth: 1,
+        borderRadius: 10,
+        maxHeight: 300 * sizer,
+        margin: 10,
+        paddingHorizontal: 10
     }
 });
 
@@ -83,6 +91,14 @@ const rows = StyleSheet.create({
     vertical: {
         justifyContent: 'flex-start',
     },
+    rowModalTable: {
+        flexDirection: 'row',
+        // justifyContent: 'space-between',
+        alignContent: 'stretch',
+        width: 230 * sizer,
+        padding: 5,
+        borderBottomWidth: 1,
+    },
 });
 
 const buttonStyles = StyleSheet.create({
@@ -100,7 +116,6 @@ const buttonStyles = StyleSheet.create({
     },
     loginWithEmail: {
         marginTop: 10,
-        backgroundColor: Colors.lightTheme.buttons.save
     },
     modalButton: {
         borderRadius: 20,
@@ -151,6 +166,14 @@ const buttonStyles = StyleSheet.create({
     settingslastBtn: {
         borderBottomWidth: StyleSheet.hairlineWidth,
     },
+    purchaseBtnArea: {
+        // flexDirection: "row",
+        paddingHorizontal: 15,
+        paddingVertical: 15,
+        alignItems: 'center',
+        borderWidth: StyleSheet.hairlineWidth,
+        borderBottomWidth: 0,
+    },
     fab: {
         position: 'absolute',
         right: 15,
@@ -158,6 +181,13 @@ const buttonStyles = StyleSheet.create({
         backgroundColor: Colors.transparent,
         borderRadius: 50,
     },
+    recipeManageIngBtn: {
+        marginVertical: 5,
+        marginHorizontal: 10
+    },
+    infoBtn: {
+        marginLeft: 10
+    }
 });
 
 const inputStyles = StyleSheet.create({
@@ -191,18 +221,13 @@ const textStyles = StyleSheet.create({
     }, 
     headerText: {
         fontSize: 25 * sizer,
-        marginTop: 30,
+        marginTop: 5,
         textAlign: 'center',
     },
     buttonText: {
-        color: Colors.lightTheme.buttons.navButtonText,
         fontWeight: "bold",
         textAlign: "center",
         fontSize: 14 * sizer,
-    },
-    navBtnText: {
-        color: Colors.lightTheme.buttons.navButtonText,
-        fontSize: 18 * sizer,
     },
     modalMsgText: {
         marginBottom: 5,
@@ -210,7 +235,6 @@ const textStyles = StyleSheet.create({
         fontSize: 18 * sizer,
     },
     modalBtnText: {
-        color: Colors.lightTheme.buttons.navButtonText,
         fontWeight: "bold",
         textAlign: "center",
         fontSize: 18 * sizer,
@@ -224,7 +248,10 @@ const textStyles = StyleSheet.create({
         fontSize: 21 * sizer,
     },
     productPriceText: {
-        fontSize: 17 * sizer,
+        fontSize: 19 * sizer,
+    },
+    productDescText: {
+        fontSize: 16 * sizer,
     },
     settingsBtnText: {
         fontSize: 16 * sizer,
@@ -232,6 +259,19 @@ const textStyles = StyleSheet.create({
     hintText: {
         fontSize: 14 * sizer,
     },
+    tableItem: {
+        fontSize: 16 * sizer,
+        textAlign: 'center',
+        width: 50 * sizer
+    },
+    tableCol1: {
+        width: 130 * sizer
+    },
+    recipeManageIngBtn: {
+        textAlign: 'center',
+        fontSize: 16,
+        fontWeight: '500'
+    }
 });
 
 const iconSizes = StyleSheet.create({
@@ -239,7 +279,8 @@ const iconSizes = StyleSheet.create({
     settingsIconSize: 22 * sizer,
     fabIconSize: 50 * sizer,
     modalIconSize: 18 * sizer,
-    loginIconSize: 50 * sizer
+    loginIconSize: 50 * sizer,
+    infoIconSize: 24 * sizer
 });
 
 export {containers, rows, buttonStyles, inputStyles, textStyles, iconSizes};

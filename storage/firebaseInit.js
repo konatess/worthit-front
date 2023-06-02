@@ -1,6 +1,6 @@
+import { Alert } from 'react-native';
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getDatabase, ref, set, push, get, remove, onValue } from 'firebase/database';
-import Notify from '../components/Notify';
 import Strings from '../constants/Strings';
 
 let firebaseConfig = {
@@ -45,7 +45,7 @@ const dbMethods = {
             } else {
                 callback(null)
             }
-        }).catch(error => Notify.showError(Strings.util.languages[0],error.message));
+        }).catch(error => Alert.alert(Strings[Strings.util.languages[0]].headers.errorAlert, error.message));
     },
     overwriteAllIngAndRec: (uid, dataObj) => {
         Promise.all([
@@ -54,28 +54,28 @@ const dbMethods = {
         ])
     },
     newIngredient: (uid, ing) => {
-        push(ref(db, `users/${uid}/ingredients`), ing).catch(error => Notify.showError(Strings.util.languages[0],error.message));
+        push(ref(db, `users/${uid}/ingredients`), ing).catch(error => Alert.alert(Strings[Strings.util.languages[0]].headers.errorAlert, error.message));
     },
     updateIngredient: (uid, ingId, ing) => {
-        set(ref(db, `users/${uid}/ingredients/${ingId}`), ing).catch(error => Notify.showError(Strings.util.languages[0], error.message));
+        set(ref(db, `users/${uid}/ingredients/${ingId}`), ing).catch(error => Alert.alert(Strings[Strings.util.languages[0]].headers.errorAlert, error.message));
     }, 
     updateIRCrossRef: (uid, ingId, recId, inUse) => {
-        set(ref(db, `users/${uid}/ingredients/${ingId}/recipes/${recId}`), (inUse || null)).catch(error => Notify.showError(Strings.util.languages[0], error.message));
+        set(ref(db, `users/${uid}/ingredients/${ingId}/recipes/${recId}`), (inUse || null)).catch(error => Alert.alert(Strings[Strings.util.languages[0]].headers.errorAlert, error.message));
     },
     deleteIngredient: (uid, ingId) => {
-        remove(ref(db, `users/${uid}/ingredients/${ingId}`)).catch(error => Notify.showError(Strings.util.languages[0], error.message));
+        remove(ref(db, `users/${uid}/ingredients/${ingId}`)).catch(error => Alert.alert(Strings[Strings.util.languages[0]].headers.errorAlert, error.message));
     },
     deleteAllIngredients: (uid) => {
         remove(ref(db, `users/${uid}/ingredients`));
     },
     newRecipe: (uid, rec) => {
-        return push(ref(db, `users/${uid}/recipes`), rec).then(newRef => newRef.key).catch(error => Notify.showError(Strings.util.languages[0], error.message));
+        return push(ref(db, `users/${uid}/recipes`), rec).then(newRef => newRef.key).catch(error => Alert.alert(Strings[Strings.util.languages[0]].headers.errorAlert, error.message));
     },
     updateRecipe: (uid, recId, rec) => {
-        set(ref(db, `users/${uid}/recipes/${recId}`), rec).catch(error => Notify.showError(Strings.util.languages[0], error.message));
+        set(ref(db, `users/${uid}/recipes/${recId}`), rec).catch(error => Alert.alert(Strings[Strings.util.languages[0]].headers.errorAlert, error.message));
     },
     deleteRecipe: (uid, recId) => {
-        remove(ref(db, `users/${uid}/recipes/${recId}`)).catch(error => Notify.showError(Strings.util.languages[0], error.message));
+        remove(ref(db, `users/${uid}/recipes/${recId}`)).catch(error => Alert.alert(Strings[Strings.util.languages[0]].headers.errorAlert, error.message));
     },
     deleteAllRecipes: (uid) => {
         remove(ref(db, `users/${uid}/recipes`));
