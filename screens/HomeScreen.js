@@ -141,7 +141,8 @@ export default function HomeScreen ({ route, navigation }) {
                     name: allIngredients[id]?.name,
                     cost: allIngredients[id]?.cost,
                     unit: allIngredients[id]?.unit,
-                    inventory: allIngredients[id]?.inventory
+                    inventory: allIngredients[id]?.inventory,
+                    numRecipes: (allIngredients[id].hasOwnProperty('recipes') ? Object.keys(allIngredients[id].recipes).length : 0)
                 }
             buttons.push(button)
         }
@@ -367,6 +368,7 @@ export default function HomeScreen ({ route, navigation }) {
                 cost={item.cost}
                 unit={item.unit}
                 inventory={item.inventory}
+                numRecipes={item.numRecipes}
                 onPress={() => {
                     callIngModal({
                         id: item.id,
