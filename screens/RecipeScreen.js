@@ -349,7 +349,7 @@ export default function RecipeScreen ({navigation, route}) {
         return arr
     }
     
-    let deleteBtn = {
+    let deleteBtn = { // TODO: insert confirm popup step
         title: Strings.English.buttons.delete,
         color: settingsObj.darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
         iconName: Icons.delete,
@@ -364,7 +364,7 @@ export default function RecipeScreen ({navigation, route}) {
                         delete allIngObj[id].recipes[prodId]
                     }
                 }
-                storeIng(allIngObj).then(getIng(setAllIngredients));
+                storeIng(allIngObj).then(getIng(setAllIngredients)); // TODO: remove .then, make sure retrieval auto updates from the HomeScreen side
             } else if (prefLogin !== Strings.util.logins[0]) {
                 firebaseInit.dbMethods.deleteRecipe(user.uid, prodId);
                 for (id in allIngredients) {
@@ -566,6 +566,8 @@ export default function RecipeScreen ({navigation, route}) {
                             }
                         }}
                     />
+                </View>
+                <View style={rows.row1}>
                     <Text style={[textStyles.labelText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>
                         {Strings.English.label.amount}
                     </Text>
