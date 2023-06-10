@@ -370,7 +370,6 @@ export default function HomeScreen ({ route, navigation }) {
                 inventory={item.inventory}
                 numRecipes={item.numRecipes}
                 onPress={() => {
-                    console.log(allIngredients[item.id])
                     callIngModal({
                         id: item.id,
                         name: item.name,
