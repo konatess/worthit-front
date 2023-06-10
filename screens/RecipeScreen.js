@@ -349,29 +349,14 @@ export default function RecipeScreen ({navigation, route}) {
         return arr
     }
     
-    let deleteBtn = { // TODO: insert confirm popup step
+    let deleteBtn = {
         title: Strings.English.buttons.delete,
         color: settingsObj.darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
         iconName: Icons.delete,
         onPress: () => {
-            if (prefLogin === Strings.util.logins[0]) {
-                let allIngObj = allIngredients;
-                let allProdObj = products;
-                delete allProdObj[prodId]
-                storeRec(allProdObj);
-                for (id in allIngredients) {
-                    if (allIngObj[id].recipes) {
-                        delete allIngObj[id].recipes[prodId]
-                    }
-                }
-                storeIng(allIngObj).then(getIng(setAllIngredients)); // TODO: remove .then, make sure retrieval auto updates from the HomeScreen side
-            } else if (prefLogin !== Strings.util.logins[0]) {
-                firebaseInit.dbMethods.deleteRecipe(user.uid, prodId);
-                for (id in allIngredients) {
-                    firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, false);
-                }
-            }
-            navigation.pop()
+            setModalMessage(Strings.English.messages.deleteOneRec);
+            setModalButtons([modalCancelBtn, modalDeleteRecBtn])
+            setModalVisible(true)
         },
         darkMode: settingsObj.darkMode
     }
@@ -423,6 +408,34 @@ export default function RecipeScreen ({navigation, route}) {
         iconName: Icons.okay,
         onPress: () => {
             closeModal();
+        }
+    }
+    let modalDeleteRecBtn = {
+        title: Strings.English.buttons.delete,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
+        iconName: Icons.delete,
+        onPress: () => {
+            if (prefLogin === Strings.util.logins[0]) {
+                let allIngObj = allIngredients;
+                let allProdObj = products;
+                delete allProdObj[prodId]
+                storeRec(allProdObj);
+                for (id in allIngredients) {
+                    if (allIngObj[id].recipes) {
+                        delete allIngObj[id].recipes[prodId]
+                        if (Object.keys(allIngObj[id].recipes).length === 0) {
+                            delete allIngObj[id].recipes
+                        }
+                    }
+                }
+                storeIng(allIngObj);
+            } else if (prefLogin !== Strings.util.logins[0]) {
+                firebaseInit.dbMethods.deleteRecipe(user.uid, prodId);
+                for (id in allIngredients) {
+                    firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, false);
+                }
+            }
+            navigation.pop()
         }
     }
     let modalNoBtn = {

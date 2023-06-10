@@ -115,6 +115,7 @@ export default {
             ingredientsAmounts: "Please set amounts for ingredients, or remove them from the list",
             
             ingredients: "Choose an ingredient: ",
+            deleteOneRec: "Are you sure you want to delete this recipe?",
             deleteAllIng: "Are you sure you want to delete all your ingredients? This cannot be undone.",
             deleteAllRec: "Are you sure you want to delete all your recipes? This cannot be undone.",
             overwriteLocal: "Are you sure you want to overwrite your local data with your database data? This cannot be undone.",
