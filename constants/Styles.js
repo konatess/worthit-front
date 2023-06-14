@@ -23,6 +23,11 @@ const containers = StyleSheet.create({
         padding: 10,
         marginBottom: 50 * sizer,
     }, 
+    screenMsgArea: {
+        flex: 1,
+        padding: 25,
+        marginBottom: 50 * sizer,
+    }, 
     topPadding: {
         height: 10 * sizer
     },
