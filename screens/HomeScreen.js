@@ -396,6 +396,9 @@ export default function HomeScreen ({ route, navigation }) {
                 darkMode={settingsObj.darkMode}
             />}
         />}
+        {entitlements.storage1 && prodButtons.length === 0 && <View style={[containers.projArea]} >
+            <Text style={[textStyles.productTitleText]} >{Strings.English.messages.subNoProd}</Text>
+        </View>}
         <Modal 
             visible={modalVisible} 
             message={modalMessage} 
