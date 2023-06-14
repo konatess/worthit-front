@@ -120,7 +120,7 @@ export default {
             deleteOneRec: "Are you sure you want to delete this recipe?",
             deleteAllIng: "Are you sure you want to delete all your ingredients? This cannot be undone.",
             deleteAllRec: "Are you sure you want to delete all your recipes? This cannot be undone.",
-            subNoProd: "Something missing? If you recently added a subscription, and you had previously saved recipes or ingredients, you can retrieve them by going to settings and choosing to overwrite the database data with local data.",
+            subNoProd: "Something missing? If you recently added a subscription, and you had previously saved Recipes or Ingredients, you can retrieve them by going to Settings and choosing to overwrite the database data with local data.",
             overwriteLocal: "Are you sure you want to overwrite your local data with your database data? This cannot be undone.",
             overwriteRemote: "Are you sure you want to overwrite your database data with your local data? This cannot be undone.",
             overwriteInProgress: "Saving overwrite...",
