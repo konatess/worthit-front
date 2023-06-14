@@ -65,7 +65,9 @@ export default {
                 overwriteRemote: "Overwrite Database with Local Data",
                 logout: "Log out",
                 feedback: "Send Us Your Feedback",
-                site: "Visit Our Website"
+                site: "Visit Our Website",
+                privacy: "View Privacy Policy",
+                eula: "View End User License Agreement"
             }
         },
         headers: {

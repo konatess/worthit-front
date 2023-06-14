@@ -29,6 +29,8 @@ export default {
     info: 'information-circle-outline',
     // info: 'information-circle'
     restore: 'refresh',
-    upgrade: 'cart' // 'chevron-up-circle',
+    upgrade: 'cart', // 'chevron-up-circle',
     // upgrade: 'chevron-up-circle-outline', // 'caret-up',  'arrow-up', 
+    privacy: 'document-text',
+    eula: 'briefcase-outline'
 }
