@@ -237,6 +237,8 @@ export default function SettingsScreen ({ route, navigation }) {
             // console.log("skip")
         } else if ((property === "overwriteLocal" || property === "overwriteRemote" || property === "logout") && prefLogin === Strings.util.logins[0]) {
             // console.log("skip")
+        } else if (property === "eula" && Platform.OS === 'android') {
+            // console.log("skip")
         } else {
             settingsBtns.push(button)
         }

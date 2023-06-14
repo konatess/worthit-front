@@ -3,7 +3,7 @@ export default {
         name: "Worth It",
         slug: "worthit",
         scheme: "worthit",
-        version: "1.0.19",
+        version: "1.0.20",
         orientation: "portrait",
         icon: "./assets/icon.jpg",
         userInterfaceStyle: "light",
@@ -34,7 +34,7 @@ export default {
                     }
                 ]
             },
-            buildNumber: "20",
+            buildNumber: "21",
             bundleIdentifier: "com.buddingapps.worthit",
             googleServicesFile: process.env.GOOGLE_SERVICES_PLIST,
         },
@@ -43,7 +43,7 @@ export default {
                 foregroundImage: "./assets/adaptive-icon.png",
                 backgroundColor: "#FFFAEF"
             },
-            versionCode: 20,
+            versionCode: 21,
             permissions: [
                 "android.permission.INTERNET"
             ],
