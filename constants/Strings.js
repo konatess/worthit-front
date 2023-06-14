@@ -16,7 +16,9 @@ export default {
             purchase: "Purchase"
         },
         mailto: "mailto:<admin@buddingapps.com>?subject=Worth%20It%20App",
-        website: "https://www.buddingapps.com/projects/divide-%26-de-stress",
+        website: "https://www.buddingapps.com/projects/worth-it",
+        privacy: "https://www.buddingapps.com/privacy-notice-wi",
+        eula: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/",
         dateFormats: ["MM/DD", "DD/MM", "MM-DD", "DD-MM", "YY/MM/DD", "DD/MM/YY", "MM/DD/YY", "YY-MM-DD", "DD-MM-YY", "MM-DD-YY"],
         regex: {
             titles: /[^\wÀ-ÖØ-öø-ÿ'\- _/&:!()]/,

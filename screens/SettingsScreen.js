@@ -199,6 +199,24 @@ export default function SettingsScreen ({ route, navigation }) {
                 Alert.alert(Strings[language].headers.errorAlert, Strings.util.website);
             }
         },
+        privacy: async () => {
+            let supported = await Linking.canOpenURL(Strings.util.privacy);
+            if (supported) {
+                await Linking.openURL(Strings.util.privacy)
+            }
+            else {
+                Alert.alert(Strings[language].headers.errorAlert, Strings.util.privacy);
+            }
+        },
+        eula: async () => {
+            let supported = await Linking.canOpenURL(Strings.util.eula);
+            if (supported) {
+                await Linking.openURL(Strings.util.eula)
+            }
+            else {
+                Alert.alert(Strings[language].headers.errorAlert, Strings.util.eula);
+            }
+        },
         logout: () => {
             let auth = getAuth(app)
             signOut(auth).then(setUser({uid: ""}))
