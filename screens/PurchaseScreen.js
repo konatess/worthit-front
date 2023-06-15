@@ -17,7 +17,6 @@ export default function PurchaseScreen ({ route, navigation }) {
     const { entitlements, setEntitlements } = useContext(Entitlements)
     const [packages, setPackages] = useState([])
     const [isPurchsing, setIsPurchasing] = useState(false);
-    const [isAnonymous, setIsAnonymous] = useState(true);
 
     useEffect(() => {
         const getPackages = async () => {
@@ -34,25 +33,9 @@ export default function PurchaseScreen ({ route, navigation }) {
           getPackages();
     }, []);
 
-    // const getUserDetails = async () => {
-    //     setIsAnonymous(await Purchases.isAnonymous());
-    
-    //     const customerInfo = await Purchases.getCustomerInfo();
-    //     if (typeof customerInfo.entitlements.active[Strings.util.entitlements.storage1] !== 'undefined') {
-    //         let ent = {...entitlements};
-    //         ent.storage1 = true;
-    //         setEntitlements(ent);
-    //     }
-    // };
-    
-    // useEffect(() => {
-    //     // Get user details when component first mounts
-    //     getUserDetails();
-    // }, []);
-
     useEffect(() => {
         if (entitlements.storage1) {
-            if (isAnonymous || !user.uid) {
+            if (!user.uid) {
                 let obj = {...settingsObj}
                 if (obj.login === Strings.util.logins[0]) {
                     obj.login = Strings.util.logins[1]
@@ -64,14 +47,6 @@ export default function PurchaseScreen ({ route, navigation }) {
             }
         }
     }, [entitlements.storage1]);
-    
-    // useEffect(() => {
-    //     // Subscribe to purchaser updates
-    //     Purchases.addCustomerInfoUpdateListener(getUserDetails);
-    //     return () => {
-    //       Purchases.removeCustomerInfoUpdateListener(getUserDetails);
-    //     };
-    // });
 
     let cancelBtn = {
         title: Strings.English.buttons.cancel,
@@ -106,6 +81,7 @@ export default function PurchaseScreen ({ route, navigation }) {
         <View>
             {packages.length > 0 && <FlatList 
                 style={containers.settingsBtnList}
+                contentContainerStyle={{paddingBottom: 30, paddingTop: 10}}
                 data={packages}
                 renderItem={({ item, index }) => <PackageItem 
                     packageItem={item} 
@@ -121,7 +97,6 @@ export default function PurchaseScreen ({ route, navigation }) {
                         } catch (e) {
                             if (!e.userCancelled) {
                                 Alert.alert(Strings[language].headers.errorAlert, e.message)
-                                // Alert.alert("Purchase Item Error: ", e)
                             }
                         } finally {
                             setIsPurchasing(false);
