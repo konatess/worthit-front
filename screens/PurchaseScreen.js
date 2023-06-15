@@ -72,6 +72,22 @@ export default function PurchaseScreen ({ route, navigation }) {
         darkMode: settingsObj.darkMode
     }
 
+    let stopBtn = {
+        title: Strings.English.buttons.stopSub,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
+        iconName: Icons.delete,
+        onPress: async () => {
+            let supported = await Linking.canOpenURL(entitlements.subsURL);
+            if (supported) {
+                await Linking.openURL(entitlements.subsURL)
+            }
+            else {
+                Alert.alert(Strings[language].headers.errorAlert, entitlements.subsURL);
+            }
+        },
+        darkMode: settingsObj.darkMode
+    }
+
     return <SafeAreaView style={[containers.safeArea, {backgroundColor: settingsObj.darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
         <StatusBar 
             barStyle={settingsObj.darkMode ? 'light-content' : 'dark-content'}
@@ -107,8 +123,9 @@ export default function PurchaseScreen ({ route, navigation }) {
                 />}
                 keyExtractor={(item) => item.identifier}
             />}
+            {/* <Text>{typeof entitlements.subsURL}</Text> */}
         </View>
-        <ButtonBar buttons={[cancelBtn, restoreBtn]} />
+        <ButtonBar buttons={entitlements.subsURL.length ? [cancelBtn, stopBtn, restoreBtn] : [cancelBtn, restoreBtn]} />
     </SafeAreaView>
 }
 
