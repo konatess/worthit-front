@@ -361,6 +361,7 @@ export default function HomeScreen ({ route, navigation }) {
         <Text style={[textStyles.headerText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{viewIng ? Strings.English.headers.ingredients : Strings.English.headers.recipes}</Text>
         {ingButtons.length > 0 && viewIng && <FlatList 
             style={[ containers.projArea ]}
+            contentContainerStyle={{paddingBottom: 20}}
             data={ingButtons}
             renderItem={({ item }) => <IngButton 
                 key={"ing" + item.id} 
