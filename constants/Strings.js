@@ -40,6 +40,7 @@ export default {
             ingredients: "Ingredients",
             save: "Save",
             delete: "Delete",
+            stopSub: "Stop",
             remove: "Remove",
             create: "New",
             cancel: "Cancel",
