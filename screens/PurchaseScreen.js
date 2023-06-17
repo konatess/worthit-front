@@ -133,7 +133,7 @@ export default function PurchaseScreen ({ route, navigation }) {
                 />}
                 keyExtractor={(item) => item.identifier}
             />}
-            <Text>{"URL: " + entitlements.subsURL}</Text>
+            {/* <Text>{"URL: " + entitlements.subsURL}</Text> */}
         </View>
         <ButtonBar buttons={entitlements.subsURL.length ? [cancelBtn, stopBtn, restoreBtn] : [cancelBtn, restoreBtn]} />
     </SafeAreaView>
