@@ -33,7 +33,6 @@ export default function App() {
         let isAnonymous = await Purchases.isAnonymous();
     
         const customerInfo = await Purchases.getCustomerInfo();
-		console.log(customerInfo)
 		let ent = { 
 			isAnon: isAnonymous, 
 			storage1: typeof customerInfo.entitlements.active[Strings.util.entitlements.storage1] !== 'undefined',
