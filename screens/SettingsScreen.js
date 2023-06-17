@@ -82,7 +82,7 @@ export default function SettingsScreen ({ route, navigation }) {
 
     let modalCancelBtn = {
         title: Strings.English.buttons.cancel,
-        color: Colors.lightTheme.buttons.cancel,
+        color: darkMode ? Colors.darkTheme.buttons.cancel : Colors.lightTheme.buttons.cancel,
         iconName: Icons.cancel,
         onPress: () => {
             closeModal();
@@ -91,7 +91,7 @@ export default function SettingsScreen ({ route, navigation }) {
 
     let modalDeleteIngBtn = {
         title: Strings.English.buttons.delete,
-        color: Colors.lightTheme.buttons.delete,
+        color: darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
         iconName: Icons.delete,
         onPress: () => {
             closeModal();
@@ -106,7 +106,7 @@ export default function SettingsScreen ({ route, navigation }) {
 
     let modalDeleteRecBtn = {
         title: Strings.English.buttons.delete,
-        color: Colors.lightTheme.buttons.delete,
+        color: darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
         iconName: Icons.delete,
         onPress: () => {
             closeModal();
@@ -121,7 +121,7 @@ export default function SettingsScreen ({ route, navigation }) {
 
     let modalOverwriteLocalBtn = {
         title: Strings.English.buttons.okay,
-        color: Colors.lightTheme.buttons.save,
+        color: darkMode ? Colors.darkTheme.buttons.save : Colors.lightTheme.buttons.save,
         iconName: Icons.okay,
         onPress: () => {
             setModalMessage(Strings.English.messages.overwriteInProgress);
@@ -140,13 +140,25 @@ export default function SettingsScreen ({ route, navigation }) {
 
     let modalOverwriteRemoteBtn = {
         title: Strings.English.buttons.okay,
-        color: Colors.lightTheme.buttons.save,
+        color: darkMode ? Colors.darkTheme.buttons.save : Colors.lightTheme.buttons.save,
         iconName: Icons.okay,
         onPress: async () => {
             setModalMessage(Strings.English.messages.overwriteInProgress);
             setModalButtons([]);
             let value = await getIngAndRec();
             firebaseInit.dbMethods.overwriteAllIngAndRec(user.uid, value);
+            closeModal();
+        }
+    }
+
+    let modalDeleteAllRemote = {
+        title: Strings.English.buttons.delete,
+        color: darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
+        iconName: Icons.delete,
+        onPress: () => {
+            setModalMessage(Strings.English.messages.deleting);
+            setModalButtons([]);
+            firebaseInit.dbMethods.deleteAllUserData(user.uid);
             closeModal();
         }
     }
@@ -175,6 +187,11 @@ export default function SettingsScreen ({ route, navigation }) {
         overwriteRemote: () => {
             setModalMessage(Strings.English.messages.overwriteRemote);
             setModalButtons([modalOverwriteRemoteBtn, modalCancelBtn])
+            setModalVisible(true);
+        },
+        deleteAllUserDataRemote: () => {
+            setModalMessage(Strings.English.messages.deleteAllUserDataRemote);
+            setModalButtons([modalDeleteAllRemote, modalCancelBtn])
             setModalVisible(true);
         },
         subscriptions: () => {
@@ -235,7 +252,7 @@ export default function SettingsScreen ({ route, navigation }) {
             // console.log("skip")
         } else if (property === "deleteRec" && !recLength) {
             // console.log("skip")
-        } else if ((property === "overwriteLocal" || property === "overwriteRemote" || property === "logout") && prefLogin === Strings.util.logins[0]) {
+        } else if ((property === "overwriteLocal" || property === "overwriteRemote" || property === "deleteAllUserDataRemote" || property === "logout") && prefLogin === Strings.util.logins[0]) {
             // console.log("skip")
         } else if (property === "eula" && Platform.OS === 'android') {
             // console.log("skip")
@@ -249,7 +266,7 @@ export default function SettingsScreen ({ route, navigation }) {
             barStyle={darkMode ? 'light-content' : 'dark-content'}
         />
         {Platform.OS === 'android' && <View style={{height: StatusBar.currentHeight}} />}
-        <Text style={[textStyles.headerText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{Strings.English.headers.settings}</Text>
+        <Text style={[textStyles.headerText, {color: darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{Strings.English.headers.settings}</Text>
         <View style={containers.settingsBtnList}>
             {settingsBtns.map( button => button )}
         </View>

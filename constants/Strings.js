@@ -63,6 +63,7 @@ export default {
                 deleteIng: "Start Fresh - Delete All Ingredients",
                 overwriteLocal: "Overwrite Local Data with Cloud Data",
                 overwriteRemote: "Overwrite Cloud Data with Local Data",
+                deleteAllUserDataRemote: "Delete All Cloud Data",
                 privacy: "View Privacy Policy",
                 eula: "View End User License Agreement",
                 logout: "Log out",
@@ -127,7 +128,9 @@ export default {
             subNoProd: "Something missing? If you recently added a subscription, and you had previously saved Recipes or Ingredients, you can retrieve them by going to Settings and choosing to overwrite the cloud data with local data.",
             overwriteLocal: "Are you sure you want to overwrite your local data with your cloud data? This cannot be undone.",
             overwriteRemote: "Are you sure you want to overwrite your cloud data with your local data? This cannot be undone.",
+            deleteAllUserDataRemote: "Are you sure you want to delete all your cloud data? This cannot be undone.",
             overwriteInProgress: "Saving overwrite...",
+            deleting: "Deleting...",
             updateIng: "You have increased your product inventory. Would you like to subtract ingredients from your inventory?",
             amount: "The time and amount determine how much of your hourly wage to add to the price. This helps you get a fair wage for yourself, so set this based on a slow day, not on what you can do when you're at your best. Remember you're a human, not a robot.",
             wage: "You deserve to be paid a living wage. This number is what you would want to be paid per hour. Most humans are their own worst critic, so if that applies to you, be sure to go a little higher than you are comfortable with.",  //If you make this product yourself, the wage is what you should pay yourself for time spent making this specific product. If you pay an employee to make this product, put their wage here.
@@ -138,6 +141,7 @@ export default {
                 ing: "You've reached your limit for creating and saving ingredients. Would you like to upgrade your subscription to create more?",
                 rec: "You've reached your limit for creating and saving recipes. Would you like to upgrade your subscription to create more?",
             },
+            welcome: "Welcome to Worth It!\nToggle between the ingredients view and the products view using the turquoise button below. The new button will open either a new ingredient or a new product recipe depending on which view is open.\n\nIf you are lost or confused, please reach out. You can send an email for help or to leave feedback using the Feedback button in the Settings menu.\n\nIn the free app, all of your data is local, and only lives on your device. If you would like to back up your data to the cloud, and get more storage space, please subscribe."
         },
         placeholder:  {
             email: "email@example.com",

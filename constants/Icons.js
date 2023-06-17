@@ -26,6 +26,7 @@ export default {
     subscriptions: 'cart', //analytics-sharp, apps, bookmarks, albums
     overwriteLocal: 'cloud-download-outline', // 'arrow-down-circle-outline',
     overwriteRemote: 'cloud-upload-outline', //'arrow-up-circle-outline'
+    deleteAllUserDataRemote: 'cloud-offline-outline',
     info: 'information-circle-outline',
     // info: 'information-circle'
     restore: 'refresh',

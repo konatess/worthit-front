@@ -78,8 +78,11 @@ const dbMethods = {
         remove(ref(db, `users/${uid}/recipes/${recId}`)).catch(error => Alert.alert(Strings[Strings.util.languages[0]].headers.errorAlert, error.message));
     },
     deleteAllRecipes: (uid) => {
-        remove(ref(db, `users/${uid}/recipes`));
+        remove(ref(db, `users/${uid}/recipes`)).catch(error => Alert.alert(Strings[Strings.util.languages[0]].headers.errorAlert, error.message));
     },
+    deleteAllUserData: (uid) => {
+        remove(ref(db, `users/${uid}`)).catch(error => Alert.alert(Strings[Strings.util.languages[0]].headers.errorAlert, error.message))
+    }
 }
 
 export default { app, db, dbMethods }

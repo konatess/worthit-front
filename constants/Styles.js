@@ -192,6 +192,11 @@ const buttonStyles = StyleSheet.create({
     },
     infoBtn: {
         marginLeft: 10
+    },
+    infoBtnLarge: {
+        position: 'absolute',
+        bottom: 100,
+        right: 20,
     }
 });
 
@@ -285,7 +290,8 @@ const iconSizes = StyleSheet.create({
     fabIconSize: 50 * sizer,
     modalIconSize: 18 * sizer,
     loginIconSize: 50 * sizer,
-    infoIconSize: 24 * sizer
+    infoIconSize: 24 * sizer,
+    infoLargeIconSize: 50 * sizer
 });
 
 export {containers, rows, buttonStyles, inputStyles, textStyles, iconSizes};
