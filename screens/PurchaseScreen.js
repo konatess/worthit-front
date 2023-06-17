@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { SafeAreaView, View, StatusBar, FlatList, Alert, Text } from "react-native";
 import Purchases from "react-native-purchases";
+import * as Linking from "expo-linking";
 import ButtonBar from '../components/ButtonBar';
 import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
