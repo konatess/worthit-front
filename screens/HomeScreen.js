@@ -21,6 +21,8 @@ import { storeIng, getIng, getRec } from "../storage/localAsync";
 
 WebBrowser.maybeCompleteAuthSession();
 
+// TODO: Add info button somewhere about upgrade and cloud backup.
+
 
 export default function HomeScreen ({ route, navigation }) {
 	const { settingsObj } = useContext(SettingsContext)
