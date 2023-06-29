@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import { SafeAreaView, View, Text, TextInput, Pressable, KeyboardAvoidingView, Alert } from "react-native";
+import { SafeAreaView, Text, TextInput, Pressable, KeyboardAvoidingView, Alert } from "react-native";
 import * as Facebook from 'expo-auth-session/providers/facebook';
 import * as Google from 'expo-auth-session/providers/google';
 import { ResponseType, makeRedirectUri } from 'expo-auth-session';

@@ -23,6 +23,11 @@ const containers = StyleSheet.create({
         padding: 10,
         marginBottom: 50 * sizer,
     }, 
+    screenMsgArea: {
+        flex: 1,
+        padding: 20 * sizer,
+        marginBottom: 50 * sizer,
+    }, 
     topPadding: {
         height: 10 * sizer
     },
@@ -187,6 +192,11 @@ const buttonStyles = StyleSheet.create({
     },
     infoBtn: {
         marginLeft: 10
+    },
+    infoBtnLarge: {
+        position: 'absolute',
+        bottom: 100,
+        right: 20,
     }
 });
 
@@ -280,7 +290,8 @@ const iconSizes = StyleSheet.create({
     fabIconSize: 50 * sizer,
     modalIconSize: 18 * sizer,
     loginIconSize: 50 * sizer,
-    infoIconSize: 24 * sizer
+    infoIconSize: 24 * sizer,
+    infoLargeIconSize: 50 * sizer
 });
 
 export {containers, rows, buttonStyles, inputStyles, textStyles, iconSizes};

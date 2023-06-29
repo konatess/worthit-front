@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect, useCallback } from "react";
-import { Text, SafeAreaView, FlatList, Platform, View, StatusBar, Keyboard } from "react-native";
+import { Text, SafeAreaView, FlatList, Platform, View, StatusBar, Keyboard, Pressable } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
 import ButtonBar from '../components/ButtonBar';
@@ -15,11 +15,14 @@ import { Entitlements } from "../constants/EntitlementsContext";
 import { SettingsContext } from "../constants/SettingsContext";
 import firebaseInit from "../storage/firebaseInit";
 import ProdButton from "../components/ProdButton";
+import InfoButtonLarge from "../components/InfoBtnLarge";
 import DataLimits from "../constants/DataLimits";
 import Calculate from "../constants/Calculate";
 import { storeIng, getIng, getRec } from "../storage/localAsync";
 
 WebBrowser.maybeCompleteAuthSession();
+
+// TODO: Add info button somewhere about upgrade and cloud backup.
 
 
 export default function HomeScreen ({ route, navigation }) {
@@ -361,6 +364,7 @@ export default function HomeScreen ({ route, navigation }) {
         <Text style={[textStyles.headerText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{viewIng ? Strings.English.headers.ingredients : Strings.English.headers.recipes}</Text>
         {ingButtons.length > 0 && viewIng && <FlatList 
             style={[ containers.projArea ]}
+            contentContainerStyle={{paddingBottom: 30, paddingTop: 10}}
             data={ingButtons}
             renderItem={({ item }) => <IngButton 
                 key={"ing" + item.id} 
@@ -396,6 +400,17 @@ export default function HomeScreen ({ route, navigation }) {
                 darkMode={settingsObj.darkMode}
             />}
         />}
+        {entitlements.storage1 && !viewIng && prodButtons.length === 0 && <View style={[containers.screenMsgArea]} >
+            <Text style={[textStyles.productTitleText]} >{Strings.English.messages.subNoProd}</Text>
+        </View>}
+        {!entitlements.storage1 && !viewIng && <InfoButtonLarge 
+            onPress={() => {
+                setModalMessage(Strings.English.messages.welcome)
+                setModalButtons([modalCancelBtn, modalUpgradeSubBtn])
+                setModalVisible(true)
+            }}
+            darkMode={settingsObj.darkMode}
+         />}
         <Modal 
             visible={modalVisible} 
             message={modalMessage} 

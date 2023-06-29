@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { SafeAreaView, View, StatusBar, FlatList, Alert, Text } from "react-native";
 import Purchases from "react-native-purchases";
+import * as Linking from "expo-linking";
 import ButtonBar from '../components/ButtonBar';
 import Icons from "../constants/Icons";
 import Colors from "../constants/Colors";
@@ -14,10 +15,8 @@ import { SettingsContext } from "../constants/SettingsContext";
 export default function PurchaseScreen ({ route, navigation }) {
     const { settingsObj, setSettingsObj } = useContext(SettingsContext);
     const { user } = useContext(UserContext);
-    const { entitlements, setEntitlements } = useContext(Entitlements)
-    const [packages, setPackages] = useState([])
-    const [isPurchsing, setIsPurchasing] = useState(false);
-    const [isAnonymous, setIsAnonymous] = useState(true);
+    const { entitlements, setEntitlements } = useContext(Entitlements);
+    const [packages, setPackages] = useState([]);
 
     useEffect(() => {
         const getPackages = async () => {
@@ -34,44 +33,22 @@ export default function PurchaseScreen ({ route, navigation }) {
           getPackages();
     }, []);
 
-    // const getUserDetails = async () => {
-    //     setIsAnonymous(await Purchases.isAnonymous());
-    
-    //     const customerInfo = await Purchases.getCustomerInfo();
-    //     if (typeof customerInfo.entitlements.active[Strings.util.entitlements.storage1] !== 'undefined') {
-    //         let ent = {...entitlements};
-    //         ent.storage1 = true;
-    //         setEntitlements(ent);
+    // useEffect(() => { // TODO: Change so that users can be on page if they have already purchased 
+    //     // a subscription and are returning to the page, but are redirected if they have just 
+    //     // purchased a new subscription.
+    //     if (entitlements.storage1) {
+    //         if (!user.uid) {
+    //             let obj = {...settingsObj}
+    //             if (obj.login === Strings.util.logins[0]) {
+    //                 obj.login = Strings.util.logins[1]
+    //             }
+    //             setSettingsObj(obj);
+    //             navigation.push(Strings.util.routes.login)
+    //         } else {
+    //             navigation.push(Strings.util.routes.home)
+    //         }
     //     }
-    // };
-    
-    // useEffect(() => {
-    //     // Get user details when component first mounts
-    //     getUserDetails();
-    // }, []);
-
-    useEffect(() => {
-        if (entitlements.storage1) {
-            if (isAnonymous || !user.uid) {
-                let obj = {...settingsObj}
-                if (obj.login === Strings.util.logins[0]) {
-                    obj.login = Strings.util.logins[1]
-                }
-                setSettingsObj(obj);
-                navigation.push(Strings.util.routes.login)
-            } else {
-                navigation.push(Strings.util.routes.home)
-            }
-        }
-    }, [entitlements.storage1]);
-    
-    // useEffect(() => {
-    //     // Subscribe to purchaser updates
-    //     Purchases.addCustomerInfoUpdateListener(getUserDetails);
-    //     return () => {
-    //       Purchases.removeCustomerInfoUpdateListener(getUserDetails);
-    //     };
-    // });
+    // }, [entitlements.storage1]);
 
     let cancelBtn = {
         title: Strings.English.buttons.cancel,
@@ -97,6 +74,22 @@ export default function PurchaseScreen ({ route, navigation }) {
         darkMode: settingsObj.darkMode
     }
 
+    let stopBtn = {
+        title: Strings.English.buttons.stopSub,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.delete : Colors.lightTheme.buttons.delete,
+        iconName: Icons.delete,
+        onPress: async () => {
+            let supported = await Linking.canOpenURL(entitlements.subsURL);
+            if (supported) {
+                await Linking.openURL(entitlements.subsURL)
+            }
+            else {
+                Alert.alert(Strings[language].headers.errorAlert, entitlements.subsURL);
+            }
+        },
+        darkMode: settingsObj.darkMode
+    }
+
     return <SafeAreaView style={[containers.safeArea, {backgroundColor: settingsObj.darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
         <StatusBar 
             barStyle={settingsObj.darkMode ? 'light-content' : 'dark-content'}
@@ -106,11 +99,11 @@ export default function PurchaseScreen ({ route, navigation }) {
         <View>
             {packages.length > 0 && <FlatList 
                 style={containers.settingsBtnList}
+                contentContainerStyle={{paddingBottom: 30, paddingTop: 10}}
                 data={packages}
                 renderItem={({ item, index }) => <PackageItem 
                     packageItem={item} 
                     onSelection={async () => {
-                        setIsPurchasing(true);
                         try {
                             const { purchaserInfo } = await Purchases.purchasePackage(item);
                             if (typeof purchaserInfo.entitlements.active[Strings.util.entitlements.storage1] !== 'undefined') {
@@ -121,10 +114,18 @@ export default function PurchaseScreen ({ route, navigation }) {
                         } catch (e) {
                             if (!e.userCancelled) {
                                 Alert.alert(Strings[language].headers.errorAlert, e.message)
-                                // Alert.alert("Purchase Item Error: ", e)
                             }
                         } finally {
-                            setIsPurchasing(false);
+                            if (!user.uid) {
+                                let obj = {...settingsObj}
+                                if (obj.login === Strings.util.logins[0]) {
+                                    obj.login = Strings.util.logins[1]
+                                }
+                                setSettingsObj(obj);
+                                navigation.push(Strings.util.routes.login)
+                            } else {
+                                navigation.push(Strings.util.routes.home)
+                            }
                         }
                     }}
                     isLast={index === packages.length -1}
@@ -132,8 +133,9 @@ export default function PurchaseScreen ({ route, navigation }) {
                 />}
                 keyExtractor={(item) => item.identifier}
             />}
+            {/* <Text>{"URL: " + entitlements.subsURL}</Text> */}
         </View>
-        <ButtonBar buttons={[cancelBtn, restoreBtn]} />
+        <ButtonBar buttons={entitlements.subsURL.length ? [cancelBtn, stopBtn, restoreBtn] : [cancelBtn, restoreBtn]} />
     </SafeAreaView>
 }
 

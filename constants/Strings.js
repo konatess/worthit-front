@@ -16,7 +16,9 @@ export default {
             purchase: "Purchase"
         },
         mailto: "mailto:<admin@buddingapps.com>?subject=Worth%20It%20App",
-        website: "https://www.buddingapps.com/projects/divide-%26-de-stress",
+        website: "https://www.buddingapps.com/projects/worth-it",
+        privacy: "https://www.buddingapps.com/privacy-notice-wi",
+        eula: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/",
         dateFormats: ["MM/DD", "DD/MM", "MM-DD", "DD-MM", "YY/MM/DD", "DD/MM/YY", "MM/DD/YY", "YY-MM-DD", "DD-MM-YY", "MM-DD-YY"],
         regex: {
             titles: /[^\wÀ-ÖØ-öø-ÿ'\- _/&:!()]/,
@@ -38,6 +40,7 @@ export default {
             ingredients: "Ingredients",
             save: "Save",
             delete: "Delete",
+            stopSub: "Stop",
             remove: "Remove",
             create: "New",
             cancel: "Cancel",
@@ -59,11 +62,14 @@ export default {
                 subscriptions: "Manage Subscriptions",
                 deleteRec: "Start Fresh - Delete All Recipes",
                 deleteIng: "Start Fresh - Delete All Ingredients",
-                overwriteLocal: "Overwrite Local Data with Database",
-                overwriteRemote: "Overwrite Database with Local Data",
+                overwriteLocal: "Overwrite Local Data with Cloud Data",
+                overwriteRemote: "Overwrite Cloud Data with Local Data",
+                deleteAllUserDataRemote: "Delete All Cloud Data",
+                privacy: "View Privacy Policy",
+                eula: "View End User License Agreement",
                 logout: "Log out",
                 feedback: "Send Us Your Feedback",
-                site: "Visit Our Website"
+                site: "Visit Our Website",
             }
         },
         headers: {
@@ -79,9 +85,9 @@ export default {
             prodNote: "Notes: ",
             time: "Average Time to Make: ",
             number: "Items: ",
-            hour: "H: ",
-            minute: "M: ",
-            amount: "#: ",
+            hour: "Hours: ",
+            minute: "Minutes: ",
+            amount: "Amount (per time): ",
             wage: "Wage per Hour: $ ",
             profit: "Profit: ",
             profAmount: "$ ",
@@ -97,7 +103,9 @@ export default {
             price: "Price: ",
             numProducts: "For # of Product: ",
             ingTableNeed: "Need:",
-            ingTableHave: "Have:"
+            ingTableHave: "Have:",
+            durationYear: "Duration: 1 Year",
+            durationMonth: "Duration: 1 Month",
         },
         messages: {
             ingNameTooShort: "Your ingredient needs a name",
@@ -115,21 +123,26 @@ export default {
             ingredientsAmounts: "Please set amounts for ingredients, or remove them from the list",
             
             ingredients: "Choose an ingredient: ",
+            deleteOneRec: "Are you sure you want to delete this recipe?",
             deleteAllIng: "Are you sure you want to delete all your ingredients? This cannot be undone.",
             deleteAllRec: "Are you sure you want to delete all your recipes? This cannot be undone.",
-            overwriteLocal: "Are you sure you want to overwrite your local data with your database data? This cannot be undone.",
-            overwriteRemote: "Are you sure you want to overwrite your database data with your local data? This cannot be undone.",
+            subNoProd: "Something missing? If you recently added a subscription, and you had previously saved Recipes or Ingredients, you can retrieve them by going to Settings and choosing to overwrite the cloud data with local data.",
+            overwriteLocal: "Are you sure you want to overwrite your local data with your cloud data? This cannot be undone.",
+            overwriteRemote: "Are you sure you want to overwrite your cloud data with your local data? This cannot be undone.",
+            deleteAllUserDataRemote: "Are you sure you want to delete all your cloud data? This cannot be undone.",
             overwriteInProgress: "Saving overwrite...",
+            deleting: "Deleting...",
             updateIng: "You have increased your product inventory. Would you like to subtract ingredients from your inventory?",
             amount: "The time and amount determine how much of your hourly wage to add to the price. This helps you get a fair wage for yourself, so set this based on a slow day, not on what you can do when you're at your best. Remember you're a human, not a robot.",
             wage: "You deserve to be paid a living wage. This number is what you would want to be paid per hour. Most humans are their own worst critic, so if that applies to you, be sure to go a little higher than you are comfortable with.",  //If you make this product yourself, the wage is what you should pay yourself for time spent making this specific product. If you pay an employee to make this product, put their wage here.
-            profit: "Your business needs profit that is separate from the hourly wage above. This number should be high enough to cover:\n• expected expenses tied to each product such as fees from credit card purchases or sales platforms\n• expected general expenses such as subscription fees which are spread over all your sales\n• and still have some left over for unexpected expenses.\nIf all of that feels too overwhelming or unpredictable, start by putting 50 in the % field, and refine from there. You can always update your profits later.",
+            profit: "Your business needs profit that is separate from the hourly wage above. This number should be high enough to cover:\n• expected expenses tied to each product such as fees from credit card purchases or sales platforms\n• expected general expenses which are spread over all your sales such as subscriptions or rental fees\n• and still have some left over for unexpected expenses.\nIf all of that feels too overwhelming or unpredictable, start by putting 50 in the % field, and refine from there. You can always update your profits later.",
             inventory: "This is the number of this product you have in inventory now, created but not sold. This number can be 0. Use the 'Calculate Ingredients Needed' button below to see how much of your ingredients you would need to make # more of this product, and how much of each ingredient you already have.",
             ingInfo: "Use the 'Add Ingredients' button to choose ingredients needed for this recipe, then touch each ingredient to update the quantity.",
             dataLimit: {
                 ing: "You've reached your limit for creating and saving ingredients. Would you like to upgrade your subscription to create more?",
                 rec: "You've reached your limit for creating and saving recipes. Would you like to upgrade your subscription to create more?",
             },
+            welcome: "Welcome to Worth It!\nToggle between the ingredients view and the products view using the turquoise button below. The new button will open either a new ingredient or a new product recipe depending on which view is open.\n\nIf you are lost or confused, please reach out. You can send an email for help or to leave feedback using the Feedback button in the Settings menu.\n\nIn the free app, all of your data is local, and only lives on your device. If you would like to back up your data to the cloud, and get more storage space, please subscribe."
         },
         placeholder:  {
             email: "email@example.com",

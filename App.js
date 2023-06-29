@@ -33,8 +33,10 @@ export default function App() {
         let isAnonymous = await Purchases.isAnonymous();
     
         const customerInfo = await Purchases.getCustomerInfo();
-		let ent = { isAnon: isAnonymous, 
-			storage1: typeof customerInfo.entitlements.active[Strings.util.entitlements.storage1] !== 'undefined' 
+		let ent = { 
+			isAnon: isAnonymous, 
+			storage1: typeof customerInfo.entitlements.active[Strings.util.entitlements.storage1] !== 'undefined',
+			subsURL: customerInfo.managementURL || ""
 		};
 		if (!ent.storage1) {
 			let sett = {...settingsObj} 
