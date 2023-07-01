@@ -38,6 +38,7 @@ export default {
             restoreP: "Restore Purchases",
             products: "Products", 
             ingredients: "Ingredients",
+            analysis: "Analysis",
             save: "Save",
             delete: "Delete",
             stopSub: "Stop",

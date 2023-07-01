@@ -356,6 +356,15 @@ export default function HomeScreen ({ route, navigation }) {
         },
         darkMode: settingsObj.darkMode
     }
+    let analysisBtn = {
+        title: Strings.English.buttons.analysis,
+        color: settingsObj.darkMode ? Colors.darkTheme.buttons.analysis : Colors.lightTheme.buttons.analysis,
+        iconName: Icons.analysis,
+        onPress: () => {
+            setViewIng(!viewIng)
+        },
+        darkMode: settingsObj.darkMode
+    }
     return (<SafeAreaView style={[containers.safeArea, {backgroundColor: settingsObj.darkMode ? Colors.darkTheme.background : Colors.lightTheme.background}]}> 
         <StatusBar 
             barStyle={settingsObj.darkMode ? 'light-content' : 'dark-content'}
@@ -420,6 +429,6 @@ export default function HomeScreen ({ route, navigation }) {
             vertical={modalBtnsVertical}
             darkMode={settingsObj.darkMode}
         />
-        {!keyboardOut && <ButtonBar buttons={[settingsbtn, ingBtn, createbtn]} />}
+        {!keyboardOut && <ButtonBar buttons={[settingsbtn, ingBtn, createbtn, analysisBtn]} />}
     </SafeAreaView>)
 }

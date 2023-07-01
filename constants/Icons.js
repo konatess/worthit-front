@@ -33,5 +33,6 @@ export default {
     upgrade: 'cart', // 'chevron-up-circle',
     // upgrade: 'chevron-up-circle-outline', // 'caret-up',  'arrow-up', 
     privacy: 'document-text',
-    eula: 'briefcase-outline'
+    eula: 'briefcase-outline',
+    analysis: 'analytics-outline'
 }
