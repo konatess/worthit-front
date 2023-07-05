@@ -23,6 +23,7 @@ export default {
     email: 'at-sharp',
     facebook: 'logo-facebook',
     google: 'logo-google',
+    apple: 'ios-logo-apple',
     subscriptions: 'cart', //analytics-sharp, apps, bookmarks, albums
     overwriteLocal: 'cloud-download-outline', // 'arrow-down-circle-outline',
     overwriteRemote: 'cloud-upload-outline', //'arrow-up-circle-outline'
@@ -34,5 +35,5 @@ export default {
     // upgrade: 'chevron-up-circle-outline', // 'caret-up',  'arrow-up', 
     privacy: 'document-text',
     eula: 'briefcase-outline',
-    analysis: 'analytics-outline'
+    analysis: 'stats-chart'  // 'analytics-outline' 'bar-chart'
 }
