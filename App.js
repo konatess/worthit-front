@@ -14,6 +14,7 @@ import HomeScreen from './screens/HomeScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import RecipeScreen from './screens/RecipeScreen';
 import PurchaseScreen from './screens/PurchaseScreen';
+import BreakEvenScreen from './screens/BreakEvenScreen';
 import LoginScreen from './screens/LoginScreen';
 import Strings from './constants/Strings';
 import { getSettings } from './storage/localAsync';
@@ -97,6 +98,7 @@ export default function App() {
 						<Stack.Screen name={Strings.util.routes.settings} component={SettingsScreen} />
 						<Stack.Screen name={Strings.util.routes.recipe} component={RecipeScreen} />
 						<Stack.Screen name={Strings.util.routes.purchase} component={PurchaseScreen} />
+						<Stack.Screen name={Strings.util.routes.breakEven} component={BreakEvenScreen} />
 					</> 
 					: 
 					<>

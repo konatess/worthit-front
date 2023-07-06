@@ -361,7 +361,7 @@ export default function HomeScreen ({ route, navigation }) {
         color: settingsObj.darkMode ? Colors.darkTheme.buttons.analysis : Colors.lightTheme.buttons.analysis,
         iconName: Icons.analysis,
         onPress: () => {
-            setViewIng(!viewIng)
+            navigation.push(Strings.util.routes.breakEven)
         },
         darkMode: settingsObj.darkMode
     }

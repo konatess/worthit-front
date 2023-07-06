@@ -13,7 +13,8 @@ export default {
             home: "Home",
             settings: "Settings",
             recipe: "Recipe",
-            purchase: "Purchase"
+            purchase: "Purchase",
+            breakEven: "BreakEven"
         },
         mailto: "mailto:<admin@buddingapps.com>?subject=Worth%20It%20App",
         website: "https://www.buddingapps.com/projects/worth-it",
@@ -79,6 +80,7 @@ export default {
             errorAlert: "Error: ",
             settings: "Settings",
             subs: "Subscriptions",
+            breakEven: "Break-Even Analysis"
         },
         label: {
             login: "Log in to Begin",
