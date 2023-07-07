@@ -197,6 +197,13 @@ const buttonStyles = StyleSheet.create({
         position: 'absolute',
         bottom: 100,
         right: 20,
+    },
+    bEABtn: {
+        padding: 10,
+        marginBottom: 3,
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: .2,
     }
 });
 

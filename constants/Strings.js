@@ -56,6 +56,10 @@ export default {
             calcIngredients: "Calculate Ingredients Needed",
             yes: "Yes",
             no: "No",
+            bEAheaders: {
+                fixed: "Fixed Costs: ",
+                prod: "Products: "
+            },
             allSettings: {
                 darkMode: "Dark Mode On/Off",
                 // currency: "Currency"

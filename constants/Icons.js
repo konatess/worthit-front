@@ -35,5 +35,7 @@ export default {
     // upgrade: 'chevron-up-circle-outline', // 'caret-up',  'arrow-up', 
     privacy: 'document-text',
     eula: 'briefcase-outline',
-    analysis: 'stats-chart'  // 'analytics-outline' 'bar-chart'
+    analysis: 'stats-chart',  // 'analytics-outline' 'bar-chart'
+    expanded: 'caret-down',
+    collapsed: 'caret-forward'
 }
