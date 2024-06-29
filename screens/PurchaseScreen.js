@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { SafeAreaView, View, StatusBar, FlatList, Alert, Text } from "react-native";
+import { SafeAreaView, View, StatusBar, FlatList, Alert, Text, Platform } from "react-native";
 import Purchases from "react-native-purchases";
 import * as Linking from "expo-linking";
 import ButtonBar from '../components/ButtonBar';
@@ -17,6 +17,7 @@ export default function PurchaseScreen ({ route, navigation }) {
     const { user } = useContext(UserContext);
     const { entitlements, setEntitlements } = useContext(Entitlements);
     const [packages, setPackages] = useState([]);
+    // const [userCancelled, setUserCancelled] = useState(false);
 
     useEffect(() => {
         const getPackages = async () => {
@@ -84,7 +85,7 @@ export default function PurchaseScreen ({ route, navigation }) {
                 await Linking.openURL(entitlements.subsURL)
             }
             else {
-                Alert.alert(Strings[language].headers.errorAlert, entitlements.subsURL);
+                Alert.alert(Strings[settingsObj.language].headers.errorAlert, entitlements.subsURL);
             }
         },
         darkMode: settingsObj.darkMode
@@ -111,11 +112,6 @@ export default function PurchaseScreen ({ route, navigation }) {
                                 ent.storage1 = true
                                 setEntitlements(ent);
                             }
-                        } catch (e) {
-                            if (!e.userCancelled) {
-                                Alert.alert(Strings[language].headers.errorAlert, e.message)
-                            }
-                        } finally {
                             if (!user.uid) {
                                 let obj = {...settingsObj}
                                 if (obj.login === Strings.util.logins[0]) {
@@ -126,7 +122,27 @@ export default function PurchaseScreen ({ route, navigation }) {
                             } else {
                                 navigation.push(Strings.util.routes.home)
                             }
-                        }
+                        } catch (e) {
+                            if (e.userCancelled) {
+                                Alert.alert(Strings[settingsObj.language].headers.errorAlert, e.message)
+                                // setUserCancelled(true)
+                            }
+                            if (!e.userCancelled) {
+                                Alert.alert(Strings[settingsObj.language].headers.errorAlert, e.message)
+                            }
+                        } 
+                        // finally {
+                        //     if (!user.uid && !userCancelled) {
+                        //         let obj = {...settingsObj}
+                        //         if (obj.login === Strings.util.logins[0]) {
+                        //             obj.login = Strings.util.logins[1]
+                        //         }
+                        //         setSettingsObj(obj);
+                        //         navigation.push(Strings.util.routes.login)
+                        //     } else {
+                        //         navigation.push(Strings.util.routes.home)
+                        //     }
+                        // }
                     }}
                     isLast={index === packages.length -1}
                     // ListFooterComponent={() => {}}
