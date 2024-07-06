@@ -62,7 +62,7 @@ export default function App() {
 			}
 		}
 
-		Purchases.setLogLevel(LOG_LEVEL.VERBOSE)
+		Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
 		if (Platform.OS === 'ios') {
 			Purchases.configure({apiKey: "appl_NIMzKbuELZwYrRadlznGbomLWLN"});
 		} else if (Platform.OS === 'android') {
@@ -71,14 +71,6 @@ export default function App() {
 
 		loadResourcesAndDataAsync();
 	}, []);
-
-	useEffect(() => {
-        // Subscribe to purchaser updates
-        Purchases.addCustomerInfoUpdateListener(getUserDetails);
-        return () => {
-          Purchases.removeCustomerInfoUpdateListener(getUserDetails);
-        };
-    });
 
 	if (!isLoadingComplete) {
 		return null
