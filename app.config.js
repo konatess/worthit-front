@@ -1,9 +1,13 @@
+const versionNum = "1.0.30";
+const buildNum = "31";
+const versionCode = 31;
+
 export default {
     expo: {
         name: "Worth It",
         slug: "worthit",
         scheme: "worthit",
-        version: "1.0.29",
+        version: versionNum,
         orientation: "portrait",
         icon: "./assets/icon.jpg",
         userInterfaceStyle: "light",
@@ -34,7 +38,7 @@ export default {
                     }
                 ]
             },
-            buildNumber: "30",
+            buildNumber: buildNum,
             bundleIdentifier: "com.buddingapps.worthit",
             googleServicesFile: process.env.GOOGLE_SERVICES_PLIST,
         },
@@ -43,7 +47,7 @@ export default {
                 foregroundImage: "./assets/adaptive-icon.png",
                 backgroundColor: "#FFFAEF"
             },
-            versionCode: 30,
+            versionCode: versionCode,
             permissions: [
                 "android.permission.INTERNET"
             ],
