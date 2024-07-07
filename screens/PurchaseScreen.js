@@ -134,18 +134,6 @@ export default function PurchaseScreen ({ route, navigation }) {
                                 Alert.alert(Strings[settingsObj.language].headers.errorAlert, e.message)
                             }
                         } 
-                        // finally {
-                        //     if (!user.uid && !userCancelled) {
-                        //         let obj = {...settingsObj}
-                        //         if (obj.login === Strings.util.logins[0]) {
-                        //             obj.login = Strings.util.logins[1]
-                        //         }
-                        //         setSettingsObj(obj);
-                        //         navigation.push(Strings.util.routes.login)
-                        //     } else {
-                        //         navigation.push(Strings.util.routes.home)
-                        //     }
-                        // }
                     }}
                     isLast={index === packages.length -1}
                     // ListFooterComponent={() => {}}
