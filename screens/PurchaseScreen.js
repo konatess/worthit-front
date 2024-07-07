@@ -17,7 +17,7 @@ export default function PurchaseScreen ({ route, navigation }) {
     const { user } = useContext(UserContext);
     const { entitlements, setEntitlements } = useContext(Entitlements);
     const [packages, setPackages] = useState([]);
-    // const [userCancelled, setUserCancelled] = useState(false);
+    const [purchased, setPurchased] = useState(false);
 
     useEffect(() => {
         const getPackages = async () => {
@@ -34,22 +34,22 @@ export default function PurchaseScreen ({ route, navigation }) {
           getPackages();
     }, []);
 
-    // useEffect(() => { // TODO: Change so that users can be on page if they have already purchased 
-    //     // a subscription and are returning to the page, but are redirected if they have just 
-    //     // purchased a new subscription.
-    //     if (entitlements.storage1) {
-    //         if (!user.uid) {
-    //             let obj = {...settingsObj}
-    //             if (obj.login === Strings.util.logins[0]) {
-    //                 obj.login = Strings.util.logins[1]
-    //             }
-    //             setSettingsObj(obj);
-    //             navigation.push(Strings.util.routes.login)
-    //         } else {
-    //             navigation.push(Strings.util.routes.home)
-    //         }
-    //     }
-    // }, [entitlements.storage1]);
+    useEffect(() => { // TODO: Change so that users can be on page if they have already purchased 
+        // a subscription and are returning to the page, but are redirected if they have just 
+        // purchased a new subscription.
+        if (entitlements.storage1) {
+            if (!user.uid) {
+                let obj = {...settingsObj}
+                if (obj.login === Strings.util.logins[0]) {
+                    obj.login = Strings.util.logins[1]
+                }
+                setSettingsObj(obj);
+                navigation.push(Strings.util.routes.login)
+            } else {
+                navigation.push(Strings.util.routes.home)
+            }
+        }
+    }, [purchased]);
 
     let cancelBtn = {
         title: Strings.English.buttons.cancel,
@@ -111,17 +111,18 @@ export default function PurchaseScreen ({ route, navigation }) {
                                 let ent = { ...entitlements}
                                 ent.storage1 = true
                                 setEntitlements(ent);
+                                setPurchased(true);
                             }
-                            if (!user.uid) {
-                                let obj = {...settingsObj}
-                                if (obj.login === Strings.util.logins[0]) {
-                                    obj.login = Strings.util.logins[1]
-                                }
-                                setSettingsObj(obj);
-                                navigation.push(Strings.util.routes.login)
-                            } else {
-                                navigation.push(Strings.util.routes.home)
-                            }
+                            // if (!user.uid) {
+                            //     let obj = {...settingsObj}
+                            //     if (obj.login === Strings.util.logins[0]) {
+                            //         obj.login = Strings.util.logins[1]
+                            //     }
+                            //     setSettingsObj(obj);
+                            //     navigation.push(Strings.util.routes.login)
+                            // } else {
+                            //     navigation.push(Strings.util.routes.home)
+                            // }
                         } catch (e) {
                             if (e.userCancelled) {
                                 Alert.alert(Strings[settingsObj.language].headers.errorAlert, e.message)
