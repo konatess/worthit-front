@@ -44,9 +44,11 @@ export default function PurchaseScreen ({ route, navigation }) {
                     obj.login = Strings.util.logins[1]
                 }
                 setSettingsObj(obj);
-                navigation.push(Strings.util.routes.login)
+                setPurchased(false);
+                navigation.push(Strings.util.routes.login);
             } else {
-                navigation.push(Strings.util.routes.home)
+                setPurchased(false);
+                navigation.push(Strings.util.routes.home);
             }
         }
     }, [purchased]);
