@@ -37,7 +37,7 @@ export default function PurchaseScreen ({ route, navigation }) {
     useEffect(() => { // TODO: Change so that users can be on page if they have already purchased 
         // a subscription and are returning to the page, but are redirected if they have just 
         // purchased a new subscription.
-        if (entitlements.storage1) {
+        if (purchased && entitlements.storage1) {
             if (!user.uid) {
                 let obj = {...settingsObj}
                 if (obj.login === Strings.util.logins[0]) {
