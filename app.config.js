@@ -1,6 +1,6 @@
-const versionNum = "1.0.30";
-const buildNum = "31";
-const versionCode = 31;
+const versionNum = "1.0.31";
+const buildNum = "32";
+const versionCode = 32;
 
 export default {
     expo: {
