@@ -99,6 +99,7 @@ export default function PurchaseScreen ({ route, navigation }) {
         />
         {Platform.OS === 'android' && <View style={{height: StatusBar.currentHeight}} />}
         <Text style={[textStyles.headerText, {color: settingsObj.darkMode ? Colors.darkTheme.text : Colors.lightTheme.text}]}>{Strings.English.headers.subs}</Text>
+        <Text>{UserContext.uid}</Text>
         <View>
             {packages.length > 0 && <FlatList 
                 style={containers.settingsBtnList}
