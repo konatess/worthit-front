@@ -40,7 +40,7 @@ export default {
             },
             buildNumber: buildNum,
             bundleIdentifier: "com.buddingapps.worthit",
-            googleServicesFile: process.env.GOOGLE_SERVICES_PLIST,
+            googleServicesFile: "./GoogleService-Info.plist",
         },
         android: {
             adaptiveIcon: {
@@ -52,12 +52,14 @@ export default {
                 "android.permission.INTERNET"
             ],
             package: "com.buddingapps.worthit",
-            googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
+            googleServicesFile: "./google-services.json",
         },
         web: {
             favicon: "./assets/favicon.png"
         },
         plugins: [
+            "@react-native-firebase/app",
+            "@react-native-firebase/auth",
             ["expo-build-properties",
                 {
                     android: {
