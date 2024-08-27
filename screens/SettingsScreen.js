@@ -14,7 +14,6 @@ import { UserContext } from "../constants/UserContext";
 import { SettingsContext } from "../constants/SettingsContext";
 import { storeSettings, storeIng, deleteIng, storeRec, deleteRec, getIngAndRec } from "../storage/localAsync";
 
-
 export default function SettingsScreen ({ route, navigation }) {
     const { recLength, ingLength } = route.params;
     const { settingsObj, setSettingsObj} = useContext(SettingsContext);

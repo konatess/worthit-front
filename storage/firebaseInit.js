@@ -1,4 +1,4 @@
-import { Alert } from 'react-native';
+import { Alert } from 'react-native'
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getDatabase, ref, set, push, get, remove, onValue } from 'firebase/database';
 import Strings from '../constants/Strings';
