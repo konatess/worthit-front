@@ -1,6 +1,6 @@
-const versionNum = "1.0.31";
-const buildNum = "32";
-const versionCode = 32;
+const versionNum = "1.0.32";
+const buildNum = "33";
+const versionCode = 33;
 
 export default {
     expo: {
@@ -40,7 +40,7 @@ export default {
             },
             buildNumber: buildNum,
             bundleIdentifier: "com.buddingapps.worthit",
-            googleServicesFile: "./GoogleService-Info.plist",
+            googleServicesFile: process.env.GOOGLE_SERVICES_PLIST,
         },
         android: {
             adaptiveIcon: {
@@ -52,7 +52,7 @@ export default {
                 "android.permission.INTERNET"
             ],
             package: "com.buddingapps.worthit",
-            googleServicesFile: "./google-services.json",
+            googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
         },
         web: {
             favicon: "./assets/favicon.png"
