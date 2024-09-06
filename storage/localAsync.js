@@ -73,8 +73,8 @@ const storeSettings = async (settingsObj) => {
 
 const getSettings = async (callback) => {
     try {
-      const jsonValue = await AsyncStorage.getItem(storageKeys.settings);
-    callback(jsonValue != null ? JSON.parse(jsonValue) : {darkMode: false, currency: Strings.util.currencies[0], language: Strings.util.languages[0], login: Strings.util.logins[0]});
+        const jsonValue = await AsyncStorage.getItem(storageKeys.settings);
+        callback(jsonValue != null ? JSON.parse(jsonValue) : {darkMode: false, currency: Strings.util.currencies[0], language: Strings.util.languages[0], login: Strings.util.logins[0]});
     } catch(e) {
         Alert.alert(Strings[Strings.util.languages[0]].headers.errorAlert, e.message);
     }

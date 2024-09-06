@@ -13,7 +13,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { UserContext } from "../constants/UserContext";
 import { Entitlements } from "../constants/EntitlementsContext";
 import { SettingsContext } from "../constants/SettingsContext";
-import firebaseInit from "../storage/firebaseInit";
+import firebaseMethods from "../storage/firebaseMethods";
 import ProdButton from "../components/ProdButton";
 import InfoButtonLarge from "../components/InfoBtnLarge";
 import DataLimits from "../constants/DataLimits";
@@ -67,7 +67,7 @@ export default function HomeScreen ({ route, navigation }) {
         if (settingsObj.login === Strings.util.logins[0]) {
             getIng(setAllIngredients)
         } else {
-            let unsubscribe = firebaseInit.dbMethods.listen.ing(user.uid, setAllIngredients)
+            let unsubscribe = firebaseMethods.dbMethods.listen.ing(user.uid, setAllIngredients)
             return unsubscribe
         }
     }, [])
@@ -80,7 +80,7 @@ export default function HomeScreen ({ route, navigation }) {
         if (settingsObj.login === Strings.util.logins[0]) {
             getRec(setProducts);
         } else {
-            let unsubscribe = firebaseInit.dbMethods.listen.rec(user.uid, setProducts)
+            let unsubscribe = firebaseMethods.dbMethods.listen.rec(user.uid, setProducts)
             return unsubscribe
         }
     }, [])
@@ -254,15 +254,15 @@ export default function HomeScreen ({ route, navigation }) {
                 if (ingId) {
                     allIngObj[ingId] = ing;
                 } else {
-                    let id = firebaseInit.dbMethods.createId();
+                    let id = firebaseMethods.dbMethods.createId();
                     allIngObj[id] = ing;
                 }
                 storeIng(allIngObj).then(getIng(setAllIngredients));
             } else if (settingsObj.login !== Strings.util.logins[0]) {
                 if (ingId) {
-                    firebaseInit.dbMethods.updateIngredient(user.uid, ingId, ing);
+                    firebaseMethods.dbMethods.updateIngredient(user.uid, ingId, ing);
                 } else {
-                    firebaseInit.dbMethods.newIngredient(user.uid, ing);
+                    firebaseMethods.dbMethods.newIngredient(user.uid, ing);
                 }
             }
             closeModal();
@@ -275,7 +275,7 @@ export default function HomeScreen ({ route, navigation }) {
             delete allIngObj[id];
             storeIng(allIngObj).then(getIng(setAllIngredients));
         } else if (settingsObj.login !== Strings.util.logins[0]) {
-            firebaseInit.dbMethods.deleteIngredient(user.uid, id);
+            firebaseMethods.dbMethods.deleteIngredient(user.uid, id);
         }
         setIngId("");
     }

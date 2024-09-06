@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { SafeAreaView, View, Text, StatusBar, Alert, Platform, Keyboard } from "react-native";
 import * as Linking from "expo-linking";
 import { getAuth, signOut } from 'firebase/auth';
-import firebaseInit, { app } from "../storage/firebaseInit";
+import firebaseMethods, { app } from "../storage/firebaseMethods";
 import ButtonBar from '../components/ButtonBar';
 import SettingButton from "../components/SettingButton";
 import { containers, textStyles } from '../constants/Styles';
@@ -97,7 +97,7 @@ export default function SettingsScreen ({ route, navigation }) {
             if (prefLogin === Strings.util.logins[0]) {
                 deleteIng();
             } else if (prefLogin === !Strings.util.logins[0]) {
-                firebaseInit.dbMethods.deleteAllIngredients(user.uid);
+                firebaseMethods.dbMethods.deleteAllIngredients(user.uid);
             }
             navigation.pop();
         }
@@ -112,7 +112,7 @@ export default function SettingsScreen ({ route, navigation }) {
             if (prefLogin === Strings.util.logins[0]) {
                 deleteRec();
             } else if (prefLogin === !Strings.util.logins[0]) {
-                firebaseInit.dbMethods.deleteAllRecipes(user.uid);
+                firebaseMethods.dbMethods.deleteAllRecipes(user.uid);
             }
             navigation.pop();
         }
@@ -127,7 +127,7 @@ export default function SettingsScreen ({ route, navigation }) {
             setModalButtons([]);
             let ingredients = {};
             let recipes = {};
-            firebaseInit.dbMethods.getAllIngAndRec(user.uid,(value) => {
+            firebaseMethods.dbMethods.getAllIngAndRec(user.uid,(value) => {
                 if (value) {
                     ingredients = value.ingredients
                     recipes = value.recipes
@@ -145,7 +145,7 @@ export default function SettingsScreen ({ route, navigation }) {
             setModalMessage(Strings.English.messages.overwriteInProgress);
             setModalButtons([]);
             let value = await getIngAndRec();
-            firebaseInit.dbMethods.overwriteAllIngAndRec(user.uid, value);
+            firebaseMethods.dbMethods.overwriteAllIngAndRec(user.uid, value);
             closeModal();
         }
     }
@@ -157,7 +157,7 @@ export default function SettingsScreen ({ route, navigation }) {
         onPress: () => {
             setModalMessage(Strings.English.messages.deleting);
             setModalButtons([]);
-            firebaseInit.dbMethods.deleteAllUserData(user.uid);
+            firebaseMethods.dbMethods.deleteAllUserData(user.uid);
             closeModal();
         }
     }
@@ -269,6 +269,7 @@ export default function SettingsScreen ({ route, navigation }) {
         <View style={containers.settingsBtnList}>
             {settingsBtns.map( button => button )}
         </View>
+        <Text>{settingsObj.login}</Text>
         <Modal 
             visible={modalVisible} 
             message={modalMessage} 

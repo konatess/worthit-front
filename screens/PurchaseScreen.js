@@ -143,7 +143,7 @@ export default function PurchaseScreen ({ route, navigation }) {
             />}
             {/* <Text>{"URL: " + entitlements.subsURL}</Text> */}
         </View>
-        <ButtonBar buttons={entitlements.subsURL.length ? [cancelBtn, stopBtn, restoreBtn] : [cancelBtn, restoreBtn]} />
+        <ButtonBar buttons={entitlements.subsURL?.length ? [cancelBtn, stopBtn, restoreBtn] : [cancelBtn, restoreBtn]} />
     </SafeAreaView>
 }
 

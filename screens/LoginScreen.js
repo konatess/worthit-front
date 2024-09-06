@@ -3,9 +3,9 @@ import { SafeAreaView, Text, TextInput, Pressable, KeyboardAvoidingView, Alert }
 import * as Facebook from 'expo-auth-session/providers/facebook';
 import * as Google from 'expo-auth-session/providers/google';
 import { ResponseType, makeRedirectUri } from 'expo-auth-session';
-import { signInWithEmailAndPassword } from 'firebase/app';
-import { getAuth, FacebookAuthProvider, GoogleAuthProvider, signInWithCredential, onAuthStateChanged } from 'firebase/auth';
-import { app } from '../storage/firebaseInit';
+import { getAuth, initializeAuth, FacebookAuthProvider, GoogleAuthProvider, signInWithCredential, onAuthStateChanged, signInWithRedirect, getRedirectResult, signInWithEmailAndPassword, getReactNativePersistence } from 'firebase/auth';
+import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage"
+import { app } from '../storage/firebaseMethods';
 import LoginButton from "../components/LoginBtn";
 import { containers, textStyles, inputStyles, buttonStyles } from "../constants/Styles";
 import Strings from "../constants/Strings";
@@ -17,7 +17,10 @@ import Colors from "../constants/Colors";
 import Purchases from "react-native-purchases";
 import { storeSettings } from "../storage/localAsync";
 
-const auth = getAuth(app)
+// const auth = initializeAuth(app, {
+//     persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+// });
+const auth = getAuth(app);
 
 export default function LoginScreen ({ navigation, route }) { 
 	const { settingsObj, setSettingsObj } = useContext(SettingsContext)
@@ -111,6 +114,36 @@ export default function LoginScreen ({ navigation, route }) {
     //     });
     // }
 
+
+    // const signIn = async (provider) => {
+    //     await signInWithRedirect(auth, provider);
+    //     // This will trigger a full page redirect away from your app
+
+    //     // After returning from the redirect when your app initializes you can obtain the result
+    //     const result = await getRedirectResult(auth);
+    //     if (result) {
+    //         // This is the signed-in user
+    //         const resultUser = result.user;
+    //         console.log("resultUser:")
+    //         console.log(resultUser);
+    //         // This gives you a provider Access Token.
+    //         const credential = provider.credentialFromResult(auth, result);
+    //         const token = credential.accessToken;
+    //         setUser(resultUser)
+    //     }
+    // }
+
+    // const signInG = () => {
+    //     const provider = new GoogleAuthProvider();
+    //     signIn(provider);
+    // }
+
+    // const signInFB = () => {
+    //     const provider = new FacebookAuthProvider();
+    //     signIn(provider);
+    // }
+
+
     return (
         <SafeAreaView style={[containers.safeArea, containers.logins]}>
             <Text style={textStyles.labelText}>{Strings.English.label.login}</Text>
@@ -145,6 +178,7 @@ export default function LoginScreen ({ navigation, route }) {
                     storeSettings(obj);
                     setSettingsObj(obj);
                     fPromptAsync();
+                    // signInFB();
                 }}
             />}
             {(prefLogin === Strings.util.logins[1] || prefLogin === Strings.util.logins[3]) && <LoginButton 
@@ -155,9 +189,12 @@ export default function LoginScreen ({ navigation, route }) {
                     storeSettings(obj);
                     setSettingsObj(obj);
                     gPromptAsync();
+                    // signInG();
                 }}
             />}
             </>}
+            <Text>{Strings.util.logins.join(", ")}</Text>
+            <Text>{prefLogin}</Text>
             {/* <LoginButton 
                 iconName={Icons.email}
                 onPress={() => {setUseEmail(!useEmail)}}

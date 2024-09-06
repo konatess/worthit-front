@@ -9,7 +9,7 @@ import Colors from "../constants/Colors";
 import Strings from "../constants/Strings";
 import Modal from "../components/Modal";
 import { UserContext } from "../constants/UserContext";
-import firebaseInit from "../storage/firebaseInit";
+import firebaseMethods from "../storage/firebaseMethods";
 import { storeIng, getIng, storeRec } from "../storage/localAsync";
 import IngAmount from "../components/IngAmount";
 import DataLimits from "../constants/DataLimits";
@@ -126,7 +126,7 @@ export default function RecipeScreen ({navigation, route}) {
         if (prefLogin === Strings.util.logins[0]) {
             getIng(setAllIngredients);
         } else {
-            let unsubscribe = firebaseInit.dbMethods.listen.ing(user.uid, setAllIngredients)
+            let unsubscribe = firebaseMethods.dbMethods.listen.ing(user.uid, setAllIngredients)
             return unsubscribe
         }
     }, [])
@@ -202,11 +202,11 @@ export default function RecipeScreen ({navigation, route}) {
             }
             if (prefLogin === Strings.util.logins[0]) {
                 let allIngObj = allIngredients;
-                let id = firebaseInit.dbMethods.createId();
+                let id = firebaseMethods.dbMethods.createId();
                 allIngObj[id] = ing;
                 storeIng(allIngObj).then(getIng(setAllIngredients));
             } else if (prefLogin !== Strings.util.logins[0]) {
-                firebaseInit.dbMethods.newIngredient(user.uid, ing)
+                firebaseMethods.dbMethods.newIngredient(user.uid, ing)
             }
             closeModal();
         }
@@ -281,7 +281,7 @@ export default function RecipeScreen ({navigation, route}) {
         }
         if (prefLogin === Strings.util.logins[0]) {
             let allIngObj = allIngredients || {};
-            let recId = prodId.length ? prodId : firebaseInit.dbMethods.createId();
+            let recId = prodId.length ? prodId : firebaseMethods.dbMethods.createId();
             let allProdObj = {
                 ...products,
                 [recId]: recipe
@@ -302,16 +302,16 @@ export default function RecipeScreen ({navigation, route}) {
             storeIng(allIngObj).then(getIng(setAllIngredients));
         } else if (prefLogin !== Strings.util.logins[0]) {
             if (prodId) {
-                firebaseInit.dbMethods.updateRecipe(user.uid, prodId, recipe);
+                firebaseMethods.dbMethods.updateRecipe(user.uid, prodId, recipe);
                 for (id in allIngredients) {
                     let inUse = id in ingredients
-                    firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, inUse)
+                    firebaseMethods.dbMethods.updateIRCrossRef(user.uid, id, prodId, inUse)
                 } 
             } else {
-                let newRec = await firebaseInit.dbMethods.newRecipe(user.uid, recipe);
+                let newRec = await firebaseMethods.dbMethods.newRecipe(user.uid, recipe);
                 for (id in allIngredients) {
                     let inUse = id in ingredients
-                    firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, newRec, inUse)
+                    firebaseMethods.dbMethods.updateIRCrossRef(user.uid, id, newRec, inUse)
                 } 
             }
         }
@@ -430,9 +430,9 @@ export default function RecipeScreen ({navigation, route}) {
                 }
                 storeIng(allIngObj);
             } else if (prefLogin !== Strings.util.logins[0]) {
-                firebaseInit.dbMethods.deleteRecipe(user.uid, prodId);
+                firebaseMethods.dbMethods.deleteRecipe(user.uid, prodId);
                 for (id in allIngredients) {
-                    firebaseInit.dbMethods.updateIRCrossRef(user.uid, id, prodId, false);
+                    firebaseMethods.dbMethods.updateIRCrossRef(user.uid, id, prodId, false);
                 }
             }
             navigation.pop()

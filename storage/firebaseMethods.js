@@ -1,6 +1,7 @@
 import { Alert } from 'react-native'
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getDatabase, ref, set, push, get, remove, onValue } from 'firebase/database';
+// import { FIRESTORE_DB } from './firebaseConfig';
 import Strings from '../constants/Strings';
 
 let firebaseConfig = {
@@ -36,7 +37,8 @@ const dbMethods = {
         }
     },
     createId: () => {
-        return push(ref(db, `users`)).key
+        // return push(ref(db, `users`)).key
+
     },
     getAllIngAndRec: (uid, callback) => {
         get(ref(db, `users/${uid}`)).then((snapshot) => {

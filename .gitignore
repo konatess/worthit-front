@@ -11,6 +11,7 @@ npm-debug.*
 web-build/
 GoogleService-Info.plist
 google-services.json
+firebaseConfig.*
 
 # macOS
 .DS_Store

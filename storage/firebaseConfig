@@ -1,0 +1,19 @@
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+
+// Initialize Firebase with your config
+const firebaseConfig = {
+	apiKey: "AIzaSyD5LuF_dEvcv3xcTg3-hIxJ_6Ps_f04YYw",
+    authDomain: "worth-888.firebaseapp.com",
+    databaseURL: "https://worth-888-default-rtdb.firebaseio.com",
+    projectId: "worth-888",
+    storageBucket: "worth-888.appspot.com",
+    messagingSenderId: "383268290551",
+    appId: "1:383268290551:web:c951118a22bcf2404778f2",
+    measurementId: "G-HQS6MR5BT6"
+};
+
+export const FIREBASE_APP = initializeApp(firebaseConfig);
+export const FIRESTORE_DB = getFirestore(FIREBASE_APP);
+export const FIREBASE_AUTH = getAuth(FIREBASE_APP);

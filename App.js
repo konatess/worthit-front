@@ -30,6 +30,10 @@ export default function App() {
 	
 
 	const getUserDetails = async () => {
+		let sett = {};
+		await getSettings((value) => {
+			sett = {...value}
+		});
         let isAnonymous = await Purchases.isAnonymous();
     
         const customerInfo = await Purchases.getCustomerInfo();
@@ -39,11 +43,13 @@ export default function App() {
 			subsURL: customerInfo.managementURL || ""
 		};
 		if (!ent.storage1) {
-			let sett = {...settingsObj} 
-			sett.login = Strings.util.logins[0]
-			setSettingsObj(sett)
+			sett.login = Strings.util.logins[1] // changed to 1 for testing, should be 0
+		} 
+		else if (!!ent.storage1 && sett.login === Strings.util.logins[0]) {
+			sett.login = Strings.util.logins[1]
 		}
 		setEntitlements(ent);
+		setSettingsObj(sett)
     };
 
 	// Load any resources or data that we need prior to rendering the app
@@ -52,7 +58,7 @@ export default function App() {
 			try {
 				SplashScreen.preventAutoHideAsync();
 				await getSettings(setSettingsObj);
-				getUserDetails();
+				await getUserDetails();
 			} catch (e) {
 				// We might want to provide this error information to an error reporting service
 				Alert.alert(Strings[Strings.util.languages[0]].headers.errorAlert, e.message)
